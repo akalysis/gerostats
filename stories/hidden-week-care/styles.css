@@ -778,3 +778,249 @@ p {
     grid-template-columns: 1fr;
   }
 }
+
+/* Gerostats dark glass theme */
+:root {
+  color-scheme: dark;
+  --ink: #f8fafc;
+  --muted: #94a3b8;
+  --paper: #020617;
+  --panel: rgba(15, 23, 42, 0.74);
+  --line: rgba(148, 163, 184, 0.18);
+  --red: #a3e635;
+  --red-dark: #bef264;
+  --amber: #facc15;
+  --green: #2dd4bf;
+  --blue: #60a5fa;
+  --charcoal: #0f172a;
+  --card: rgba(15, 23, 42, 0.74);
+  --card-strong: rgba(15, 23, 42, 0.92);
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+}
+
+body {
+  background:
+    linear-gradient(to right, rgba(255, 255, 255, 0.032) 1px, transparent 1px) 0 0 / 42px 42px,
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.032) 1px, transparent 1px) 0 0 / 42px 42px,
+    linear-gradient(135deg, rgba(163, 230, 53, 0.1), transparent 32%),
+    linear-gradient(315deg, rgba(45, 212, 191, 0.08), transparent 38%),
+    var(--paper);
+  color: var(--ink);
+}
+
+.site-header {
+  border-bottom: 1px solid var(--line);
+  background: rgba(2, 6, 23, 0.78);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: #fff;
+}
+
+.brand-mark {
+  display: block;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  background: url("/favicon.svg?v=mark-20260704") center / cover no-repeat;
+  box-shadow: 0 0 24px rgba(163, 230, 53, 0.14);
+}
+
+nav {
+  color: #cbd5e1;
+}
+
+nav a:hover,
+nav a:focus-visible {
+  color: var(--red);
+  background: rgba(163, 230, 53, 0.1);
+}
+
+.kicker,
+.panel-label {
+  color: var(--red);
+}
+
+.lede,
+.opening-copy p:not(.kicker):not(.lede),
+.section-heading p:not(.kicker),
+.story p,
+.technical-note ul,
+.method p,
+.sources ul,
+.author p,
+.scene-panel p:not(.panel-label) {
+  color: #cbd5e1;
+}
+
+.opening-stat,
+.map-shell,
+.scene-panel,
+.method,
+.metric,
+.rank-panel li,
+.map-overlay-list,
+.map-caption,
+.map-tooltip {
+  border-color: var(--line);
+  background: var(--card);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.opening-stat,
+.metric,
+.rank-panel li {
+  border-top-color: var(--red);
+}
+
+.stat-number,
+.metric b,
+.rank-panel strong,
+.map-overlay-list strong {
+  color: var(--red);
+}
+
+.stat-label,
+.map-caption strong,
+.map-overlay-list h4,
+.rank-panel h4 {
+  color: #fff;
+}
+
+.stat-note,
+.metric span,
+.rank-panel span,
+.map-caption,
+.map-tooltip,
+.map-overlay-list span,
+.legend-row {
+  color: var(--muted);
+}
+
+.scene-tabs {
+  background: rgba(148, 163, 184, 0.18);
+  border-bottom-color: var(--line);
+}
+
+.scene-tab {
+  background: rgba(15, 23, 42, 0.78);
+  color: #cbd5e1;
+}
+
+.scene-tab:hover,
+.scene-tab:focus-visible,
+.scene-tab.is-active {
+  background: var(--red);
+  color: #07110d;
+}
+
+.map-stage,
+#care-map {
+  background:
+    radial-gradient(circle at 32% 22%, rgba(45, 212, 191, 0.12), transparent 32%),
+    #07111f;
+}
+
+.lsoa {
+  stroke: rgba(15, 23, 42, 0.7);
+}
+
+.lsoa:hover {
+  stroke: #f8fafc;
+}
+
+.bubble {
+  filter: drop-shadow(0 7px 12px rgba(0, 0, 0, 0.28));
+}
+
+.bubble-value {
+  fill: #fff;
+  stroke: rgba(2, 6, 23, 0.62);
+}
+
+.label-line {
+  stroke: rgba(226, 232, 240, 0.5);
+}
+
+.label-bg {
+  fill: rgba(15, 23, 42, 0.86);
+  stroke: var(--line);
+}
+
+.ward-label,
+.lad-label {
+  fill: #f8fafc;
+  stroke: rgba(2, 6, 23, 0.75);
+}
+
+.map-overlay-list li,
+.rank-panel,
+.legend-row,
+.author {
+  border-color: var(--line);
+}
+
+.legend-row {
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.legend-key {
+  border-color: rgba(226, 232, 240, 0.42);
+}
+
+.technical-note a,
+.sources a,
+.text-link {
+  color: #fff;
+  text-decoration-color: var(--red);
+}
+
+.site-footer {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) minmax(180px, auto);
+  gap: 1rem;
+  padding: 2rem clamp(1rem, 4vw, 4rem);
+  border-top: 1px solid var(--line);
+  background: rgba(2, 6, 23, 0.64);
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+.site-footer a {
+  color: #fff;
+}
+
+.footer-credit {
+  grid-column: 1 / -1;
+  max-width: 960px;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--line);
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.footer-credit span {
+  display: block;
+}
+
+@media (max-width: 860px) {
+  .site-footer {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .scene-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

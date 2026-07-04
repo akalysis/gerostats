@@ -514,3 +514,190 @@ code {
     width: 100%;
   }
 }
+
+/* Gerostats dark glass theme */
+:root {
+  color-scheme: dark;
+  --ink: #f8fafc;
+  --muted: #94a3b8;
+  --paper: #020617;
+  --white: #ffffff;
+  --line: rgba(148, 163, 184, 0.18);
+  --red: #a3e635;
+  --teal: #2dd4bf;
+  --gold: #38bdf8;
+  --blue: #60a5fa;
+  --green: #2dd4bf;
+  --card: rgba(15, 23, 42, 0.74);
+  --card-strong: rgba(15, 23, 42, 0.92);
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+}
+
+body {
+  background:
+    linear-gradient(to right, rgba(255, 255, 255, 0.032) 1px, transparent 1px) 0 0 / 42px 42px,
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.032) 1px, transparent 1px) 0 0 / 42px 42px,
+    linear-gradient(135deg, rgba(163, 230, 53, 0.1), transparent 32%),
+    linear-gradient(315deg, rgba(45, 212, 191, 0.08), transparent 38%),
+    var(--paper);
+  color: var(--ink);
+}
+
+.site-header {
+  border-bottom: 1px solid var(--line);
+  background: rgba(2, 6, 23, 0.78);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--white);
+}
+
+.brand-mark {
+  display: block;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  background: url("/favicon.svg?v=mark-20260704") center / cover no-repeat;
+  box-shadow: 0 0 24px rgba(163, 230, 53, 0.14);
+}
+
+nav {
+  color: #cbd5e1;
+}
+
+nav a:hover,
+nav a:focus {
+  color: var(--red);
+}
+
+.hero::before {
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(rgba(2, 6, 23, 0.08), rgba(2, 6, 23, 0.08)),
+    url("assets/newcastle-osm-hero-map.png") center / cover no-repeat;
+  box-shadow: var(--shadow);
+  opacity: 0.28;
+}
+
+.kicker,
+.section-label {
+  color: var(--red);
+}
+
+.lede,
+.hero > p:not(.kicker),
+.section-intro,
+.essay p,
+.closing-call p:last-child,
+.author-note p,
+.note-page p,
+.note-page li {
+  color: #cbd5e1;
+}
+
+.button,
+.chapter-bar button {
+  border-color: var(--line);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.65);
+  color: var(--white);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.2);
+}
+
+.button.primary {
+  border-color: var(--red);
+  background: var(--red);
+  color: #07110d;
+  box-shadow: 0 0 28px rgba(163, 230, 53, 0.24);
+}
+
+.button:hover,
+.button:focus,
+.chapter-bar button:hover,
+.chapter-bar button:focus {
+  border-color: rgba(163, 230, 53, 0.5);
+  box-shadow: 0 0 30px rgba(163, 230, 53, 0.16);
+}
+
+.video-frame,
+.stat-card,
+.closing-call,
+.note-table {
+  border-color: var(--line);
+  background: var(--card);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.stat-card {
+  border-top-color: var(--red);
+}
+
+.stat-card p:last-child,
+.story-meta,
+.note-table td {
+  color: var(--muted);
+}
+
+.essay section,
+.stat-band,
+.author-note {
+  border-color: var(--line);
+}
+
+.essay section p:first-of-type {
+  color: #e2e8f0;
+}
+
+.note-table th,
+.note-table td {
+  border-color: var(--line);
+}
+
+code {
+  background: rgba(148, 163, 184, 0.12);
+  color: #d9f99d;
+}
+
+.text-link,
+.note-page a {
+  color: var(--white);
+  text-decoration-color: var(--red);
+}
+
+.site-footer {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) minmax(180px, auto);
+  gap: 1rem;
+  border-top: 1px solid var(--line);
+  background: rgba(2, 6, 23, 0.64);
+  color: var(--muted);
+}
+
+.site-footer a {
+  color: var(--white);
+}
+
+.footer-credit {
+  grid-column: 1 / -1;
+  max-width: 960px;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--line);
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.footer-credit span {
+  display: block;
+}
+
+@media (max-width: 850px) {
+  .site-footer {
+    grid-template-columns: 1fr;
+  }
+}
