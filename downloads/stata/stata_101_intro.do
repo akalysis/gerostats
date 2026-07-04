@@ -1,5 +1,5 @@
 * ==============================================================================
-* AKALYSIS KNOWLEDGE BASE 
+* GEROSTATS KNOWLEDGE BASE
 * Script: Stata 101 - Introduction for Epidemiologists
 * Author: Dr Andrew Kingston
 * Date: April 2026

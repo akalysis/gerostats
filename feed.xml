@@ -42,13 +42,6 @@
       <description>A practical introduction to the Stata interface, the do-file editor and the first commands every epidemiologist should know.</description>
     </item>
     <item>
-      <title>Building AKALYSIS: from zero to production.</title>
-      <link>https://gerostats.co.uk/writing/building-akalysis/</link>
-      <guid>https://gerostats.co.uk/writing/building-akalysis/</guid>
-      <pubDate>Sat, 04 Apr 2026 00:00:00 +0000</pubDate>
-      <description>How the Akalysis consultancy site was designed, engineered and deployed, and why end-to-end analytical infrastructure matters.</description>
-    </item>
-    <item>
       <title>Census 2021: Disability Inequality Islands.</title>
       <link>https://gerostats.co.uk/writing/census-disability-gap/</link>
       <guid>https://gerostats.co.uk/writing/census-disability-gap/</guid>
