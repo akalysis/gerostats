@@ -8,6 +8,16 @@
       "permanent": true
     },
     {
+      "source": "/garden",
+      "destination": "/writing/",
+      "permanent": true
+    },
+    {
+      "source": "/digital-garden",
+      "destination": "/writing/",
+      "permanent": true
+    },
+    {
       "source": "/metro",
       "destination": "/stories/metro-life-expectancy/",
       "permanent": true

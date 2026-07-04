@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Building AKALYSIS | Gerostats Digital Garden</title>
+    <meta
+      name="description"
+      content="How the Akalysis consultancy site was designed, engineered and deployed using Next.js, TypeScript, Tailwind CSS, Vercel and Resend."
+    >
+    <meta name="author" content="Andrew Kingston PhD CStat SFHEA">
+    <link rel="canonical" href="https://gerostats.co.uk/writing/building-akalysis/">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Gerostats home">
+        <span class="brand-mark" aria-hidden="true">G</span>
+        <span>Gerostats</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="/writing/">Garden</a>
+        <a href="/#stories">Stories</a>
+        <a href="/about/">About</a>
+        <a href="mailto:mrakingston@gmail.com">Contact</a>
+      </nav>
+    </header>
+
+    <main id="main" class="article-page">
+      <article class="article-shell">
+        <aside class="article-meta" aria-label="Article metadata">
+          <p class="page-kicker">Applied code</p>
+          <p><time datetime="2026-04-04">4 April 2026</time></p>
+          <p>Digital garden note</p>
+          <p><a class="text-link" href="/writing/">Back to garden</a></p>
+        </aside>
+
+        <div class="article-content">
+          <h1 class="page-title">Building AKALYSIS: from zero to production.</h1>
+          <p class="page-intro">
+            How I designed, engineered and deployed the Akalysis consultancy
+            site using Next.js, TypeScript, Tailwind CSS, Vercel and Resend,
+            and why a statistician building their own production infrastructure
+            matters.
+          </p>
+          <div class="tag-row" aria-label="Tags">
+            <span class="tag">Next.js</span>
+            <span class="tag">TypeScript</span>
+            <span class="tag">Tailwind CSS</span>
+            <span class="tag">Vercel</span>
+            <span class="tag">Resend</span>
+          </div>
+
+          <p class="lead">
+            The Akalysis site was designed, engineered and deployed by me.  Not
+            outsourced, not templated, not a drag-and-drop build.  It was built
+            from scratch in Next.js, deployed on Vercel with a custom domain,
+            and given a working transactional email pipeline.
+          </p>
+
+          <div class="article-callout">
+            <p>
+              <strong>Why this belongs in the garden:</strong> building
+              production software is part of my skill set, not a side note.  A
+              statistician who can also ship clean, performant web
+              infrastructure is a different kind of hire.  This note is evidence
+              of that, not just a claim about it.
+            </p>
+          </div>
+
+          <h2>Stack decisions</h2>
+          <p>
+            Every technology choice was deliberate.  The goal was a site that is
+            fast, maintainable, search-friendly and capable of growing without
+            avoidable technical debt.
+          </p>
+
+          <h3>Next.js with the App Router</h3>
+          <p>
+            React with the App Router gives server-side rendering by default,
+            file-system routing and a clean separation between server and client
+            components.  For a content-heavy consultancy site that needs good
+            Core Web Vitals and structured metadata, this is a strong
+            foundation.  Pages are rendered at build time where possible, and
+            dynamic routes can be generated statically.
+          </p>
+
+          <h3>TypeScript throughout</h3>
+          <p>
+            The content layer, SEO definitions, publication lists and garden
+            entries are typed with explicit interfaces.  That is not ceremonial.
+            It means a typo in a content object fails at compile time rather
+            than silently producing a broken production page.
+          </p>
+
+          <pre class="code-block"><code>// src/lib/content/seo-pages.ts
+export type SeoLandingPageContent = {
+  slug: string;
+  path: string;
+  metaTitle: string;
+  intro: string;
+  focusAreas: Array&lt;{
+    title: string;
+    description: string;
+  }&gt;;
+};</code></pre>
+
+          <p>
+            The type system catches structural errors before they reach the
+            browser.  That is the same principle behind a good statistical
+            analysis plan: define your schema before you touch the data.
+          </p>
+
+          <h3>Tailwind CSS and a deliberate design system</h3>
+          <p>
+            The original Akalysis design used a high-contrast dark interface
+            with lime, emerald and teal accents.  The point was to avoid a
+            generic blue-heavy technology palette and to make the site feel
+            precise, technical and recognisable at small sizes.
+          </p>
+
+          <h3>MDX for the digital garden</h3>
+          <p>
+            Long-form garden content was written in MDX: Markdown with embedded
+            React components.  The intercensal method post, for example, used
+            rendered LaTeX equations inside an otherwise readable article.  That
+            is the right pattern when writing needs notation, code, diagrams or
+            interactive components without losing editorial flow.
+          </p>
+
+          <pre class="code-block"><code>## The Core Equation
+
+The intercensal method exploits the relationship:
+
+&lt;BlockMath math="\\Pi(x+n,t+n) = ..." /&gt;</code></pre>
+
+          <h2>The contact pipeline</h2>
+          <p>
+            The contact form is a compact example of lightweight backend work.
+            Rather than relying on a mail client opening correctly, the form
+            posts to a Next.js API route that sends a formatted email via
+            Resend.
+          </p>
+
+          <pre class="code-block"><code>// src/app/api/contact/route.ts
+import { Resend } from "resend";
+import { NextRequest, NextResponse } from "next/server";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+export async function POST(request: NextRequest) {
+  const { name, email, enquiryType, message } = await request.json();
+
+  await resend.emails.send({
+    from: "AKALYSIS Enquiries &lt;contact@akalysis.co.uk&gt;",
+    to: ["mrakingston@gmail.com"],
+    replyTo: email,
+    subject: `New enquiry from ${name} - ${enquiryType}`,
+    html: `...`
+  });
+
+  return NextResponse.json({ success: true });
+}</code></pre>
+
+          <p>
+            Domain verification, DNS and SSL were handled through Vercel, with
+            sensitive keys kept as environment variables rather than committed to
+            the repository.
+          </p>
+
+          <h2>Deployment and domain</h2>
+          <p>
+            The site was deployed on Vercel with automatic deployments triggered
+            by pushes to the main branch on GitHub.  A local commit could be
+            live within roughly a minute, including build time.
+          </p>
+
+          <pre class="code-block"><code>$ git push origin main
+-> GitHub receives push
+-> Vercel webhook triggers build
+-> Next.js build runs
+-> akalysis.co.uk updated</code></pre>
+
+          <p>
+            The domain was registered separately, with nameservers pointing to
+            Vercel.  That leaves no server to maintain, no certificate renewal
+            to schedule and no hand-rolled hosting layer to babysit.
+          </p>
+
+          <h2>Why this matters for a statistician</h2>
+          <p>
+            Data scientists who can only operate inside pre-built environments
+            are limited in what they can deliver.  The ability to take analytical
+            output and build the infrastructure that surfaces it to
+            decision-makers is a meaningful extension of the role.
+          </p>
+          <p>
+            Akalysis was a working example of that approach: statistical writing
+            served by a production web application with typed data models,
+            structured metadata, automated deployment and transactional email,
+            all built and maintained by the same person doing the analysis.
+          </p>
+
+          <div class="link-panel">
+            <h2>Repository</h2>
+            <p>
+              The source code for the original Akalysis site is available on
+              GitHub.
+            </p>
+            <p>
+              <a class="text-link" href="https://github.com/akalysis/akalysis-hub" target="_blank" rel="noopener noreferrer">akalysis/akalysis-hub</a>
+            </p>
+          </div>
+
+          <p class="source-note">
+            Originally cultivated in the
+            <a href="https://www.akalysis.co.uk/garden/code/building-akalysis" target="_blank" rel="noopener noreferrer">Akalysis Digital Garden</a>.
+          </p>
+        </div>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <p>Gerostats.co.uk</p>
+      <p><a href="mailto:mrakingston@gmail.com">mrakingston@gmail.com</a></p>
+    </footer>
+  </body>
+</html>
