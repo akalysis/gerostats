@@ -17,7 +17,10 @@ const orange = "#f97316";
 const red = "#ef4444";
 const ink = "#f8fafc";
 const muted = "#cbd5e1";
-const panel = "rgba(15, 23, 42, 0.82)";
+const panel = "rgba(15, 23, 42, 0.84)";
+const mapLand = "#f4fbf8";
+const mapWater = "#d7eef5";
+const mapLine = "#99b8bf";
 
 type Ward = (typeof wards)[number];
 type AnchoredWard = Ward & {x: number; y: number};
@@ -145,7 +148,7 @@ const camera = (frame: number, fps: number) => {
 
   if (frame >= 27 * fps && frame < 39 * fps) {
     return {
-      scale: interpolate(toTop, [0, 1], [1.08, 4.15]),
+      scale: interpolate(toTop, [0, 1], [1.08, 5.65]),
       x: mix(WIDTH / 2, topBurden.x, toTop),
       y: mix(HEIGHT / 2, topBurden.y, toTop),
     };
@@ -153,7 +156,7 @@ const camera = (frame: number, fps: number) => {
 
   if (frame >= 39 * fps && frame < 53 * fps) {
     return {
-      scale: interpolate(toWalker, [0, 1], [3.6, 5.0]),
+      scale: interpolate(toWalker, [0, 1], [5.05, 6.3]),
       x: mix(topBurden.x, stackFocus.x, toWalker),
       y: mix(topBurden.y, stackFocus.y, toWalker),
     };
@@ -161,7 +164,7 @@ const camera = (frame: number, fps: number) => {
 
   if (frame >= 53 * fps && frame < 66 * fps) {
     return {
-      scale: interpolate(toLow, [0, 1], [4.2, 4.75]),
+      scale: interpolate(toLow, [0, 1], [5.5, 6.1]),
       x: mix(stackFocus.x, lowFocus.x, toLow),
       y: mix(stackFocus.y, lowFocus.y, toLow),
     };
@@ -169,7 +172,7 @@ const camera = (frame: number, fps: number) => {
 
   if (frame >= 66 * fps && frame < 76 * fps) {
     return {
-      scale: interpolate(home, [0, 1], [4.2, 1.08]),
+      scale: interpolate(home, [0, 1], [5.15, 1.08]),
       x: mix(lowFocus.x, WIDTH / 2, home),
       y: mix(lowFocus.y, HEIGHT / 2, home),
     };
@@ -241,23 +244,39 @@ const ShapePath = ({
   highlight: boolean;
 }) => {
   const norm = clamp(normShape(shape));
-  const lift = rise * (4 + norm * 32 + (highlight ? 8 : 0));
+  const lift = rise * (5 + norm * 44 + (highlight ? 18 : 0));
   const fill = ramp(norm);
+  const sideFill = blend("#5b7c82", "#7f1d1d", norm);
+  const sideLayers = Math.max(0, Math.min(7, Math.round(lift / 8)));
 
   return (
     <g>
       <path
         d={shape.d}
-        fill="rgba(15,23,42,0.34)"
-        opacity={0.16 + norm * 0.16}
-        transform={`translate(${lift * 0.45}, ${lift * 0.72})`}
+        fill="rgba(13, 30, 36, 0.24)"
+        opacity={0.08 + norm * 0.1}
+        transform={`translate(${lift * 0.55}, ${lift * 0.62})`}
       />
+      {Array.from({length: sideLayers}).map((_, index) => {
+        const step = index + 1;
+        return (
+          <path
+            key={step}
+            d={shape.d}
+            fill={sideFill}
+            opacity={0.13 + norm * 0.12}
+            stroke="rgba(8, 47, 73, 0.08)"
+            strokeWidth={0.45}
+            transform={`translate(${step * 0.9}, ${-lift + step * 4.8})`}
+          />
+        );
+      })}
       <path
         d={shape.d}
         fill={fill}
-        opacity={highlight ? 1 : 0.7 + norm * 0.22}
-        stroke={highlight ? "rgba(2,6,23,0.82)" : "rgba(15,23,42,0.2)"}
-        strokeWidth={highlight ? 1.25 : 0.6}
+        opacity={highlight ? 1 : 0.62 + norm * 0.28}
+        stroke={highlight ? "rgba(15,23,42,0.96)" : "rgba(15,23,42,0.28)"}
+        strokeWidth={highlight ? 1.35 : 0.42}
         transform={`translate(0, ${-lift})`}
       />
     </g>
@@ -266,19 +285,19 @@ const ShapePath = ({
 
 const WardColumn = ({ward, rise, active}: {ward: AnchoredWard; rise: number; active: boolean}) => {
   const norm = clamp(normHours(ward.olderHours));
-  const height = rise * (18 + norm * 92);
-  const width = active ? 12 : 7;
+  const height = rise * (5 + norm * 24);
+  const width = active ? 5 : 3;
   const fill = ramp(norm);
 
   return (
-    <g transform={`translate(${ward.x}, ${ward.y})`} opacity={active ? 1 : 0.24}>
+    <g transform={`translate(${ward.x}, ${ward.y})`} opacity={active ? 0.9 : 0}>
       <rect
         x={-width / 2}
         y={-height}
         width={width}
         height={height}
         fill={fill}
-        stroke="rgba(2,6,23,0.74)"
+        stroke="rgba(2,6,23,0.68)"
         strokeWidth="1"
       />
       <path
@@ -292,7 +311,7 @@ const WardColumn = ({ward, rise, active}: {ward: AnchoredWard; rise: number; act
 };
 
 const MapLayer = ({frame, fps}: {frame: number; fps: number}) => {
-  const rise = sceneProgress(frame, fps, 19, 39);
+  const rise = sceneProgress(frame, fps, 19, 43);
   const cam = camera(frame, fps);
   const topScene = frame >= 29 * fps && frame < 39 * fps;
   const walkerScene = frame >= 39 * fps && frame < 53 * fps;
@@ -301,7 +320,27 @@ const MapLayer = ({frame, fps}: {frame: number; fps: number}) => {
 
   return (
     <svg style={styles.mapSvg} viewBox={`0 0 ${WIDTH} ${HEIGHT}`}>
-      <rect x="0" y="0" width={WIDTH} height={HEIGHT} fill="rgba(219,234,242,0.42)" />
+      <defs>
+        <linearGradient id="mapBackground" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#ecfdf5" />
+          <stop offset="48%" stopColor={mapLand} />
+          <stop offset="100%" stopColor="#eef8ff" />
+        </linearGradient>
+        <pattern id="mapGrid" width="52" height="52" patternUnits="userSpaceOnUse">
+          <path d="M 52 0 L 0 0 0 52" fill="none" stroke="rgba(12, 74, 110, 0.13)" strokeWidth="1" />
+        </pattern>
+      </defs>
+      <rect x="0" y="0" width={WIDTH} height={HEIGHT} fill={mapWater} />
+      <path
+        d="M0 62 C154 35 246 70 362 45 C528 10 612 46 753 31 C916 14 1060 37 1280 7 L1280 720 L0 720 Z"
+        fill="url(#mapBackground)"
+      />
+      <rect x="0" y="0" width={WIDTH} height={HEIGHT} fill="url(#mapGrid)" opacity="0.42" />
+      <g opacity="0.38">
+        <path d="M205 560 C305 496 405 492 526 432 C658 367 760 390 920 312" fill="none" stroke={mapLine} strokeWidth="4" strokeLinecap="round" />
+        <path d="M230 222 C382 236 534 210 698 230 C812 244 914 220 1058 180" fill="none" stroke={mapLine} strokeWidth="2.2" strokeLinecap="round" />
+        <path d="M480 662 C532 545 590 488 668 410 C742 337 792 260 842 118" fill="none" stroke={mapLine} strokeWidth="2" strokeLinecap="round" />
+      </g>
       <g
         style={{
           transform: `translate(${WIDTH / 2}px, ${HEIGHT / 2}px) scale(${cam.scale}) translate(${-cam.x}px, ${-cam.y}px)`,

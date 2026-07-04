@@ -1,4 +1,4 @@
-const svg = d3.select("#care-map");
+const mapContainer = document.querySelector("#care-map");
 const tooltip = document.querySelector("#map-tooltip");
 const sceneLabel = document.querySelector("#scene-label");
 const sceneTitle = document.querySelector("#scene-title");
@@ -16,21 +16,9 @@ const formatOne = new Intl.NumberFormat("en-GB", {
   maximumFractionDigits: 1,
 });
 
-const deprivationColours = {
-  1: "#ef4444",
-  2: "#f97316",
-  3: "#f59e0b",
-  4: "#facc15",
-  5: "#d9f99d",
-  6: "#86efac",
-  7: "#34d399",
-  8: "#2dd4bf",
-  9: "#38bdf8",
-  10: "#60a5fa",
-};
-
-const dataVersion = "20260704-oldercare-colour";
-const metricColour = d3.interpolateRgbBasis(["#34d399", "#facc15", "#f97316", "#ef4444"]);
+const dataVersion = "20260704-raised-map";
+const greenRedRamp = ["#0f766e", "#22c55e", "#a3e635", "#facc15", "#fb923c", "#b91c1c"];
+const heightStops = [120, 2600, 5600, 9400, 14800, 18800];
 
 const focusConfig = {
   all: { label: "All" },
@@ -53,27 +41,41 @@ const focusConfig = {
   },
 };
 
+const sceneConfig = {
+  week: {
+    metric: "older_minimum_hours_per_100_65plus",
+    heightMetric: "older_minimum_hours_per_100_65plus",
+    highFlag: "high_older_burden",
+  },
+  deprivation: {
+    metric: "imd_decile",
+    heightMetric: "older_minimum_hours_per_100_65plus",
+    highFlag: "high_older_burden",
+  },
+  heavy: {
+    metric: "older_heavy_care_pct",
+    heightMetric: "older_heavy_care_pct",
+    highFlag: "high_older_heavy_care",
+  },
+  stack: {
+    metric: "older_stack_score",
+    heightMetric: "older_stack_score",
+    highFlag: "high_older_stack",
+  },
+};
+
 const state = {
   geo: null,
   wards: null,
   summary: null,
+  distributions: null,
   scene: "week",
   focus: "all",
-  projection: null,
-  path: null,
-  width: 0,
-  height: 0,
-  transform: d3.zoomIdentity,
+  map: null,
+  popup: null,
+  loaded: false,
+  fallback: false,
 };
-
-const viewportLayer = svg.append("g").attr("class", "map-viewport");
-const shadowLayer = viewportLayer.append("g").attr("class", "shadow-layer");
-const mapLayer = viewportLayer.append("g").attr("class", "map-layer");
-const outlineLayer = viewportLayer.append("g").attr("class", "outline-layer");
-const columnLayer = viewportLayer.append("g").attr("class", "column-layer");
-const labelLayer = viewportLayer.append("g").attr("class", "label-layer");
-
-let zoomBehaviour = null;
 
 function displayLad(lad) {
   return lad.replace("Newcastle upon Tyne", "Newcastle");
@@ -87,20 +89,6 @@ function formatThousands(value) {
   return formatNumber.format(Math.round(value));
 }
 
-function sceneMetric(ward) {
-  if (state.scene === "heavy") return ward.older_heavy_care_pct;
-  if (state.scene === "deprivation") return 11 - ward.imd_decile_mean;
-  if (state.scene === "stack") return ward.older_stack_score;
-  return ward.older_minimum_hours_per_100_65plus;
-}
-
-function sceneUnit() {
-  if (state.scene === "heavy") return "% of residents aged 65+ reporting 50+ hours";
-  if (state.scene === "deprivation") return "IMD deprivation pressure";
-  if (state.scene === "stack") return "intersectional older-care score";
-  return "minimum hours per 100 residents aged 65+";
-}
-
 function valueLabel(ward) {
   if (state.scene === "heavy") return `${formatOne.format(ward.older_heavy_care_pct)}%`;
   if (state.scene === "deprivation") return `D${formatOne.format(ward.imd_decile_mean)}`;
@@ -110,14 +98,13 @@ function valueLabel(ward) {
 
 function sceneCopy(summary) {
   const older = summary.older_carers;
-  const topWard = older.highest_older_ward_hours[0];
   const topStack = older.highest_older_ward_stack[0];
   return {
     week: {
       label: "Older carers by named area",
       title: `${formatThousands(older.total_older_carers)} people aged 65+ provide unpaid care.`,
       text:
-        "The raised map shows the minimum weekly care-hours provided by older people, standardised per 100 residents aged 65 and over.  Green is lower; yellow and red mark the peaks.",
+        "The raised map shows the minimum weekly care-hours provided by older people, standardised per 100 residents aged 65 and over.  Green is lower; amber and red mark the peaks.",
       metrics: [
         {
           value: formatThousands(older.total_older_minimum_weekly_care_hours),
@@ -141,7 +128,7 @@ function sceneCopy(summary) {
       label: "Deprivation underneath",
       title: "Older care and deprivation intersect.",
       text:
-        "The map height still shows older people providing care.  The colour now follows deprivation.  D1 means the most deprived 10% of neighbourhoods in England.",
+        "The height still shows older people providing care.  The colour now follows deprivation, with the most deprived areas pushed toward red.",
       metrics: [
         {
           value: `D${formatOne.format(older.high_fifth.decile_mean)}`,
@@ -165,7 +152,7 @@ function sceneCopy(summary) {
       label: "50+ hours a week",
       title: `${formatThousands(older.total_older_heavy_carers)} older carers report 50+ hours a week.`,
       text:
-        "This is care at a level that can swallow sleep, money, health and ordinary time.  Height and columns now emphasise where 50+ hour care among people aged 65 and over is most visible.",
+        "This is care at a level that can swallow sleep, money, health and ordinary time.  The map now emphasises where 50+ hour care among people aged 65 and over is most visible.",
       metrics: [
         {
           value: `${formatOne.format(older.older_heavy_care_pct)}%`,
@@ -212,104 +199,90 @@ function sceneCopy(summary) {
   };
 }
 
-function fillSmallArea(properties, scales) {
-  if (state.scene === "deprivation") {
-    return deprivationColours[properties.imd_decile] || "#334155";
-  }
-  if (state.scene === "heavy") return metricColour(scales.smallOlderHeavy(properties.older_heavy_care_pct));
-  if (state.scene === "stack") return metricColour(scales.smallOlderStack(properties.older_stack_score));
-  return metricColour(scales.smallOlderHours(properties.older_minimum_hours_per_100_65plus));
+function metricFromFeature(properties) {
+  const config = sceneConfig[state.scene];
+  return Number(properties[config.metric]);
 }
 
-function fillWard(ward, scales) {
-  if (state.scene === "deprivation") {
-    return deprivationColours[Math.round(ward.imd_decile_mean)] || "#334155";
-  }
-  if (state.scene === "heavy") return metricColour(scales.wardOlderHeavy(ward.older_heavy_care_pct));
-  if (state.scene === "stack") return metricColour(scales.wardOlderStack(ward.older_stack_score));
-  return metricColour(scales.wardOlderHours(ward.older_minimum_hours_per_100_65plus));
+function getExtent(rows, key) {
+  const values = rows
+    .map((row) => Number(row[key]))
+    .filter(Number.isFinite)
+    .sort((a, b) => a - b);
+
+  const quantile = (index) => values[Math.round((values.length - 1) * index)];
+  const stops = [values[0], quantile(0.18), quantile(0.38), quantile(0.62), quantile(0.82), values[values.length - 1]];
+
+  return stops.map((value, index) => {
+    if (index === 0) return value;
+    return value <= stops[index - 1] ? stops[index - 1] + 0.0001 : value;
+  });
 }
 
-function makeScales() {
-  const small = state.geo.features.map((feature) => feature.properties);
-  const wards = state.wards;
-  const clampScale = (values) => d3.scaleLinear().domain(d3.extent(values)).range([0, 1]).clamp(true);
-
+function buildDistributions(geo) {
+  const rows = geo.features.map((feature) => feature.properties);
   return {
-    smallOlderHours: clampScale(small.map((d) => d.older_minimum_hours_per_100_65plus)),
-    smallOlderHeavy: clampScale(small.map((d) => d.older_heavy_care_pct)),
-    smallOlderStack: clampScale(small.map((d) => d.older_stack_score)),
-    wardOlderHours: clampScale(wards.map((d) => d.older_minimum_hours_per_100_65plus)),
-    wardOlderHeavy: clampScale(wards.map((d) => d.older_heavy_care_pct)),
-    wardOlderStack: clampScale(wards.map((d) => d.older_stack_score)),
-    columnOlderHours: d3
-      .scaleSqrt()
-      .domain(d3.extent(wards, (d) => d.older_minimum_hours_per_100_65plus))
-      .range([10, state.width < 650 ? 44 : 82]),
-    columnOlderHeavy: d3
-      .scaleSqrt()
-      .domain(d3.extent(wards, (d) => d.older_heavy_care_pct))
-      .range([10, state.width < 650 ? 44 : 82]),
-    columnOlderStack: d3
-      .scaleSqrt()
-      .domain(d3.extent(wards, (d) => d.older_stack_score))
-      .range([10, state.width < 650 ? 44 : 82]),
+    older_minimum_hours_per_100_65plus: getExtent(rows, "older_minimum_hours_per_100_65plus"),
+    older_heavy_care_pct: getExtent(rows, "older_heavy_care_pct"),
+    older_stack_score: getExtent(rows, "older_stack_score"),
   };
 }
 
-function smallAreaLift(properties, scales) {
-  const maxLift = state.width < 650 ? 15 : 26;
-  if (state.scene === "heavy") return 2 + scales.smallOlderHeavy(properties.older_heavy_care_pct) * maxLift;
-  if (state.scene === "stack") return 2 + scales.smallOlderStack(properties.older_stack_score) * maxLift;
-  return 2 + scales.smallOlderHours(properties.older_minimum_hours_per_100_65plus) * maxLift;
+function colourExpression() {
+  if (state.scene === "deprivation") {
+    return [
+      "interpolate",
+      ["linear"],
+      ["get", "imd_decile"],
+      1,
+      "#b91c1c",
+      2,
+      "#ef4444",
+      4,
+      "#fb923c",
+      6,
+      "#facc15",
+      8,
+      "#99f6e4",
+      10,
+      "#0f766e",
+    ];
+  }
+
+  const stops = state.distributions[sceneConfig[state.scene].metric];
+  const expression = ["interpolate", ["linear"], ["get", sceneConfig[state.scene].metric]];
+  stops.forEach((stop, index) => expression.push(stop, greenRedRamp[index]));
+  return expression;
 }
 
-function columnHeight(ward, scales) {
-  if (state.scene === "heavy") return scales.columnOlderHeavy(ward.older_heavy_care_pct);
-  if (state.scene === "stack") return scales.columnOlderStack(ward.older_stack_score);
-  return scales.columnOlderHours(ward.older_minimum_hours_per_100_65plus);
+function extrusionHeightExpression() {
+  const metric = sceneConfig[state.scene].heightMetric;
+  const stops = state.distributions[metric];
+  const expression = ["interpolate", ["linear"], ["get", metric]];
+  stops.forEach((stop, index) => expression.push(stop, heightStops[index]));
+  return expression;
 }
 
-function wardPoint(ward) {
-  return state.projection([ward.lon, ward.lat]);
+function highFilterExpression() {
+  const high = ["==", ["get", sceneConfig[state.scene].highFlag], true];
+  const focus = focusFilterExpression();
+  return focus ? ["any", high, focus] : high;
 }
 
-function topWards() {
-  if (state.focus !== "all") return focusedWards();
-  const key =
-    state.scene === "heavy"
-      ? "older_heavy_care_pct"
-      : state.scene === "stack"
-        ? "older_stack_score"
-        : "older_minimum_hours_per_100_65plus";
-  const limit = state.width < 650 ? 3 : 5;
-  const ranked = [...state.wards].sort((a, b) => b[key] - a[key]).slice(0, limit);
-  return ranked;
-}
+function focusFilterExpression() {
+  if (state.focus === "all") return null;
+  const config = focusConfig[state.focus];
+  if (!config) return null;
 
-function tooltipHtml(ward) {
-  return `
-    <strong>${wardName(ward)}</strong>
-    <span>${formatOne.format(ward.older_minimum_hours_per_100_65plus)} minimum older-care hours per 100 residents aged 65+</span><br>
-    <span>${formatNumber.format(ward.older_carers)} carers aged 65+</span><br>
-    <span>${formatNumber.format(ward.older_minimum_weekly_care_hours)} minimum older-care hours/week</span><br>
-    <span>${formatOne.format(ward.older_heavy_care_pct)}% of residents aged 65+ report 50+ hours/week</span><br>
-    <span>D${formatOne.format(ward.imd_decile_mean)} · ${formatOne.format(ward.bad_very_bad_health_pct)}% bad or very bad health</span>
-  `;
-}
+  if (config.ward) {
+    return ["all", ["==", ["get", "ward"], config.ward], ["==", ["get", "lad"], config.lad]];
+  }
 
-function showTooltip(event, ward) {
-  if (!ward) return;
-  tooltip.innerHTML = tooltipHtml(ward);
-  tooltip.hidden = false;
-  const left = Math.min(event.clientX + 16, window.innerWidth - tooltip.offsetWidth - 12);
-  const top = Math.min(event.clientY + 16, window.innerHeight - tooltip.offsetHeight - 12);
-  tooltip.style.left = `${left}px`;
-  tooltip.style.top = `${top}px`;
-}
+  if (config.wards) {
+    return ["in", ["get", "ward"], ["literal", Array.from(config.wards)]];
+  }
 
-function hideTooltip() {
-  tooltip.hidden = true;
+  return null;
 }
 
 function updatePanel() {
@@ -378,312 +351,480 @@ function updateFocusButtons() {
   });
 }
 
-function wardForFeature(feature) {
-  return state.wards.find(
-    (ward) => ward.ward === feature.properties.ward && ward.lad === feature.properties.lad,
-  );
-}
-
-function focusMatchesFeature(feature) {
-  if (state.focus === "all") return false;
-  const config = focusConfig[state.focus];
-  if (!config) return false;
-  if (config.ward) {
-    return feature.properties.ward === config.ward && feature.properties.lad === config.lad;
-  }
-  if (config.wards) return config.wards.has(feature.properties.ward);
-  return false;
-}
-
-function focusMatchesWard(ward) {
-  if (state.focus === "all") return false;
-  const config = focusConfig[state.focus];
-  if (!config) return false;
-  if (config.ward) return ward.ward === config.ward && ward.lad === config.lad;
-  if (config.wards) return config.wards.has(ward.ward);
-  return false;
-}
-
 function focusedWards() {
   if (state.focus === "all") return [];
-  return state.wards.filter(focusMatchesWard);
-}
+  const config = focusConfig[state.focus];
+  if (!config) return [];
 
-function isHighFeature(feature) {
-  if (focusMatchesFeature(feature)) return true;
-  if (state.scene === "heavy") return feature.properties.high_older_heavy_care;
-  if (state.scene === "stack") return feature.properties.high_older_stack;
-  return feature.properties.high_older_burden;
-}
+  if (config.ward) {
+    return state.wards.filter((ward) => ward.ward === config.ward && ward.lad === config.lad);
+  }
 
-function isHighWard(ward) {
-  if (focusMatchesWard(ward)) return true;
-  if (state.scene === "heavy") return ward.high_older_heavy_care;
-  if (state.scene === "stack") return ward.high_older_stack;
-  return ward.high_older_burden;
-}
-
-function updateSmallAreas(scales) {
-  const shadows = shadowLayer
-    .selectAll("path")
-    .data(state.geo.features, (feature) => feature.properties.lsoa_code);
-
-  shadows
-    .join("path")
-    .attr("class", "lsoa-shadow")
-    .attr("d", state.path)
-    .transition()
-    .duration(420)
-    .attr("transform", (feature) => {
-      const lift = smallAreaLift(feature.properties, scales);
-      return `translate(${lift * 0.45},${lift * 0.72})`;
-    })
-    .attr("opacity", (feature) => (isHighFeature(feature) ? 0.28 : 0.12));
-
-  const areas = mapLayer
-    .selectAll("path")
-    .data(state.geo.features, (feature) => feature.properties.lsoa_code);
-
-  areas
-    .join((enter) =>
-      enter
-        .append("path")
-        .on("mousemove", (event, feature) => showTooltip(event, wardForFeature(feature)))
-        .on("mouseleave", hideTooltip),
-    )
-    .attr("class", (feature) => `lsoa${isHighFeature(feature) ? " is-raised" : ""}`)
-    .attr("d", state.path)
-    .transition()
-    .duration(420)
-    .attr("transform", (feature) => `translate(0,${-smallAreaLift(feature.properties, scales)})`)
-    .attr("fill", (feature) => fillSmallArea(feature.properties, scales))
-    .attr("opacity", (feature) => (isHighFeature(feature) ? 0.98 : state.scene === "deprivation" ? 0.84 : 0.76));
-}
-
-function updateOutlines(scales) {
-  const outlineData = state.geo.features.filter(isHighFeature);
-  const outlines = outlineLayer.selectAll("path").data(outlineData, (feature) => feature.properties.lsoa_code);
-
-  outlines.exit().remove();
-
-  outlines
-    .join("path")
-    .attr("class", "lsoa-outline")
-    .attr("d", state.path)
-    .transition()
-    .duration(420)
-    .attr("transform", (feature) => `translate(0,${-smallAreaLift(feature.properties, scales)})`);
-}
-
-function updateWardColumns(scales) {
-  const columns = columnLayer.selectAll("g").data(state.wards, (ward) => ward.ward_code);
-
-  columns.exit().remove();
-
-  const entered = columns
-    .enter()
-    .append("g")
-    .attr("class", "ward-column")
-    .on("mousemove", (event, ward) => showTooltip(event, ward))
-    .on("mouseleave", hideTooltip);
-
-  entered.append("rect").attr("class", "ward-column-stem");
-  entered.append("path").attr("class", "ward-column-cap");
-
-  const merged = entered.merge(columns);
-
-  merged.each(function updateColumn(ward) {
-    const [x, y] = wardPoint(ward);
-    const height = columnHeight(ward, scales);
-    const high = isHighWard(ward);
-    const group = d3.select(this);
-
-    group
-      .transition()
-      .duration(420)
-      .attr("transform", `translate(${x},${y})`)
-      .attr("opacity", high ? 0.98 : state.width < 650 ? 0.18 : 0.38);
-
-    group
-      .select(".ward-column-stem")
-      .transition()
-      .duration(420)
-      .attr("x", high ? -4.5 : -2.5)
-      .attr("y", -height)
-      .attr("width", high ? 9 : 5)
-      .attr("height", height)
-      .attr("fill", fillWard(ward, scales));
-
-    group
-      .select(".ward-column-cap")
-      .transition()
-      .duration(420)
-      .attr("d", `M ${high ? -11 : -7} ${-height} L 0 ${-height - (high ? 8 : 5)} L ${high ? 11 : 7} ${-height} L 0 ${-height + (high ? 8 : 5)} Z`)
-      .attr("fill", fillWard(ward, scales));
-  });
-}
-
-function updateLabels(scales) {
-  const labels = topWards();
-  const nodes = labels.map((ward) => {
-    const [x, y] = wardPoint(ward);
-    const height = columnHeight(ward, scales);
-    return {
-      ...ward,
-      anchorX: x,
-      anchorY: y - height,
-      x,
-      y: y - height - 20,
-      height,
-    };
-  });
-
-  d3.forceSimulation(nodes)
-    .force("x", d3.forceX((d) => d.anchorX).strength(0.17))
-    .force("y", d3.forceY((d) => d.anchorY - 26).strength(0.23))
-    .force("collide", d3.forceCollide(state.width < 650 ? 34 : 54))
-    .stop()
-    .tick(90);
-
-  nodes.forEach((node) => {
-    node.x = Math.max(46, Math.min(state.width - 46, node.x));
-    node.y = Math.max(30, Math.min(state.height - 56, node.y));
-  });
-
-  const labelGroups = labelLayer.selectAll("g").data(nodes, (ward) => ward.ward_code);
-  labelGroups.exit().remove();
-
-  const entered = labelGroups.enter().append("g").attr("class", "ward-label-group");
-  entered.append("line").attr("class", "label-line");
-  entered.append("rect").attr("class", "label-bg");
-  entered.append("text").attr("class", "ward-label");
-
-  const merged = entered.merge(labelGroups);
-
-  merged.each(function updateLabel(ward) {
-    const group = d3.select(this);
-    const text = `${ward.ward} ${valueLabel(ward)}`;
-    const labelWidth = Math.max(86, text.length * 6.5 + 18);
-    const labelHeight = 25;
-
-    group
-      .select(".label-line")
-      .attr("x1", ward.anchorX)
-      .attr("y1", ward.anchorY)
-      .attr("x2", ward.x)
-      .attr("y2", ward.y);
-
-    group
-      .select(".label-bg")
-      .attr("x", ward.x - labelWidth / 2)
-      .attr("y", ward.y - labelHeight / 2)
-      .attr("width", labelWidth)
-      .attr("height", labelHeight);
-
-    group.select(".ward-label").attr("x", ward.x).attr("y", ward.y + 4).text(text);
-  });
-}
-
-function setupZoom() {
-  if (zoomBehaviour) return;
-  zoomBehaviour = d3
-    .zoom()
-    .scaleExtent([1, 8])
-    .on("zoom", (event) => {
-      state.transform = event.transform;
-      viewportLayer.attr("transform", state.transform);
-    });
-  svg.call(zoomBehaviour).on("dblclick.zoom", null);
+  if (config.wards) return state.wards.filter((ward) => config.wards.has(ward.ward));
+  return [];
 }
 
 function featuresForFocus(focus) {
   if (focus === "all") return state.geo.features;
   const config = focusConfig[focus];
   if (!config) return state.geo.features;
+
   if (config.ward) {
     return state.geo.features.filter(
       (feature) => feature.properties.ward === config.ward && feature.properties.lad === config.lad,
     );
   }
+
   if (config.wards) {
     return state.geo.features.filter((feature) => config.wards.has(feature.properties.ward));
   }
+
   return state.geo.features;
 }
 
-function zoomToFocus(focus) {
-  if (!zoomBehaviour || !state.path) return;
+function topWardsForScene() {
+  const copy = sceneCopy(state.summary)[state.scene];
+  const focused = focusedWards();
+  const rows = focused.length ? focused : copy.ranks;
+  return rows.slice(0, state.focus === "all" ? 8 : 12);
+}
+
+function labelFeatureCollection() {
+  return {
+    type: "FeatureCollection",
+    features: topWardsForScene().map((ward) => ({
+      type: "Feature",
+      properties: {
+        code: ward.ward_code,
+        ward: ward.ward,
+        lad: displayLad(ward.lad),
+        label: `${ward.ward}\n${valueLabel(ward)}`,
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [ward.lon, ward.lat],
+      },
+    })),
+  };
+}
+
+function scanCoordinates(coordinates, bounds) {
+  if (typeof coordinates[0] === "number") {
+    const [lon, lat] = coordinates;
+    bounds.minLon = Math.min(bounds.minLon, lon);
+    bounds.minLat = Math.min(bounds.minLat, lat);
+    bounds.maxLon = Math.max(bounds.maxLon, lon);
+    bounds.maxLat = Math.max(bounds.maxLat, lat);
+    return;
+  }
+  coordinates.forEach((item) => scanCoordinates(item, bounds));
+}
+
+function boundsForFeatures(features) {
+  const bounds = {
+    minLon: Infinity,
+    minLat: Infinity,
+    maxLon: -Infinity,
+    maxLat: -Infinity,
+  };
+
+  features.forEach((feature) => scanCoordinates(feature.geometry.coordinates, bounds));
+
+  if (!Number.isFinite(bounds.minLon)) return null;
+  return [
+    [bounds.minLon, bounds.minLat],
+    [bounds.maxLon, bounds.maxLat],
+  ];
+}
+
+function fitToFocus(focus, duration = 1000) {
+  if (!state.loaded) return;
   const features = featuresForFocus(focus);
-  if (!features.length || focus === "all") {
-    svg.transition().duration(700).call(zoomBehaviour.transform, d3.zoomIdentity);
+  const bounds = boundsForFeatures(features);
+  if (!bounds) return;
+
+  const all = focus === "all";
+  const padding = all
+    ? { top: 74, right: 46, bottom: 116, left: 46 }
+    : { top: 110, right: 120, bottom: 126, left: 120 };
+
+  state.map.fitBounds(bounds, {
+    padding,
+    duration,
+    maxZoom: all ? 9.45 : 12.65,
+    pitch: all ? 55 : 62,
+    bearing: all ? -14 : -24,
+  });
+}
+
+function tooltipHtml(properties) {
+  const metric = metricFromFeature(properties);
+  const metricLabel =
+    state.scene === "heavy"
+      ? `${formatOne.format(metric)}% of residents aged 65+ report 50+ hours/week`
+      : state.scene === "deprivation"
+        ? `D${formatOne.format(properties.imd_decile)} deprivation decile`
+        : `${formatOne.format(metric)} metric value`;
+
+  return `
+    <strong>${properties.ward}, ${displayLad(properties.lad)}</strong>
+    <span><b>${formatOne.format(properties.older_minimum_hours_per_100_65plus)}</b> minimum older-care hours per 100 residents aged 65+</span>
+    <span>${formatNumber.format(properties.older_carers)} carers aged 65+</span>
+    <span>${formatNumber.format(properties.older_minimum_weekly_care_hours)} minimum older-care hours/week</span>
+    <span>${metricLabel}</span>
+    <span>D${formatOne.format(properties.imd_decile)} · ${formatOne.format(properties.bad_very_bad_health_pct)}% bad or very bad health</span>
+  `;
+}
+
+function updateMapStyle() {
+  if (!state.loaded) return;
+
+  state.map.setPaintProperty("care-extrusions", "fill-extrusion-color", colourExpression());
+  state.map.setPaintProperty("care-extrusions", "fill-extrusion-height", extrusionHeightExpression());
+  state.map.setFilter("care-highlight-lines", highFilterExpression());
+  state.map.setFilter("care-highlight-fill", highFilterExpression());
+
+  const labelSource = state.map.getSource("ward-labels");
+  if (labelSource) labelSource.setData(labelFeatureCollection());
+}
+
+function interpolateColour(colours, value) {
+  const t = Math.max(0, Math.min(1, value));
+  const scaled = t * (colours.length - 1);
+  const left = Math.floor(scaled);
+  const right = Math.min(colours.length - 1, left + 1);
+  const amount = scaled - left;
+  const parse = (hex) => ({
+    r: parseInt(hex.slice(1, 3), 16),
+    g: parseInt(hex.slice(3, 5), 16),
+    b: parseInt(hex.slice(5, 7), 16),
+  });
+  const a = parse(colours[left]);
+  const b = parse(colours[right]);
+  return `rgb(${Math.round(a.r + (b.r - a.r) * amount)}, ${Math.round(a.g + (b.g - a.g) * amount)}, ${Math.round(a.b + (b.b - a.b) * amount)})`;
+}
+
+function normaliseMetric(value, key) {
+  const stops = state.distributions[key];
+  const min = stops[0];
+  const max = stops[stops.length - 1];
+  if (max <= min) return 0;
+  return Math.max(0, Math.min(1, (Number(value) - min) / (max - min)));
+}
+
+function fallbackColour(properties) {
+  if (state.scene === "deprivation") {
+    return interpolateColour(["#b91c1c", "#ef4444", "#fb923c", "#facc15", "#99f6e4", "#0f766e"], (Number(properties.imd_decile) - 1) / 9);
+  }
+  const key = sceneConfig[state.scene].metric;
+  return interpolateColour(greenRedRamp, normaliseMetric(properties[key], key));
+}
+
+function pathForRing(ring, project) {
+  return ring
+    .map((coordinate, index) => {
+      const [x, y] = project(coordinate);
+      return `${index === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`;
+    })
+    .join(" ")
+    .concat(" Z");
+}
+
+function pathForGeometry(geometry, project) {
+  if (geometry.type === "Polygon") {
+    return geometry.coordinates.map((ring) => pathForRing(ring, project)).join(" ");
+  }
+  if (geometry.type === "MultiPolygon") {
+    return geometry.coordinates
+      .flatMap((polygon) => polygon.map((ring) => pathForRing(ring, project)))
+      .join(" ");
+  }
+  return "";
+}
+
+function renderFallbackMap(reason = "") {
+  state.fallback = true;
+  state.loaded = false;
+  const width = 1000;
+  const height = 640;
+  const pad = 34;
+  const bounds = boundsForFeatures(state.geo.features);
+  if (!bounds) return;
+
+  const [[minLon, minLat], [maxLon, maxLat]] = bounds;
+  const project = ([lon, lat]) => {
+    const x = pad + ((lon - minLon) / (maxLon - minLon)) * (width - pad * 2);
+    const y = pad + (1 - (lat - minLat) / (maxLat - minLat)) * (height - pad * 2);
+    return [x, y];
+  };
+
+  const metric = sceneConfig[state.scene].heightMetric;
+  const highRows = new Set(topWardsForScene().map((ward) => `${ward.ward}|||${ward.lad}`));
+  const focusRows = new Set(focusedWards().map((ward) => `${ward.ward}|||${ward.lad}`));
+
+  const paths = state.geo.features
+    .map((feature) => {
+      const properties = feature.properties;
+      const d = pathForGeometry(feature.geometry, project);
+      const norm = normaliseMetric(properties[metric], metric);
+      const lift = 5 + norm * 34;
+      const key = `${properties.ward}|||${properties.lad}`;
+      const highlighted = highRows.has(key) || focusRows.has(key);
+      const opacity = state.focus === "all" || focusRows.size === 0 || focusRows.has(key) ? 0.9 : 0.28;
+      const stroke = highlighted ? "#07111f" : "rgba(15, 23, 42, 0.28)";
+      return `
+        <path class="fallback-shadow" d="${d}" transform="translate(${(lift * 0.5).toFixed(1)} ${(lift * 0.62).toFixed(1)})" />
+        <path class="fallback-side" d="${d}" transform="translate(${(lift * 0.34).toFixed(1)} ${(-lift * 0.34).toFixed(1)})" opacity="${0.1 + norm * 0.22}" />
+        <path class="fallback-top" d="${d}" transform="translate(0 ${(-lift).toFixed(1)})" fill="${fallbackColour(properties)}" opacity="${opacity}" stroke="${stroke}" stroke-width="${highlighted ? 1.2 : 0.42}" />
+      `;
+    })
+    .join("");
+
+  const labels = topWardsForScene()
+    .slice(0, state.focus === "all" ? 6 : 10)
+    .map((ward) => {
+      const [x, y] = project([ward.lon, ward.lat]);
+      return `
+        <g class="fallback-label" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})">
+          <circle r="4.5"></circle>
+          <text x="8" y="-7">${ward.ward}</text>
+          <text x="8" y="9">${valueLabel(ward)}</text>
+        </g>
+      `;
+    })
+    .join("");
+
+  const note = reason
+    ? `<p class="fallback-note">A lightweight map is shown because the 3D map is not available in this browser.</p>`
+    : "";
+
+  mapContainer.innerHTML = `
+    <div class="fallback-map" role="img" aria-label="Fallback map of older unpaid care across Tyne and Wear">
+      <svg viewBox="0 0 ${width} ${height}" aria-hidden="true">
+        <rect width="${width}" height="${height}" fill="#dff2f6"></rect>
+        <path d="M0 52 C160 28 280 64 410 42 C560 16 690 46 815 28 C908 15 944 38 1000 20 L1000 640 L0 640 Z" fill="#f5fbf8"></path>
+        <g opacity="0.42" fill="none" stroke="#8fb3bc" stroke-width="2">
+          <path d="M84 486 C228 410 356 424 516 352 C660 286 760 302 902 238"></path>
+          <path d="M182 138 C310 168 472 124 616 154 C734 178 832 142 954 96"></path>
+        </g>
+        <g>${paths}</g>
+        <g>${labels}</g>
+      </svg>
+      ${note}
+    </div>
+  `;
+}
+
+function mapStyle() {
+  return {
+    version: 8,
+    glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+    sources: {
+      "carto-light": {
+        type: "raster",
+        tiles: [
+          "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png",
+          "https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png",
+          "https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png",
+          "https://d.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png",
+        ],
+        tileSize: 256,
+        attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
+      },
+    },
+    layers: [
+      {
+        id: "carto-light",
+        type: "raster",
+        source: "carto-light",
+        paint: {
+          "raster-opacity": 0.82,
+          "raster-saturation": -0.35,
+          "raster-contrast": -0.08,
+        },
+      },
+    ],
+  };
+}
+
+function initializeMap() {
+  if (!window.maplibregl || !window.maplibregl.supported({ failIfMajorPerformanceCaveat: false })) {
+    renderFallbackMap("webgl-unavailable");
     return;
   }
 
-  const bounds = features.reduce(
-    (acc, feature) => {
-      const [[x0, y0], [x1, y1]] = state.path.bounds(feature);
-      return [
-        [Math.min(acc[0][0], x0), Math.min(acc[0][1], y0)],
-        [Math.max(acc[1][0], x1), Math.max(acc[1][1], y1)],
-      ];
-    },
-    [
-      [Infinity, Infinity],
-      [-Infinity, -Infinity],
-    ],
+  mapContainer.innerHTML = "";
+  state.fallback = false;
+  state.map = new maplibregl.Map({
+    container: "care-map",
+    style: mapStyle(),
+    center: [-1.49, 54.98],
+    zoom: 9.05,
+    pitch: 55,
+    bearing: -14,
+    antialias: true,
+    attributionControl: true,
+  });
+
+  state.map.addControl(
+    new maplibregl.NavigationControl({
+      visualizePitch: true,
+      showZoom: false,
+    }),
+    "bottom-right",
   );
-  const dx = bounds[1][0] - bounds[0][0];
-  const dy = bounds[1][1] - bounds[0][1];
-  const cx = (bounds[0][0] + bounds[1][0]) / 2;
-  const cy = (bounds[0][1] + bounds[1][1]) / 2;
-  const scale = Math.max(1, Math.min(7, 0.78 / Math.max(dx / state.width, dy / state.height)));
-  const transform = d3.zoomIdentity
-    .translate(state.width / 2, state.height / 2)
-    .scale(scale)
-    .translate(-cx, -cy);
 
-  svg.transition().duration(900).call(zoomBehaviour.transform, transform);
-}
+  state.popup = new maplibregl.Popup({
+    closeButton: false,
+    closeOnClick: false,
+    className: "care-popup",
+    offset: 16,
+  });
 
-function renderMap() {
-  if (!state.geo || !state.wards) return;
+  state.map.on("load", () => {
+    state.loaded = true;
 
-  const stage = document.querySelector(".map-stage");
-  const rect = stage.getBoundingClientRect();
-  state.width = Math.max(320, rect.width);
-  state.height = Math.max(420, svg.node().clientHeight || rect.height);
-  svg.attr("viewBox", `0 0 ${state.width} ${state.height}`);
+    state.map.addSource("care-areas", {
+      type: "geojson",
+      data: state.geo,
+    });
 
-  state.projection = d3.geoMercator().fitExtent(
-    [
-      [28, 38],
-      [state.width - 28, state.height - 68],
-    ],
-    state.geo,
-  );
-  state.path = d3.geoPath(state.projection);
-  setupZoom();
+    state.map.addLayer({
+      id: "care-highlight-fill",
+      type: "fill-extrusion",
+      source: "care-areas",
+      filter: highFilterExpression(),
+      paint: {
+        "fill-extrusion-color": "#fff7ed",
+        "fill-extrusion-height": extrusionHeightExpression(),
+        "fill-extrusion-base": 0,
+        "fill-extrusion-opacity": 0.18,
+        "fill-extrusion-vertical-gradient": true,
+      },
+    });
 
-  const scales = makeScales();
-  updateSmallAreas(scales);
-  updateOutlines(scales);
-  updateWardColumns(scales);
-  updateLabels(scales);
-  viewportLayer.attr("transform", state.transform);
+    state.map.addLayer({
+      id: "care-extrusions",
+      type: "fill-extrusion",
+      source: "care-areas",
+      paint: {
+        "fill-extrusion-color": colourExpression(),
+        "fill-extrusion-height": extrusionHeightExpression(),
+        "fill-extrusion-base": 0,
+        "fill-extrusion-opacity": 0.86,
+        "fill-extrusion-vertical-gradient": true,
+      },
+    });
+
+    state.map.addLayer({
+      id: "care-area-lines",
+      type: "line",
+      source: "care-areas",
+      paint: {
+        "line-color": "rgba(255, 255, 255, 0.82)",
+        "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.28, 12, 0.85],
+      },
+    });
+
+    state.map.addLayer({
+      id: "care-highlight-lines",
+      type: "line",
+      source: "care-areas",
+      filter: highFilterExpression(),
+      paint: {
+        "line-color": "#102334",
+        "line-opacity": 0.76,
+        "line-width": ["interpolate", ["linear"], ["zoom"], 8, 1.1, 12, 2.4],
+      },
+    });
+
+    state.map.addSource("ward-labels", {
+      type: "geojson",
+      data: labelFeatureCollection(),
+    });
+
+    state.map.addLayer({
+      id: "ward-labels",
+      type: "symbol",
+      source: "ward-labels",
+      layout: {
+        "text-field": ["get", "label"],
+        "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
+        "text-size": ["interpolate", ["linear"], ["zoom"], 8, 10, 12, 14],
+        "text-line-height": 1.1,
+        "text-allow-overlap": false,
+        "text-ignore-placement": false,
+        "text-variable-anchor": ["top", "bottom", "left", "right"],
+        "text-radial-offset": 0.7,
+      },
+      paint: {
+        "text-color": "#102334",
+        "text-halo-color": "rgba(250, 254, 255, 0.94)",
+        "text-halo-width": 2.2,
+      },
+    });
+
+    state.map.on("mousemove", "care-extrusions", (event) => {
+      const feature = event.features && event.features[0];
+      if (!feature) return;
+      state.map.getCanvas().style.cursor = "pointer";
+      state.popup.setLngLat(event.lngLat).setHTML(tooltipHtml(feature.properties)).addTo(state.map);
+    });
+
+    state.map.on("mouseleave", "care-extrusions", () => {
+      state.map.getCanvas().style.cursor = "";
+      state.popup.remove();
+    });
+
+    state.map.on("click", "care-extrusions", (event) => {
+      const feature = event.features && event.features[0];
+      if (!feature) return;
+      const focusKey = Object.entries(focusConfig).find(([, config]) => {
+        if (!config.ward) return false;
+        return config.ward === feature.properties.ward && config.lad === feature.properties.lad;
+      });
+
+      if (focusKey) {
+        setFocus(focusKey[0]);
+      } else {
+        const features = state.geo.features.filter(
+          (row) => row.properties.ward === feature.properties.ward && row.properties.lad === feature.properties.lad,
+        );
+        const bounds = boundsForFeatures(features);
+        if (bounds) {
+          state.map.fitBounds(bounds, {
+            padding: { top: 112, right: 122, bottom: 128, left: 122 },
+            duration: 900,
+            maxZoom: 12.8,
+            pitch: 62,
+            bearing: -24,
+          });
+        }
+      }
+    });
+
+    updateMapStyle();
+    fitToFocus(state.focus, 0);
+  });
 }
 
 function setScene(scene) {
   state.scene = scene;
   updateTabs();
   updatePanel();
-  renderMap();
+  if (state.fallback) renderFallbackMap();
+  else updateMapStyle();
 }
 
 function setFocus(focus) {
   state.focus = focus;
   updateFocusButtons();
-  renderMap();
-  zoomToFocus(focus);
+  if (state.fallback) {
+    renderFallbackMap();
+  } else {
+    updateMapStyle();
+    fitToFocus(focus);
+  }
 }
 
 sceneTabs.forEach((button) => {
@@ -696,13 +837,16 @@ focusButtons.forEach((button) => {
 
 zoomButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    if (!zoomBehaviour) return;
+    if (!state.loaded) return;
     if (button.dataset.zoom === "reset") {
       setFocus("all");
       return;
     }
-    const factor = button.dataset.zoom === "in" ? 1.35 : 0.74;
-    svg.transition().duration(350).call(zoomBehaviour.scaleBy, factor);
+    const delta = button.dataset.zoom === "in" ? 0.78 : -0.78;
+    state.map.easeTo({
+      zoom: state.map.getZoom() + delta,
+      duration: 340,
+    });
   });
 });
 
@@ -742,17 +886,21 @@ Promise.all([
     state.geo = geo;
     state.wards = wards;
     state.summary = summary;
+    state.distributions = buildDistributions(geo);
+    tooltip.hidden = true;
     updatePanel();
     updateFocusButtons();
-    renderMap();
+    try {
+      initializeMap();
+    } catch (error) {
+      renderFallbackMap(error.message);
+    }
   })
   .catch((error) => {
     sceneTitle.textContent = "The map data could not be loaded.";
     sceneText.textContent = error.message;
   });
 
-let resizeTimer = null;
 window.addEventListener("resize", () => {
-  window.clearTimeout(resizeTimer);
-  resizeTimer = window.setTimeout(renderMap, 150);
+  if (state.loaded) state.map.resize();
 });

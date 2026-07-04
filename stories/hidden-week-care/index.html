@@ -11,6 +11,7 @@
     <meta name="author" content="Andrew Kingston PhD CStat SFHEA">
     <link rel="canonical" href="https://gerostats.co.uk/stories/hidden-week-care/">
     <link rel="icon" href="/favicon.svg?v=mark-20260704" type="image/svg+xml">
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.17.0/dist/maplibre-gl.css">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -20,11 +21,15 @@
         <span class="brand-word"><span>Gero</span><span class="brand-accent">stats</span></span>
       </a>
       <nav aria-label="Primary navigation">
-        <a href="/writing/">Garden</a>
-        <a href="#map">Map</a>
-        <a href="#story">Story</a>
-        <a href="#method">Take-home</a>
-        <a href="/stories/hidden-week-care/technical-note/">Technical note</a>
+        <a href="/">Home</a>
+        <a href="/writing/">Garden Notes</a>
+        <a href="/data-stories/">Data Stories</a>
+        <a href="/methods/">Methods</a>
+        <a href="/projects/">Projects</a>
+        <a href="/reading/">Reading</a>
+        <a href="/now/">Now</a>
+        <a href="/about/">About</a>
+        <a href="/contact/">Contact</a>
       </nav>
     </header>
 
@@ -74,10 +79,10 @@
             controls
             playsinline
             preload="metadata"
-            poster="/assets/stories/hidden-week-story-poster.jpg?v=20260704-oldercare-colour"
+            poster="/assets/stories/hidden-week-story-poster.jpg?v=20260704-raised-map"
             aria-label="Animated walkthrough of unpaid care burden across Tyne and Wear"
           >
-            <source src="/assets/stories/hidden-week-story.mp4?v=20260704-oldercare-colour" type="video/mp4">
+            <source src="/assets/stories/hidden-week-story.mp4?v=20260704-raised-map" type="video/mp4">
           </video>
           <div class="story-animation-copy">
             <p class="kicker">Animated walkthrough</p>
@@ -138,7 +143,7 @@
           </div>
 
           <div class="map-stage">
-            <svg id="care-map" role="img" aria-labelledby="map-title map-desc"></svg>
+            <div id="care-map" role="img" aria-labelledby="map-title map-desc"></div>
             <div class="map-tooltip" id="map-tooltip" hidden></div>
             <div class="map-overlay-list" id="map-overlay-list" aria-live="polite"></div>
             <div class="map-caption">
@@ -165,11 +170,11 @@
             </div>
             <div>
               <span class="legend-key low"></span>
-              Green area: lower older-care burden
+              Green/teal: lower older-care burden
             </div>
             <div>
               <span class="legend-key deprived"></span>
-              Background: small-area pattern
+              Height: small-area older-care pattern
             </div>
             <div>
               <span class="legend-key pulse"></span>
@@ -249,7 +254,7 @@
         <p class="kicker">Author</p>
         <h2 id="author-heading">Andrew <span class="heading-accent">Kingston</span></h2>
         <p>
-          I am a statistical epidemiologist from the North East.  Gerostats is
+          I am a statistical epidemiologist from the North East.  <span class="inline-wordmark">Gero<span class="wordmark-stats">stats</span></span> is
           where I can write personally about public health statistics, local
           places and the hidden labour that official numbers can make visible.
         </p>
@@ -258,7 +263,7 @@
     </main>
 
     <footer class="site-footer">
-      <p>Gerostats.co.uk</p>
+      <p><span class="inline-wordmark">Gero<span class="wordmark-stats">stats</span></span>.co.uk</p>
       <p><a href="mailto:drandrewkingston@gmail.com">drandrewkingston@gmail.com</a></p>
       <p class="footer-credit">
         <span>&copy; 2026 Dr. Andrew Kingston. All rights reserved.</span>
@@ -266,8 +271,8 @@
       </p>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-    <script src="scripts/app.js?v=20260704-oldercare-colour"></script>
+    <script src="https://unpkg.com/maplibre-gl@5.17.0/dist/maplibre-gl.js"></script>
+    <script src="scripts/app.js?v=20260704-raised-map"></script>
     <script src="/assets/site-lockdown.js?v=20260704"></script>
   </body>
 </html>
