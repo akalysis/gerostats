@@ -162,17 +162,6 @@
             <div class="map-tooltip" id="map-tooltip" hidden></div>
 
             <div class="map-overlay-stack">
-              <article class="story-panel" aria-live="polite">
-                <p class="panel-label" id="scene-label">The hidden week</p>
-                <h3 id="scene-title">24,107 older people providing unpaid care.</h3>
-                <p id="scene-text">
-                  This is the minimum visible week of unpaid care provided by
-                  people aged 65 and over across Tyne and Wear.
-                </p>
-              </article>
-            </div>
-
-            <div class="map-footer-overlay">
               <div class="map-note" id="height-note">
                 Taller wards show more lower-bound weekly care-hours from older carers.
               </div>
@@ -199,6 +188,18 @@
                   </div>
                 </dl>
               </div>
+            </div>
+
+            <div class="map-footer-overlay">
+              <article id="story-panel" class="story-panel active" aria-live="polite">
+                <p class="panel-label" id="scene-label">The hidden week</p>
+                <h3 id="scene-title">24,107 older people providing unpaid care.</h3>
+                <p id="scene-text">
+                  This is the minimum visible week of unpaid care provided by
+                  people aged 65 and over across Tyne and Wear.
+                </p>
+                <p class="story-progress" id="story-progress">Use the controls or hover the map to take over.</p>
+              </article>
               <div class="map-control-cluster" aria-label="Map movement controls">
                 <button class="story-button story-primary" id="story-toggle" type="button">Tell the story</button>
                 <button class="story-button" id="rotate-left" type="button">Rotate left</button>

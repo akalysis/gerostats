@@ -1663,7 +1663,6 @@ nav a:focus-visible {
 
 .map-panel .map-stage {
   position: relative;
-  min-height: clamp(620px, 76vh, 880px);
   border: 1px solid var(--map-border);
   border-radius: 24px;
   background:
@@ -1675,7 +1674,8 @@ nav a:focus-visible {
 .map-frame#care-map,
 .map-panel #care-map {
   width: 100%;
-  height: clamp(620px, 76vh, 880px);
+  height: min(91vh, 1180px);
+  min-height: 780px;
   background:
     radial-gradient(circle at 20% 16%, rgba(255, 255, 255, 0.86), transparent 35%),
     linear-gradient(155deg, var(--map-bg) 0%, #f9fdff 48%, var(--map-bg-deep) 100%);
@@ -1683,18 +1683,27 @@ nav a:focus-visible {
 
 .map-overlay-stack {
   position: absolute;
-  top: 18px;
-  left: 18px;
+  inset: 16px 16px auto 16px;
   z-index: 5;
-  width: min(410px, calc(100% - 36px));
+  display: grid;
+  gap: 12px;
+  align-content: start;
   pointer-events: none;
 }
 
 .story-panel {
   display: grid;
   gap: 10px;
-  padding: 18px;
+  width: min(100%, 430px);
+  padding: 18px 20px;
   border-radius: 22px;
+}
+
+.story-panel.active {
+  background:
+    radial-gradient(circle at top right, rgba(255, 124, 115, 0.18), transparent 30%),
+    linear-gradient(135deg, rgba(16, 56, 76, 0.95), rgba(12, 88, 116, 0.9));
+  color: #effcff;
 }
 
 .story-panel h3 {
@@ -1704,21 +1713,35 @@ nav a:focus-visible {
   line-height: 1.05;
 }
 
+.story-panel.active h3 {
+  color: #effcff;
+}
+
+.story-panel.active .panel-label,
+.story-panel.active p {
+  color: rgba(239, 252, 255, 0.78);
+}
+
 .story-panel p {
   margin: 0;
   font-size: 0.96rem;
   line-height: 1.45;
 }
 
+.story-progress {
+  margin: 3px 0 0;
+  font-size: 0.83rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
 .map-footer-overlay {
   position: absolute;
-  right: 18px;
-  bottom: 18px;
-  left: 18px;
+  inset: auto 16px 16px 16px;
   z-index: 5;
-  display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(260px, 380px) auto;
-  gap: 12px;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
   align-items: end;
   pointer-events: none;
 }
@@ -1730,6 +1753,7 @@ nav a:focus-visible {
 }
 
 .map-note {
+  width: min(100%, 390px);
   padding: 12px 14px;
   border-radius: 18px;
   font-size: 0.9rem;
@@ -1745,6 +1769,7 @@ nav a:focus-visible {
 .map-readout {
   display: grid;
   gap: 7px;
+  width: min(100%, 390px);
   padding: 14px;
   border-radius: 18px;
 }
@@ -1798,6 +1823,8 @@ nav a:focus-visible {
 }
 
 .map-control-cluster {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, auto));
   align-items: center;
   justify-content: flex-end;
   padding: 8px;
@@ -1857,8 +1884,8 @@ nav a:focus-visible {
 
 .map-panel .fallback-map,
 .map-panel .fallback-map svg {
-  min-height: clamp(620px, 76vh, 880px);
-  height: clamp(620px, 76vh, 880px);
+  min-height: 780px;
+  height: min(91vh, 1180px);
 }
 
 .map-panel .fallback-note {

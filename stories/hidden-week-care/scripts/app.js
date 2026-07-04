@@ -16,6 +16,7 @@ const rotateLeft = document.querySelector("#rotate-left");
 const rotateRight = document.querySelector("#rotate-right");
 const reliefToggle = document.querySelector("#relief-toggle");
 const storyToggle = document.querySelector("#story-toggle");
+const storyProgress = document.querySelector("#story-progress");
 const mapReadoutLabel = document.querySelector("#map-readout-label");
 const mapReadoutName = document.querySelector("#map-readout-name");
 const mapReadoutRegion = document.querySelector("#map-readout-region");
@@ -35,7 +36,8 @@ const formatOne = new Intl.NumberFormat("en-GB", {
 
 const dataVersion = "20260704-raised-map";
 const greenRedRamp = ["#0f766e", "#22c55e", "#a3e635", "#facc15", "#fb923c", "#b91c1c"];
-const heightStops = [120, 2600, 5600, 9400, 14800, 18800];
+const heightStops = [80, 700, 1400, 2200, 3200, 4500];
+const emptyCollection = { type: "FeatureCollection", features: [] };
 
 const focusConfig = {
   all: { label: "All" },
@@ -310,11 +312,17 @@ function colourExpression() {
 
 function extrusionHeightExpression() {
   if (state.flatMode) return 0;
-  const metric = sceneConfig[state.scene].heightMetric;
-  const stops = state.distributions[metric];
-  const expression = ["interpolate", ["linear"], ["get", metric]];
-  stops.forEach((stop, index) => expression.push(stop, heightStops[index]));
-  return expression;
+  return [
+    "interpolate",
+    ["linear"],
+    ["zoom"],
+    8,
+    ["*", ["coalesce", ["get", "height"], 0], 0.7],
+    10,
+    ["*", ["coalesce", ["get", "height"], 0], 1],
+    12.6,
+    ["*", ["coalesce", ["get", "height"], 0], 1.12],
+  ];
 }
 
 function highFilterExpression() {
@@ -344,6 +352,59 @@ function legendColours() {
     return ["#b91c1c", "#ef4444", "#fb923c", "#facc15", "#99f6e4", "#0f766e"];
   }
   return greenRedRamp;
+}
+
+function interpolateNumber(domain, range, value) {
+  const safeValue = Number(value);
+  if (!Number.isFinite(safeValue)) return range[0];
+  if (safeValue <= domain[0]) return range[0];
+  for (let index = 1; index < domain.length; index += 1) {
+    if (safeValue <= domain[index]) {
+      const left = domain[index - 1];
+      const right = domain[index];
+      const span = right - left || 1e-12;
+      const amount = Math.max(0, Math.min(1, (safeValue - left) / span));
+      return range[index - 1] + (range[index] - range[index - 1]) * amount;
+    }
+  }
+  return range[range.length - 1];
+}
+
+function runtimeHeight(properties) {
+  if (state.flatMode) return 0;
+  const metric = sceneConfig[state.scene].heightMetric;
+  return interpolateNumber(state.distributions[metric], heightStops, properties[metric]);
+}
+
+function runtimeFill(properties) {
+  if (state.scene === "deprivation") {
+    return interpolateColour(["#b91c1c", "#ef4444", "#fb923c", "#facc15", "#99f6e4", "#0f766e"], (Number(properties.imd_decile) - 1) / 9);
+  }
+  const metric = sceneConfig[state.scene].metric;
+  return interpolateColour(greenRedRamp, normaliseMetric(properties[metric], metric));
+}
+
+function updateRuntimeFeatures() {
+  if (!state.geo) return;
+  state.geo.features.forEach((feature) => {
+    const properties = feature.properties;
+    const metric = metricFromFeature(properties);
+    properties.fill = runtimeFill(properties);
+    properties.height = Number(runtimeHeight(properties).toFixed(2));
+    properties.renderValue = Number.isFinite(metric) ? Number(metric.toFixed(6)) : null;
+    properties.rateValue = Number.isFinite(properties.older_minimum_hours_per_100_65plus)
+      ? Number(properties.older_minimum_hours_per_100_65plus.toFixed(6))
+      : null;
+  });
+}
+
+function sourceFeatures(features) {
+  return { type: "FeatureCollection", features };
+}
+
+function focusedFeatureCollection() {
+  if (state.focus === "all") return emptyCollection;
+  return sourceFeatures(featuresForFocus(state.focus));
 }
 
 function updateLegend() {
@@ -591,10 +652,15 @@ function tooltipHtml(properties) {
 function updateMapStyle() {
   if (!state.loaded) return;
 
-  state.map.setPaintProperty("care-extrusions", "fill-extrusion-color", colourExpression());
+  updateRuntimeFeatures();
+  const areaSource = state.map.getSource("care-areas");
+  if (areaSource) areaSource.setData(state.geo);
   state.map.setPaintProperty("care-extrusions", "fill-extrusion-height", extrusionHeightExpression());
+  state.map.setPaintProperty("care-highlight-fill", "fill-extrusion-height", extrusionHeightExpression());
   state.map.setFilter("care-highlight-lines", highFilterExpression());
   state.map.setFilter("care-highlight-fill", highFilterExpression());
+  const selectionSource = state.map.getSource("selection-feature");
+  if (selectionSource) selectionSource.setData(focusedFeatureCollection());
 
   const labelSource = state.map.getSource("ward-labels");
   if (labelSource) labelSource.setData(labelFeatureCollection());
@@ -731,7 +797,20 @@ function mapStyle() {
   return {
     version: 8,
     glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
-    sources: {},
+    sources: {
+      carto: {
+        type: "raster",
+        tileSize: 256,
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        tiles: [
+          "https://a.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png",
+          "https://b.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png",
+          "https://c.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png",
+          "https://d.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png",
+        ],
+      },
+    },
     layers: [
       {
         id: "background",
@@ -740,33 +819,55 @@ function mapStyle() {
           "background-color": "#eaf7fa",
         },
       },
+      {
+        id: "carto-base",
+        type: "raster",
+        source: "carto",
+        paint: {
+          "raster-opacity": 0.56,
+          "raster-saturation": -0.55,
+          "raster-contrast": -0.16,
+        },
+      },
     ],
   };
 }
 
 function initializeMap() {
-  if (!window.maplibregl || !window.maplibregl.supported({ failIfMajorPerformanceCaveat: false })) {
-    renderFallbackMap("webgl-unavailable");
+  if (!window.maplibregl) {
+    renderFallbackMap("maplibre-unavailable");
     return;
   }
 
   mapContainer.innerHTML = "";
   state.fallback = false;
-  state.map = new maplibregl.Map({
-    container: "care-map",
-    style: mapStyle(),
-    center: [-1.49, 54.98],
-    zoom: 9.2,
-    pitch: 62,
-    bearing: -8,
-    antialias: true,
-    attributionControl: true,
-  });
+  updateRuntimeFeatures();
+
+  try {
+    state.map = new maplibregl.Map({
+      container: "care-map",
+      style: mapStyle(),
+      center: [-1.49, 54.98],
+      zoom: 9.2,
+      pitch: 62,
+      bearing: -8,
+      minZoom: 8,
+      maxZoom: 13,
+      dragRotate: false,
+      pitchWithRotate: false,
+      antialias: true,
+      attributionControl: true,
+    });
+  } catch (error) {
+    renderFallbackMap(error.message);
+    return;
+  }
 
   state.map.addControl(
     new maplibregl.NavigationControl({
       visualizePitch: true,
       showZoom: false,
+      showCompass: false,
     }),
     "bottom-right",
   );
@@ -785,14 +886,26 @@ function initializeMap() {
       type: "geojson",
       data: state.geo,
     });
+    state.map.addSource("hover-feature", { type: "geojson", data: emptyCollection });
+    state.map.addSource("selection-feature", { type: "geojson", data: emptyCollection });
 
     state.map.addLayer({
       id: "care-footprint",
       type: "fill",
       source: "care-areas",
       paint: {
-        "fill-color": "#fbfeff",
-        "fill-opacity": 0.72,
+        "fill-color": ["get", "fill"],
+        "fill-opacity": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          8,
+          0.38,
+          9.5,
+          0.54,
+          12.4,
+          0.74,
+        ],
       },
     });
 
@@ -815,10 +928,20 @@ function initializeMap() {
       type: "fill-extrusion",
       source: "care-areas",
       paint: {
-        "fill-extrusion-color": colourExpression(),
+        "fill-extrusion-color": ["get", "fill"],
         "fill-extrusion-height": extrusionHeightExpression(),
         "fill-extrusion-base": 0,
-        "fill-extrusion-opacity": 0.9,
+        "fill-extrusion-opacity": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          8,
+          0.72,
+          10,
+          0.9,
+          12.6,
+          0.98,
+        ],
         "fill-extrusion-vertical-gradient": true,
       },
     });
@@ -842,6 +965,32 @@ function initializeMap() {
         "line-color": "#10384c",
         "line-opacity": 0.76,
         "line-width": ["interpolate", ["linear"], ["zoom"], 8, 1.1, 12, 2.4],
+      },
+    });
+
+    state.map.addLayer({
+      id: "hover-outline",
+      type: "fill-extrusion",
+      source: "hover-feature",
+      paint: {
+        "fill-extrusion-color": "#f8feff",
+        "fill-extrusion-height": ["+", ["coalesce", ["get", "height"], 0], 420],
+        "fill-extrusion-base": 0,
+        "fill-extrusion-opacity": 0.24,
+        "fill-extrusion-vertical-gradient": false,
+      },
+    });
+
+    state.map.addLayer({
+      id: "selection-outline",
+      type: "fill-extrusion",
+      source: "selection-feature",
+      paint: {
+        "fill-extrusion-color": "#ffffff",
+        "fill-extrusion-height": ["+", ["coalesce", ["get", "height"], 0], 720],
+        "fill-extrusion-base": 0,
+        "fill-extrusion-opacity": 0.28,
+        "fill-extrusion-vertical-gradient": false,
       },
     });
 
@@ -875,18 +1024,24 @@ function initializeMap() {
       const feature = event.features && event.features[0];
       if (!feature) return;
       state.map.getCanvas().style.cursor = "pointer";
+      const hoverSource = state.map.getSource("hover-feature");
+      if (hoverSource) hoverSource.setData(sourceFeatures([feature]));
       updateReadout(feature.properties, "Map hover");
       state.popup.setLngLat(event.lngLat).setHTML(tooltipHtml(feature.properties)).addTo(state.map);
     });
 
     state.map.on("mouseleave", "care-extrusions", () => {
       state.map.getCanvas().style.cursor = "";
+      const hoverSource = state.map.getSource("hover-feature");
+      if (hoverSource) hoverSource.setData(emptyCollection);
       state.popup.remove();
     });
 
     state.map.on("click", "care-extrusions", (event) => {
       const feature = event.features && event.features[0];
       if (!feature) return;
+      const selectionSource = state.map.getSource("selection-feature");
+      if (selectionSource) selectionSource.setData(sourceFeatures([feature]));
       updateReadout(feature.properties, "Selected ward");
       const focusKey = Object.entries(focusConfig).find(([, config]) => {
         if (!config.ward) return false;
@@ -942,6 +1097,7 @@ function stopStoryTour() {
   state.storyTimer = null;
   state.storyIndex = 0;
   if (storyToggle) storyToggle.textContent = "Tell the story";
+  if (storyProgress) storyProgress.textContent = "Use the controls or hover the map to take over.";
 }
 
 function advanceStoryTour() {
@@ -955,6 +1111,9 @@ function advanceStoryTour() {
   setFocus(step.focus);
   if (storyToggle) {
     storyToggle.textContent = state.storyIndex >= storySteps.length ? "Finish story" : "Pause story";
+  }
+  if (storyProgress) {
+    storyProgress.textContent = `Step ${state.storyIndex} of ${storySteps.length}.`;
   }
 }
 
