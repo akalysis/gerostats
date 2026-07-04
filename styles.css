@@ -527,6 +527,20 @@ h3 {
   line-height: 1.45;
 }
 
+.footer-credit {
+  grid-column: 1 / -1;
+  max-width: 960px;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--line);
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.footer-credit span {
+  display: block;
+}
+
 .writing-page,
 .article-page {
   padding: 4.5rem 0;
