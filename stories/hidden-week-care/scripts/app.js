@@ -6,6 +6,23 @@ const sceneText = document.querySelector("#scene-text");
 const sceneMetrics = document.querySelector("#scene-metrics");
 const rankPanel = document.querySelector("#rank-panel");
 const mapOverlayList = document.querySelector("#map-overlay-list");
+const legend = document.querySelector("#legend");
+const heightNote = document.querySelector("#height-note");
+const sceneSelect = document.querySelector("#care-scene-select");
+const placeSelect = document.querySelector("#care-place-select");
+const fullscreenMap = document.querySelector("#fullscreen-map");
+const resetView = document.querySelector("#reset-view");
+const rotateLeft = document.querySelector("#rotate-left");
+const rotateRight = document.querySelector("#rotate-right");
+const reliefToggle = document.querySelector("#relief-toggle");
+const storyToggle = document.querySelector("#story-toggle");
+const mapReadoutLabel = document.querySelector("#map-readout-label");
+const mapReadoutName = document.querySelector("#map-readout-name");
+const mapReadoutRegion = document.querySelector("#map-readout-region");
+const mapReadoutRate = document.querySelector("#map-readout-rate");
+const mapReadoutCarers = document.querySelector("#map-readout-carers");
+const mapReadoutHealth = document.querySelector("#map-readout-health");
+const mapReadoutDeprivation = document.querySelector("#map-readout-deprivation");
 const sceneTabs = Array.from(document.querySelectorAll(".scene-tab"));
 const focusButtons = Array.from(document.querySelectorAll("[data-focus]"));
 const zoomButtons = Array.from(document.querySelectorAll("[data-zoom]"));
@@ -46,21 +63,45 @@ const sceneConfig = {
     metric: "older_minimum_hours_per_100_65plus",
     heightMetric: "older_minimum_hours_per_100_65plus",
     highFlag: "high_older_burden",
+    legendTitle: "Older-care hours",
+    legendLow: "Lower burden",
+    legendHigh: "Higher burden",
+    legendNote: "Minimum weekly care-hours per 100 residents aged 65+.",
+    heightTitle: "Height is care-hours",
+    heightBody: "Taller wards have more lower-bound weekly care-hours from residents aged 65+.",
   },
   deprivation: {
     metric: "imd_decile",
     heightMetric: "older_minimum_hours_per_100_65plus",
     highFlag: "high_older_burden",
+    legendTitle: "Deprivation decile",
+    legendLow: "Most deprived",
+    legendHigh: "Least deprived",
+    legendNote: "Height still shows older-care burden; colour shows IMD decile.",
+    heightTitle: "Height stays on care",
+    heightBody: "The surface remains older-care hours while colour shows deprivation beneath it.",
   },
   heavy: {
     metric: "older_heavy_care_pct",
     heightMetric: "older_heavy_care_pct",
     highFlag: "high_older_heavy_care",
+    legendTitle: "50+ hour older care",
+    legendLow: "Lower share",
+    legendHigh: "Higher share",
+    legendNote: "Share of residents aged 65+ reporting 50 or more unpaid-care hours a week.",
+    heightTitle: "Height is heavy care",
+    heightBody: "Taller wards have a larger share of residents aged 65+ providing 50+ hours a week.",
   },
   stack: {
     metric: "older_stack_score",
     heightMetric: "older_stack_score",
     highFlag: "high_older_stack",
+    legendTitle: "Intersectional signal",
+    legendLow: "Lower signal",
+    legendHigh: "Higher signal",
+    legendNote: "Older care, heavy care, deprivation, bad health and disability brought together.",
+    heightTitle: "Height is the stacked signal",
+    heightBody: "The highest areas are where several pressures intersect in the same places.",
   },
 };
 
@@ -75,7 +116,19 @@ const state = {
   popup: null,
   loaded: false,
   fallback: false,
+  flatMode: false,
+  storyTimer: null,
+  storyIndex: 0,
 };
+
+const storySteps = [
+  { scene: "week", focus: "all" },
+  { scene: "week", focus: "castle" },
+  { scene: "deprivation", focus: "walker" },
+  { scene: "heavy", focus: "redhill" },
+  { scene: "stack", focus: "walker" },
+  { scene: "week", focus: "north-jesmond" },
+];
 
 function displayLad(lad) {
   return lad.replace("Newcastle upon Tyne", "Newcastle");
@@ -256,6 +309,7 @@ function colourExpression() {
 }
 
 function extrusionHeightExpression() {
+  if (state.flatMode) return 0;
   const metric = sceneConfig[state.scene].heightMetric;
   const stops = state.distributions[metric];
   const expression = ["interpolate", ["linear"], ["get", metric]];
@@ -283,6 +337,51 @@ function focusFilterExpression() {
   }
 
   return null;
+}
+
+function legendColours() {
+  if (state.scene === "deprivation") {
+    return ["#b91c1c", "#ef4444", "#fb923c", "#facc15", "#99f6e4", "#0f766e"];
+  }
+  return greenRedRamp;
+}
+
+function updateLegend() {
+  if (!legend) return;
+  const config = sceneConfig[state.scene];
+  legend.innerHTML = `
+    <p class="legend-title">${config.legendTitle}</p>
+    <div class="legend-scale" aria-hidden="true">
+      ${legendColours()
+        .map((colour) => `<span class="legend-swatch" style="background:${colour}"></span>`)
+        .join("")}
+    </div>
+    <div class="legend-labels">
+      <span>${config.legendLow}</span>
+      <span>${config.legendHigh}</span>
+    </div>
+    <p class="legend-note">${config.legendNote}</p>
+  `;
+}
+
+function rowForReadout() {
+  if (!state.summary) return null;
+  const copy = sceneCopy(state.summary)[state.scene];
+  const focused = focusedWards();
+  return focused[0] || copy.ranks[0] || null;
+}
+
+function updateReadout(row, label = "Highest named area") {
+  if (!mapReadoutName || !state.summary) return;
+  const data = row || rowForReadout();
+  if (!data) return;
+  mapReadoutLabel.textContent = label;
+  mapReadoutName.textContent = data.ward ? `${data.ward}, ${displayLad(data.lad)}` : "Tyne and Wear";
+  mapReadoutRegion.textContent = data.ward ? "Ward-level summary" : "Ward-level view";
+  mapReadoutRate.textContent = `${formatOne.format(data.older_minimum_hours_per_100_65plus)} hrs/100`;
+  mapReadoutCarers.textContent = formatThousands(data.older_carers);
+  mapReadoutHealth.textContent = `${formatOne.format(data.bad_very_bad_health_pct)}% bad or very bad`;
+  mapReadoutDeprivation.textContent = `D${formatOne.format(data.imd_decile_mean ?? data.imd_decile)}`;
 }
 
 function updatePanel() {
@@ -317,24 +416,35 @@ function updatePanel() {
         .join("")}
     </ol>
   `;
-  mapOverlayList.innerHTML = `
-    <h4>${copy.rankLabel}</h4>
-    <ol>
-      ${copy.ranks
-        .slice(0, 5)
-        .map((row) => {
-          const value = formatOne.format(row[copy.valueKey]);
-          const suffix = copy.valueKey === "older_heavy_care_pct" ? "%" : " hrs/100";
-          return `
-            <li>
-              <span>${row.ward}</span>
-              <strong>${value}${suffix}</strong>
-            </li>
-          `;
-        })
-        .join("")}
-    </ol>
-  `;
+  if (mapOverlayList) {
+    mapOverlayList.innerHTML = `
+      <h4>${copy.rankLabel}</h4>
+      <ol>
+        ${copy.ranks
+          .slice(0, 5)
+          .map((row) => {
+            const value = formatOne.format(row[copy.valueKey]);
+            const suffix = copy.valueKey === "older_heavy_care_pct" ? "%" : " hrs/100";
+            return `
+              <li>
+                <span>${row.ward}</span>
+                <strong>${value}${suffix}</strong>
+              </li>
+            `;
+          })
+          .join("")}
+      </ol>
+    `;
+  }
+  updateLegend();
+  updateReadout(null);
+  if (heightNote) {
+    const config = sceneConfig[state.scene];
+    heightNote.innerHTML = `<strong>${config.heightTitle}</strong>${config.heightBody}`;
+  }
+  if (sceneSelect) sceneSelect.value = state.scene;
+  if (placeSelect) placeSelect.value = state.focus;
+  if (reliefToggle) reliefToggle.textContent = state.flatMode ? "3D map" : "Flat map";
 }
 
 function updateTabs() {
@@ -343,12 +453,14 @@ function updateTabs() {
     button.classList.toggle("is-active", active);
     button.setAttribute("aria-selected", String(active));
   });
+  if (sceneSelect) sceneSelect.value = state.scene;
 }
 
 function updateFocusButtons() {
   focusButtons.forEach((button) => {
     button.classList.toggle("is-active", button.dataset.focus === state.focus);
   });
+  if (placeSelect) placeSelect.value = state.focus;
 }
 
 function focusedWards() {
@@ -445,15 +557,15 @@ function fitToFocus(focus, duration = 1000) {
 
   const all = focus === "all";
   const padding = all
-    ? { top: 74, right: 46, bottom: 116, left: 46 }
-    : { top: 110, right: 120, bottom: 126, left: 120 };
+    ? { top: 118, right: 62, bottom: 150, left: 62 }
+    : { top: 132, right: 146, bottom: 152, left: 146 };
 
   state.map.fitBounds(bounds, {
     padding,
     duration,
-    maxZoom: all ? 9.45 : 12.65,
-    pitch: all ? 55 : 62,
-    bearing: all ? -14 : -24,
+    maxZoom: all ? 9.55 : 12.75,
+    pitch: state.flatMode ? 0 : all ? 62 : 66,
+    bearing: all ? -8 : -26,
   });
 }
 
@@ -619,28 +731,13 @@ function mapStyle() {
   return {
     version: 8,
     glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
-    sources: {
-      "carto-light": {
-        type: "raster",
-        tiles: [
-          "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png",
-          "https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png",
-          "https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png",
-          "https://d.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png",
-        ],
-        tileSize: 256,
-        attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
-      },
-    },
+    sources: {},
     layers: [
       {
-        id: "carto-light",
-        type: "raster",
-        source: "carto-light",
+        id: "background",
+        type: "background",
         paint: {
-          "raster-opacity": 0.82,
-          "raster-saturation": -0.35,
-          "raster-contrast": -0.08,
+          "background-color": "#eaf7fa",
         },
       },
     ],
@@ -659,9 +756,9 @@ function initializeMap() {
     container: "care-map",
     style: mapStyle(),
     center: [-1.49, 54.98],
-    zoom: 9.05,
-    pitch: 55,
-    bearing: -14,
+    zoom: 9.2,
+    pitch: 62,
+    bearing: -8,
     antialias: true,
     attributionControl: true,
   });
@@ -690,15 +787,25 @@ function initializeMap() {
     });
 
     state.map.addLayer({
+      id: "care-footprint",
+      type: "fill",
+      source: "care-areas",
+      paint: {
+        "fill-color": "#fbfeff",
+        "fill-opacity": 0.72,
+      },
+    });
+
+    state.map.addLayer({
       id: "care-highlight-fill",
       type: "fill-extrusion",
       source: "care-areas",
       filter: highFilterExpression(),
       paint: {
-        "fill-extrusion-color": "#fff7ed",
+        "fill-extrusion-color": "#fff9e6",
         "fill-extrusion-height": extrusionHeightExpression(),
         "fill-extrusion-base": 0,
-        "fill-extrusion-opacity": 0.18,
+        "fill-extrusion-opacity": 0.24,
         "fill-extrusion-vertical-gradient": true,
       },
     });
@@ -711,7 +818,7 @@ function initializeMap() {
         "fill-extrusion-color": colourExpression(),
         "fill-extrusion-height": extrusionHeightExpression(),
         "fill-extrusion-base": 0,
-        "fill-extrusion-opacity": 0.86,
+        "fill-extrusion-opacity": 0.9,
         "fill-extrusion-vertical-gradient": true,
       },
     });
@@ -721,8 +828,8 @@ function initializeMap() {
       type: "line",
       source: "care-areas",
       paint: {
-        "line-color": "rgba(255, 255, 255, 0.82)",
-        "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.28, 12, 0.85],
+        "line-color": "rgba(16, 56, 76, 0.22)",
+        "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.32, 12, 0.9],
       },
     });
 
@@ -732,7 +839,7 @@ function initializeMap() {
       source: "care-areas",
       filter: highFilterExpression(),
       paint: {
-        "line-color": "#102334",
+        "line-color": "#10384c",
         "line-opacity": 0.76,
         "line-width": ["interpolate", ["linear"], ["zoom"], 8, 1.1, 12, 2.4],
       },
@@ -768,6 +875,7 @@ function initializeMap() {
       const feature = event.features && event.features[0];
       if (!feature) return;
       state.map.getCanvas().style.cursor = "pointer";
+      updateReadout(feature.properties, "Map hover");
       state.popup.setLngLat(event.lngLat).setHTML(tooltipHtml(feature.properties)).addTo(state.map);
     });
 
@@ -779,6 +887,7 @@ function initializeMap() {
     state.map.on("click", "care-extrusions", (event) => {
       const feature = event.features && event.features[0];
       if (!feature) return;
+      updateReadout(feature.properties, "Selected ward");
       const focusKey = Object.entries(focusConfig).find(([, config]) => {
         if (!config.ward) return false;
         return config.ward === feature.properties.ward && config.lad === feature.properties.lad;
@@ -796,7 +905,7 @@ function initializeMap() {
             padding: { top: 112, right: 122, bottom: 128, left: 122 },
             duration: 900,
             maxZoom: 12.8,
-            pitch: 62,
+            pitch: state.flatMode ? 0 : 66,
             bearing: -24,
           });
         }
@@ -819,6 +928,7 @@ function setScene(scene) {
 function setFocus(focus) {
   state.focus = focus;
   updateFocusButtons();
+  updateReadout(null, focus === "all" ? "Highest named area" : "Selected area");
   if (state.fallback) {
     renderFallbackMap();
   } else {
@@ -827,12 +937,49 @@ function setFocus(focus) {
   }
 }
 
+function stopStoryTour() {
+  if (state.storyTimer) window.clearInterval(state.storyTimer);
+  state.storyTimer = null;
+  state.storyIndex = 0;
+  if (storyToggle) storyToggle.textContent = "Tell the story";
+}
+
+function advanceStoryTour() {
+  if (state.storyIndex >= storySteps.length) {
+    stopStoryTour();
+    return;
+  }
+  const step = storySteps[state.storyIndex];
+  state.storyIndex += 1;
+  setScene(step.scene);
+  setFocus(step.focus);
+  if (storyToggle) {
+    storyToggle.textContent = state.storyIndex >= storySteps.length ? "Finish story" : "Pause story";
+  }
+}
+
+function startStoryTour() {
+  if (state.storyTimer) {
+    stopStoryTour();
+    return;
+  }
+  state.storyIndex = 0;
+  advanceStoryTour();
+  state.storyTimer = window.setInterval(advanceStoryTour, 6200);
+}
+
 sceneTabs.forEach((button) => {
-  button.addEventListener("click", () => setScene(button.dataset.scene));
+  button.addEventListener("click", () => {
+    stopStoryTour();
+    setScene(button.dataset.scene);
+  });
 });
 
 focusButtons.forEach((button) => {
-  button.addEventListener("click", () => setFocus(button.dataset.focus));
+  button.addEventListener("click", () => {
+    stopStoryTour();
+    setFocus(button.dataset.focus);
+  });
 });
 
 zoomButtons.forEach((button) => {
@@ -849,6 +996,70 @@ zoomButtons.forEach((button) => {
     });
   });
 });
+
+if (sceneSelect) {
+  sceneSelect.addEventListener("change", () => {
+    stopStoryTour();
+    setScene(sceneSelect.value);
+  });
+}
+
+if (placeSelect) {
+  placeSelect.addEventListener("change", () => {
+    stopStoryTour();
+    setFocus(placeSelect.value);
+  });
+}
+
+if (resetView) {
+  resetView.addEventListener("click", () => {
+    stopStoryTour();
+    setScene("week");
+    setFocus("all");
+  });
+}
+
+if (fullscreenMap) {
+  fullscreenMap.addEventListener("click", () => {
+    const panel = fullscreenMap.closest(".map-panel");
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else if (panel?.requestFullscreen) {
+      panel.requestFullscreen();
+    }
+  });
+}
+
+if (rotateLeft) {
+  rotateLeft.addEventListener("click", () => {
+    if (!state.loaded) return;
+    state.map.easeTo({ bearing: state.map.getBearing() - 24, duration: 650 });
+  });
+}
+
+if (rotateRight) {
+  rotateRight.addEventListener("click", () => {
+    if (!state.loaded) return;
+    state.map.easeTo({ bearing: state.map.getBearing() + 24, duration: 650 });
+  });
+}
+
+if (reliefToggle) {
+  reliefToggle.addEventListener("click", () => {
+    state.flatMode = !state.flatMode;
+    updatePanel();
+    if (state.fallback) {
+      renderFallbackMap();
+    } else {
+      updateMapStyle();
+      fitToFocus(state.focus, 650);
+    }
+  });
+}
+
+if (storyToggle) {
+  storyToggle.addEventListener("click", startStoryTour);
+}
 
 function fetchJson(path) {
   return fetch(`${path}?v=${dataVersion}`).then((response) => {

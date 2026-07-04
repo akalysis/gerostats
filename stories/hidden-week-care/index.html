@@ -21,13 +21,9 @@
         <span class="brand-word"><span>Gero</span><span class="brand-accent">stats</span></span>
       </a>
       <nav aria-label="Primary navigation">
-        <a href="/">Home</a>
-        <a href="/writing/">Garden Notes</a>
-        <a href="/data-stories/">Data Stories</a>
+        <a href="/writing/">Garden</a>
+        <a href="/data-stories/">Stories</a>
         <a href="/methods/">Methods</a>
-        <a href="/projects/">Projects</a>
-        <a href="/reading/">Reading</a>
-        <a href="/now/">Now</a>
         <a href="/about/">About</a>
         <a href="/contact/">Contact</a>
       </nav>
@@ -110,77 +106,113 @@
           </div>
         </div>
 
-        <div class="map-shell">
-          <div class="scene-tabs" role="tablist" aria-label="Map scenes">
-            <button class="scene-tab is-active" type="button" data-scene="week" role="tab" aria-selected="true">
-              <span>1</span>Older carers
-            </button>
-            <button class="scene-tab" type="button" data-scene="deprivation" role="tab" aria-selected="false">
-              <span>2</span>Deprivation
-            </button>
-            <button class="scene-tab" type="button" data-scene="heavy" role="tab" aria-selected="false">
-              <span>3</span>Heavy care
-            </button>
-            <button class="scene-tab" type="button" data-scene="stack" role="tab" aria-selected="false">
-              <span>4</span>Intersection
-            </button>
+        <div class="map-panel">
+          <div class="map-toolbar">
+            <div class="map-toolbar-copy">
+              <p class="map-label">Interactive map</p>
+              <h3 id="map-title">Older unpaid care across Tyne and Wear</h3>
+              <p id="map-desc">
+                Height shows the lower-bound weekly care-hours provided by
+                residents aged 65 and over.  Colour can switch from care burden
+                to deprivation, heavy care and the intersectional signal.
+              </p>
+            </div>
+            <div id="legend" class="legend-card" aria-live="polite"></div>
           </div>
 
-          <div class="map-controls" aria-label="Map controls">
-            <div class="map-tour-controls" aria-label="Jump to places">
-              <button class="map-control is-active" type="button" data-focus="all">All</button>
-              <button class="map-control" type="button" data-focus="walker">Walker</button>
-              <button class="map-control" type="button" data-focus="redhill">Redhill</button>
-              <button class="map-control" type="button" data-focus="castle">Castle</button>
-              <button class="map-control" type="button" data-focus="north-jesmond">North Jesmond</button>
-              <button class="map-control" type="button" data-focus="coast">Coast</button>
+          <div class="map-control-panel" aria-label="Map controls">
+            <div class="selector-grid">
+              <label class="control-field" for="care-scene-select">
+                <span>View</span>
+                <select id="care-scene-select">
+                  <option value="week">Older carers</option>
+                  <option value="deprivation">Deprivation</option>
+                  <option value="heavy">50+ hour care</option>
+                  <option value="stack">Intersection</option>
+                </select>
+              </label>
+              <label class="control-field" for="care-place-select">
+                <span>Jump to</span>
+                <select id="care-place-select">
+                  <option value="all">All Tyne and Wear</option>
+                  <option value="walker">Walker</option>
+                  <option value="redhill">Redhill</option>
+                  <option value="castle">Castle</option>
+                  <option value="north-jesmond">North Jesmond</option>
+                  <option value="coast">Coast</option>
+                </select>
+              </label>
             </div>
-            <div class="map-zoom-controls" aria-label="Zoom controls">
-              <button class="map-control map-control-icon" type="button" data-zoom="in" aria-label="Zoom in">+</button>
-              <button class="map-control map-control-icon" type="button" data-zoom="out" aria-label="Zoom out">-</button>
-              <button class="map-control map-control-icon" type="button" data-zoom="reset" aria-label="Reset zoom">0</button>
+
+            <div class="segmented-control" role="tablist" aria-label="Map scenes">
+              <button class="scene-tab is-active" type="button" data-scene="week" role="tab" aria-selected="true">Older carers</button>
+              <button class="scene-tab" type="button" data-scene="deprivation" role="tab" aria-selected="false">Deprivation</button>
+              <button class="scene-tab" type="button" data-scene="heavy" role="tab" aria-selected="false">50+ hours</button>
+              <button class="scene-tab" type="button" data-scene="stack" role="tab" aria-selected="false">Intersection</button>
+            </div>
+
+            <div class="toolbar-actions">
+              <button class="ghost-button" id="fullscreen-map" type="button">Full screen</button>
+              <button class="ghost-button" id="reset-view" type="button">Reset map</button>
             </div>
           </div>
 
           <div class="map-stage">
-            <div id="care-map" role="img" aria-labelledby="map-title map-desc"></div>
+            <div id="care-map" class="map-frame" role="img" aria-labelledby="map-title map-desc"></div>
             <div class="map-tooltip" id="map-tooltip" hidden></div>
-            <div class="map-overlay-list" id="map-overlay-list" aria-live="polite"></div>
-            <div class="map-caption">
-              <strong id="map-title">Tyne and Wear ward-level unpaid care burden.</strong>
-              <span id="map-desc">Raised areas and columns show older people providing unpaid care.  Green is lower; yellow to red is higher.  Scroll or use the buttons to zoom.</span>
+
+            <div class="map-overlay-stack">
+              <article class="story-panel" aria-live="polite">
+                <p class="panel-label" id="scene-label">The hidden week</p>
+                <h3 id="scene-title">24,107 older people providing unpaid care.</h3>
+                <p id="scene-text">
+                  This is the minimum visible week of unpaid care provided by
+                  people aged 65 and over across Tyne and Wear.
+                </p>
+              </article>
+            </div>
+
+            <div class="map-footer-overlay">
+              <div class="map-note" id="height-note">
+                Taller wards show more lower-bound weekly care-hours from older carers.
+              </div>
+              <div class="map-readout" id="map-readout" aria-live="polite">
+                <p class="map-readout-label" id="map-readout-label">Start point</p>
+                <strong id="map-readout-name">Tyne and Wear</strong>
+                <span id="map-readout-region">Ward-level view</span>
+                <dl>
+                  <div>
+                    <dt>Care burden</dt>
+                    <dd id="map-readout-rate">-</dd>
+                  </div>
+                  <div>
+                    <dt>Older carers</dt>
+                    <dd id="map-readout-carers">-</dd>
+                  </div>
+                  <div>
+                    <dt>Health</dt>
+                    <dd id="map-readout-health">-</dd>
+                  </div>
+                  <div>
+                    <dt>Deprivation</dt>
+                    <dd id="map-readout-deprivation">-</dd>
+                  </div>
+                </dl>
+              </div>
+              <div class="map-control-cluster" aria-label="Map movement controls">
+                <button class="story-button story-primary" id="story-toggle" type="button">Tell the story</button>
+                <button class="story-button" id="rotate-left" type="button">Rotate left</button>
+                <button class="story-button" id="rotate-right" type="button">Rotate right</button>
+                <button class="story-button" id="relief-toggle" type="button">Flat map</button>
+              </div>
             </div>
           </div>
 
-          <div class="scene-panel" aria-live="polite">
-            <p class="panel-label" id="scene-label">The hidden week</p>
-            <h3 id="scene-title">24,107 older people providing unpaid care.</h3>
-            <p id="scene-text">
-              This is the minimum visible week of unpaid care provided by
-              people aged 65 and over across Tyne and Wear.
-            </p>
+          <div class="map-detail-grid">
             <div class="metric-grid" id="scene-metrics"></div>
             <div class="rank-panel" id="rank-panel"></div>
           </div>
-
-          <div class="legend-row" aria-label="Map legend">
-            <div>
-              <span class="legend-key high"></span>
-              Red peak: higher older-care burden
-            </div>
-            <div>
-              <span class="legend-key low"></span>
-              Green/teal: lower older-care burden
-            </div>
-            <div>
-              <span class="legend-key deprived"></span>
-              Height: small-area older-care pattern
-            </div>
-            <div>
-              <span class="legend-key pulse"></span>
-              Outline: highest named areas
-            </div>
-          </div>
+          <div class="map-overlay-list" id="map-overlay-list" aria-live="polite" hidden></div>
         </div>
       </section>
 
