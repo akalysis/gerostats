@@ -31,7 +31,7 @@ const formatOne = new Intl.NumberFormat("en-GB", {
   maximumFractionDigits: 1,
 });
 
-const dataVersion = "20260705-hours";
+const dataVersion = "20260705-denton";
 const greenRedRamp = ["#0f766e", "#22c55e", "#a3e635", "#facc15", "#fb923c", "#b91c1c"];
 const heightStops = [80, 700, 1400, 2200, 3200, 4500];
 const emptyCollection = { type: "FeatureCollection", features: [] };
@@ -39,6 +39,11 @@ const emptyCollection = { type: "FeatureCollection", features: [] };
 const focusConfig = {
   all: { label: "All" },
   walker: { ward: "Walker", lad: "Newcastle upon Tyne" },
+  "denton-westerhope": {
+    ward: "Denton & Westerhope",
+    lad: "Newcastle upon Tyne",
+    personal: true,
+  },
   redhill: { ward: "Redhill", lad: "Sunderland" },
   castle: { ward: "Castle", lad: "Sunderland" },
   "north-jesmond": { ward: "North Jesmond", lad: "Newcastle upon Tyne" },
@@ -122,6 +127,7 @@ const state = {
 
 const storySteps = [
   { scene: "week", focus: "all" },
+  { scene: "week", focus: "denton-westerhope" },
   { scene: "week", focus: "castle" },
   { scene: "deprivation", focus: "walker" },
   { scene: "heavy", focus: "redhill" },
@@ -139,6 +145,21 @@ function wardName(ward) {
 
 function formatThousands(value) {
   return formatNumber.format(Math.round(value));
+}
+
+function rankWard(row, key, descending = true) {
+  if (!row || !state.wards) return null;
+  const sorted = [...state.wards].sort((a, b) => {
+    const left = Number(a[key]);
+    const right = Number(b[key]);
+    return descending ? right - left : left - right;
+  });
+  const index = sorted.findIndex((candidate) => candidate.ward_code === row.ward_code);
+  return index >= 0 ? index + 1 : null;
+}
+
+function rankText(rank) {
+  return rank ? `rank #${rank}` : "a high rank";
 }
 
 function valueLabel(ward) {
@@ -248,6 +269,33 @@ function sceneCopy(summary) {
       valueKey: "older_minimum_hours_per_100_65plus",
       valueSuffix: " hrs per 100",
     },
+  };
+}
+
+function personalFocusCopy(row) {
+  const totalHoursRank = rankWard(row, "older_minimum_weekly_care_hours");
+  const fullTimePlusRank = rankWard(row, "older_care_50_plus");
+  const rateRank = rankWard(row, "older_minimum_hours_per_100_65plus");
+
+  return {
+    label: "Personal reference point",
+    title: "Denton & Westerhope is where this becomes personal.",
+    text:
+      `This is where I grew up.  It is not the top rate per 100 residents aged 65+, but it is ${rankText(totalHoursRank)} for total older-care hours: ${formatThousands(row.older_minimum_weekly_care_hours)} minimum unpaid care-hours every week.`,
+    metrics: [
+      {
+        value: formatThousands(row.older_minimum_weekly_care_hours),
+        label: "minimum unpaid care-hours from residents aged 65+ each week",
+      },
+      {
+        value: formatThousands(row.older_care_50_plus),
+        label: `${rankText(fullTimePlusRank)} for residents aged 65+ reporting 50+ hours/week`,
+      },
+      {
+        value: `${formatOne.format(row.older_minimum_hours_per_100_65plus)}`,
+        label: `${rankText(rateRank)} by minimum hours per 100 residents aged 65+`,
+      },
+    ],
   };
 }
 
@@ -449,10 +497,13 @@ function updateReadout(row, label = "Highest named area") {
 
 function updatePanel() {
   const copy = sceneCopy(state.summary)[state.scene];
-  sceneLabel.textContent = copy.label;
-  sceneTitle.textContent = copy.title;
-  sceneText.textContent = copy.text;
-  sceneMetrics.innerHTML = copy.metrics
+  const focused = focusedWards();
+  const focusCopy = focusConfig[state.focus]?.personal && focused[0] ? personalFocusCopy(focused[0]) : null;
+  const panelCopy = focusCopy || copy;
+  sceneLabel.textContent = panelCopy.label;
+  sceneTitle.textContent = panelCopy.title;
+  sceneText.textContent = panelCopy.text;
+  sceneMetrics.innerHTML = panelCopy.metrics
     .map(
       (metric) => `
         <div class="metric">
@@ -1116,7 +1167,9 @@ function setScene(scene) {
 function setFocus(focus) {
   state.focus = focus;
   updateFocusButtons();
-  updateReadout(null, focus === "all" ? "Highest named area" : "Selected area");
+  updatePanel();
+  const label = focus === "all" ? "Highest named area" : focusConfig[focus]?.personal ? "Personal reference point" : "Selected area";
+  updateReadout(null, label);
   if (state.fallback) {
     renderFallbackMap();
   } else {
