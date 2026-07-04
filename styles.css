@@ -130,8 +130,8 @@ nav a:focus {
   z-index: 1;
   inset: 0;
   background:
-    radial-gradient(circle at 78% 18%, rgba(189, 132, 24, 0.16), transparent 34%),
-    linear-gradient(90deg, rgba(16, 18, 23, 0.94) 0%, rgba(16, 18, 23, 0.74) 48%, rgba(16, 18, 23, 0.28) 100%);
+    radial-gradient(circle at 78% 18%, rgba(189, 132, 24, 0.13), transparent 34%),
+    linear-gradient(90deg, rgba(16, 18, 23, 0.86) 0%, rgba(16, 18, 23, 0.64) 48%, rgba(16, 18, 23, 0.18) 100%);
 }
 
 .hero::after {
@@ -530,8 +530,8 @@ h3 {
 
   .hero::before {
     background:
-      linear-gradient(180deg, rgba(16, 18, 23, 0.94), rgba(16, 18, 23, 0.76)),
-      radial-gradient(circle at 50% 20%, rgba(186, 49, 40, 0.18), transparent 42%);
+      linear-gradient(180deg, rgba(16, 18, 23, 0.88), rgba(16, 18, 23, 0.66)),
+      radial-gradient(circle at 50% 20%, rgba(186, 49, 40, 0.14), transparent 42%);
   }
 
   .intro-band,
