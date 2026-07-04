@@ -130,8 +130,8 @@ nav a:focus {
   z-index: 1;
   inset: 0;
   background:
-    radial-gradient(circle at 78% 18%, rgba(189, 132, 24, 0.06), transparent 34%),
-    linear-gradient(90deg, rgba(16, 18, 23, 0.54) 0%, rgba(16, 18, 23, 0.3) 48%, rgba(16, 18, 23, 0.02) 100%);
+    radial-gradient(circle at 78% 18%, rgba(189, 132, 24, 0.05), transparent 34%),
+    linear-gradient(90deg, rgba(16, 18, 23, 0.72) 0%, rgba(16, 18, 23, 0.46) 48%, rgba(16, 18, 23, 0.18) 100%);
 }
 
 .hero::after {
@@ -148,14 +148,14 @@ nav a:focus {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: saturate(1.05) contrast(1.08);
+  filter: brightness(0.88) saturate(0.98) contrast(1.04);
 }
 
 .hero-copy {
   position: relative;
   z-index: 2;
   width: min(840px, 100%);
-  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 3px 26px rgba(0, 0, 0, 0.62);
 }
 
 .kicker,
@@ -404,8 +404,8 @@ h3 {
 }
 
 .site-footer {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) minmax(180px, auto);
   gap: 1rem;
   padding: 2rem clamp(1rem, 4vw, 4rem);
   border-top: 1px solid var(--line);
@@ -414,6 +414,17 @@ h3 {
 
 .site-footer p {
   margin: 0;
+}
+
+.site-footer a {
+  color: var(--ink);
+}
+
+.video-credit {
+  grid-column: 1 / -1;
+  max-width: 960px;
+  font-size: 0.82rem;
+  line-height: 1.45;
 }
 
 .writing-page,
@@ -531,8 +542,8 @@ h3 {
 
   .hero::before {
     background:
-      linear-gradient(180deg, rgba(16, 18, 23, 0.58), rgba(16, 18, 23, 0.32)),
-      radial-gradient(circle at 50% 20%, rgba(186, 49, 40, 0.06), transparent 42%);
+      linear-gradient(180deg, rgba(16, 18, 23, 0.72), rgba(16, 18, 23, 0.48)),
+      radial-gradient(circle at 50% 20%, rgba(186, 49, 40, 0.05), transparent 42%);
   }
 
   .intro-band,
@@ -551,10 +562,18 @@ h3 {
     grid-row: auto;
   }
 
-  .section-head,
-  .site-footer {
+  .section-head {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .site-footer {
+    align-items: flex-start;
+    grid-template-columns: 1fr;
+  }
+
+  .video-credit {
+    grid-column: auto;
   }
 }
 
