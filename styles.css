@@ -100,6 +100,18 @@ svg {
   text-decoration: none;
 }
 
+.brand-word,
+.brand-accent {
+  display: inline;
+}
+
+.brand-accent {
+  background: linear-gradient(92deg, #a3e635 0%, #58dd7a 54%, #2dd4bf 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 .brand-mark {
   display: grid;
   width: 2.25rem;
@@ -210,6 +222,11 @@ h1 {
   font-size: clamp(4rem, 11vw, 8.5rem);
   line-height: 0.88;
   letter-spacing: 0;
+}
+
+.hero-wordmark {
+  -webkit-text-stroke: clamp(1px, 0.18vw, 2px) rgba(0, 0, 0, 0.9);
+  paint-order: stroke fill;
 }
 
 h2 {
@@ -500,6 +517,12 @@ h3 {
 .image-thumb {
   background:
     linear-gradient(rgba(2, 6, 23, 0.1), rgba(2, 6, 23, 0.42)),
+    var(--thumb-image) center / cover no-repeat;
+}
+
+.hidden-week-thumb {
+  background:
+    linear-gradient(180deg, rgba(2, 6, 23, 0.02), rgba(2, 6, 23, 0.46)),
     var(--thumb-image) center / cover no-repeat;
 }
 

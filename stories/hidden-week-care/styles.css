@@ -70,6 +70,18 @@ svg {
   letter-spacing: 0;
 }
 
+.brand-word,
+.brand-accent {
+  display: inline;
+}
+
+.brand-accent {
+  background: linear-gradient(92deg, #a3e635 0%, #58dd7a 54%, #2dd4bf 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 nav {
   display: flex;
   gap: 6px;
@@ -328,8 +340,8 @@ p {
   position: relative;
   min-height: clamp(520px, 68vw, 760px);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(237, 232, 224, 0.86)),
-    #eee8df;
+    radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.72), transparent 34%),
+    linear-gradient(180deg, #eef5f7, #dde8ed);
 }
 
 #care-map {
@@ -645,15 +657,15 @@ p {
 }
 
 .legend-key.high {
-  background: var(--red);
+  background: #ef4444;
 }
 
 .legend-key.low {
-  background: var(--green);
+  background: #34d399;
 }
 
 .legend-key.deprived {
-  background: var(--amber);
+  background: #facc15;
 }
 
 .legend-key.pulse {
@@ -717,7 +729,7 @@ p {
   display: grid;
   grid-template-columns: minmax(260px, 0.42fr) minmax(0, 0.58fr);
   gap: clamp(20px, 5vw, 64px);
-  align-items: start;
+  align-items: center;
   padding: 42px;
   border: 1px solid rgba(17, 20, 21, 0.14);
   border-radius: 8px;
@@ -732,6 +744,15 @@ p {
   overflow-wrap: normal;
 }
 
+.method-copy {
+  display: grid;
+  align-content: center;
+  align-self: center;
+  gap: 18px;
+  min-height: 100%;
+}
+
+.method-copy p,
 .method p {
   color: #293238;
 }
@@ -739,8 +760,6 @@ p {
 .text-link {
   display: inline-flex;
   justify-self: start;
-  align-self: start;
-  margin-top: 18px;
   color: var(--red-dark);
   font-weight: 850;
   text-decoration-thickness: 2px;
@@ -1042,24 +1061,24 @@ nav a:focus-visible {
 .map-stage,
 #care-map {
   background:
-    radial-gradient(circle at 32% 22%, rgba(45, 212, 191, 0.12), transparent 32%),
-    #07111f;
+    radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.72), transparent 34%),
+    linear-gradient(180deg, #edf6f8, #d7e6ed);
 }
 
 .lsoa {
-  stroke: rgba(15, 23, 42, 0.7);
+  stroke: rgba(15, 23, 42, 0.36);
 }
 
 .lsoa:hover {
-  stroke: #f8fafc;
+  stroke: #020617;
 }
 
 .lsoa-shadow {
-  fill: rgba(0, 0, 0, 0.52);
+  fill: rgba(15, 23, 42, 0.24);
 }
 
 .lsoa-outline {
-  stroke: var(--red);
+  stroke: #f97316;
 }
 
 .ward-column-stem {
@@ -1071,18 +1090,33 @@ nav a:focus-visible {
 }
 
 .label-line {
-  stroke: rgba(226, 232, 240, 0.5);
+  stroke: rgba(15, 23, 42, 0.34);
 }
 
 .label-bg {
-  fill: rgba(15, 23, 42, 0.86);
-  stroke: var(--line);
+  fill: rgba(255, 255, 255, 0.92);
+  stroke: rgba(15, 23, 42, 0.16);
 }
 
 .ward-label,
 .lad-label {
-  fill: #f8fafc;
-  stroke: rgba(2, 6, 23, 0.75);
+  fill: #0f172a;
+  stroke: rgba(255, 255, 255, 0.8);
+}
+
+.map-caption,
+.map-overlay-list,
+.map-tooltip {
+  background: rgba(255, 255, 255, 0.93);
+  border-color: rgba(15, 23, 42, 0.14);
+  color: #334155;
+}
+
+.map-caption strong,
+.map-overlay-list h4,
+.map-tooltip strong,
+.map-overlay-list span {
+  color: #0f172a;
 }
 
 .map-overlay-list li,

@@ -17,13 +17,13 @@
     <header class="site-header">
       <a class="brand" href="/" aria-label="Gerostats home">
         <span class="brand-mark" aria-hidden="true"></span>
-        <span>Gerostats</span>
+        <span class="brand-word"><span>Gero</span><span class="brand-accent">stats</span></span>
       </a>
       <nav aria-label="Primary navigation">
         <a href="/writing/">Garden</a>
         <a href="#map">Map</a>
         <a href="#story">Story</a>
-        <a href="#method">Method</a>
+        <a href="#method">Take-home</a>
         <a href="/stories/hidden-week-care/technical-note/">Technical note</a>
       </nav>
     </header>
@@ -74,10 +74,10 @@
             controls
             playsinline
             preload="metadata"
-            poster="/assets/stories/hidden-week-story-poster.jpg?v=20260704-oldercare"
+            poster="/assets/stories/hidden-week-story-poster.jpg?v=20260704-oldercare-colour"
             aria-label="Animated walkthrough of unpaid care burden across Tyne and Wear"
           >
-            <source src="/assets/stories/hidden-week-story.mp4?v=20260704-oldercare" type="video/mp4">
+            <source src="/assets/stories/hidden-week-story.mp4?v=20260704-oldercare-colour" type="video/mp4">
           </video>
           <div class="story-animation-copy">
             <p class="kicker">Animated walkthrough</p>
@@ -117,7 +117,7 @@
               <span>3</span>Heavy care
             </button>
             <button class="scene-tab" type="button" data-scene="stack" role="tab" aria-selected="false">
-              <span>4</span>The stack
+              <span>4</span>Intersection
             </button>
           </div>
 
@@ -143,7 +143,7 @@
             <div class="map-overlay-list" id="map-overlay-list" aria-live="polite"></div>
             <div class="map-caption">
               <strong id="map-title">Tyne and Wear ward-level unpaid care burden.</strong>
-              <span id="map-desc">Raised areas and columns show older people providing unpaid care.  Scroll or use the buttons to zoom.</span>
+              <span id="map-desc">Raised areas and columns show older people providing unpaid care.  Green is lower; yellow to red is higher.  Scroll or use the buttons to zoom.</span>
             </div>
           </div>
 
@@ -161,11 +161,11 @@
           <div class="legend-row" aria-label="Map legend">
             <div>
               <span class="legend-key high"></span>
-              Taller/brighter area: higher older-care burden
+              Red peak: higher older-care burden
             </div>
             <div>
               <span class="legend-key low"></span>
-              Lower/dimmer area: lower older-care burden
+              Green area: lower older-care burden
             </div>
             <div>
               <span class="legend-key deprived"></span>
@@ -185,9 +185,10 @@
           <h2>Unpaid care is <span class="heading-accent">not evenly shared.</span></h2>
           <p>
             The map is not saying that care is a problem.  Care is love, duty,
-            reciprocity, family, friendship and survival.  The problem is what happens
-            when the need for care, the work of care, poor health and deprivation all
-            concentrate in the same places.
+            reciprocity, family, friendship and survival.  The issue is
+            intersectionality: older age, unpaid care, poor health, disability
+            and deprivation are not separate lines on a table.  In some wards,
+            they intersect in the same lives and streets.
           </p>
           <p>
             In the most deprived fifth of local neighbourhoods here, the minimum
@@ -199,35 +200,38 @@
         </section>
 
         <section>
-          <h2>The public health question is <span class="heading-accent">blunt.</span></h2>
+          <h2>Imagine if this stopped <span class="heading-accent">tomorrow.</span></h2>
           <p>
-            What happens to a place when thousands of people are quietly absorbing
-            work that would otherwise break the formal care system?  What happens
-            when many of those older carers are living in communities already carrying
-            more disability, poorer health, and fewer resources?
+            Thousands of older people are doing work the formal care system would
+            otherwise have to see, fund and staff.  If that unpaid labour stopped
+            tomorrow, the pressure would not disappear.  It would move into GP
+            surgeries, hospitals, social care waiting lists, family finances and
+            the health of the carers themselves.
           </p>
           <p>
-            This should not sit in the background as “family responsibility”.  It is
-            part of the health of a place.  It is infrastructure, even when it happens
-            in kitchens, bedrooms, buses, clinics, pharmacies and broken sleep.
+            That is the take-home: when older carers are also in poorer,
+            more disabled and more deprived places, resilience is not an endless
+            resource.  It is infrastructure, even when it happens in kitchens,
+            bedrooms, buses, clinics, pharmacies and broken sleep.
           </p>
         </section>
       </article>
 
       <section class="method" id="method" aria-labelledby="method-heading">
         <div>
-          <p class="kicker">Method</p>
-          <h2 id="method-heading">A cautious count of <span class="heading-accent">hidden labour.</span></h2>
+          <p class="kicker">Take-home</p>
+          <h2 id="method-heading">If the hidden labour <span class="heading-accent">stopped.</span></h2>
         </div>
-        <p>
-          The older-carer metric uses Census 2021 RM113 at LSOA level.  It counts
-          residents aged 65 and over who provide unpaid care.  To avoid overclaiming,
-          the 19-or-less, 20-to-49 and 50-plus hour bands are counted at 1, 20 and
-          50 hours respectively.  This means the total is a minimum estimate, not a
-          maximum.  The public map aggregates those small areas to wards so the
-          burden can be read through named local areas.
-        </p>
-        <a class="text-link" href="technical-note/">Read the technical note</a>
+        <div class="method-copy">
+          <p>
+            The policy question is not only how many hours are being provided.
+            It is who is providing them, where, and with what margin left.  If
+            older unpaid carers in high-burden places became too ill, too poor,
+            or too exhausted to continue, the hidden week would become a visible
+            service crisis very quickly.
+          </p>
+          <a class="text-link" href="technical-note/">Read the technical note</a>
+        </div>
       </section>
 
       <section class="sources" aria-labelledby="sources-heading">
@@ -263,7 +267,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-    <script src="scripts/app.js"></script>
+    <script src="scripts/app.js?v=20260704-oldercare-colour"></script>
     <script src="/assets/site-lockdown.js?v=20260704"></script>
   </body>
 </html>

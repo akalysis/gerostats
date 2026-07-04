@@ -11,14 +11,16 @@ import {mapShapes, storyStats, wards} from "./generatedData";
 const WIDTH = 1280;
 const HEIGHT = 720;
 const lime = "#a3e635";
-const softLime = "#bef264";
 const teal = "#2dd4bf";
-const cyan = "#38bdf8";
+const yellow = "#facc15";
+const orange = "#f97316";
+const red = "#ef4444";
 const ink = "#f8fafc";
 const muted = "#cbd5e1";
 const panel = "rgba(15, 23, 42, 0.82)";
 
 type Ward = (typeof wards)[number];
+type AnchoredWard = Ward & {x: number; y: number};
 type Shape = (typeof mapShapes)[number];
 
 const nf = new Intl.NumberFormat("en-GB");
@@ -45,8 +47,51 @@ const blend = (from: string, to: string, amount: number) => {
   return `rgb(${Math.round(mix(a.r, b.r, amount))}, ${Math.round(mix(a.g, b.g, amount))}, ${Math.round(mix(a.b, b.b, amount))})`;
 };
 
-const byWard = (name: string) => wards.find((ward) => ward.ward === name) as Ward;
-const topBurden = storyStats.topWards[0] as Ward;
+const ramp = (amount: number) => {
+  const t = clamp(amount);
+  if (t < 0.38) return blend("#34d399", yellow, t / 0.38);
+  if (t < 0.72) return blend(yellow, orange, (t - 0.38) / 0.34);
+  return blend(orange, red, (t - 0.72) / 0.28);
+};
+
+const centroidFromPath = (d: string) => {
+  const numbers = (d.match(/-?\d+(?:\.\d+)?/g) ?? []).map(Number);
+  let x = 0;
+  let y = 0;
+  let count = 0;
+  for (let index = 0; index < numbers.length - 1; index += 2) {
+    x += numbers[index];
+    y += numbers[index + 1];
+    count += 1;
+  }
+  return count ? {x: x / count, y: y / count, count} : {x: WIDTH / 2, y: HEIGHT / 2, count: 1};
+};
+
+const anchorKey = (ward: Pick<Ward, "ward" | "lad">) => `${ward.ward}|||${ward.lad}`;
+const wardAnchors = new Map<string, {x: number; y: number; count: number}>();
+
+for (const shape of mapShapes) {
+  const centroid = centroidFromPath(shape.d);
+  const key = `${shape.ward}|||${shape.lad}`;
+  const current = wardAnchors.get(key) ?? {x: 0, y: 0, count: 0};
+  current.x += centroid.x * centroid.count;
+  current.y += centroid.y * centroid.count;
+  current.count += centroid.count;
+  wardAnchors.set(key, current);
+}
+
+const withAnchor = <T extends Ward>(ward: T): T & {x: number; y: number} => {
+  const anchor = wardAnchors.get(anchorKey(ward));
+  return {
+    ...ward,
+    x: anchor ? anchor.x / anchor.count : WIDTH / 2,
+    y: anchor ? anchor.y / anchor.count : HEIGHT / 2,
+  };
+};
+
+const anchoredWards = wards.map((ward) => withAnchor(ward));
+const byWard = (name: string) => anchoredWards.find((ward) => ward.ward === name) as AnchoredWard;
+const topBurden = withAnchor(storyStats.topWards[0] as Ward);
 const stackFocus = byWard("Walker");
 const lowFocus = byWard("North Jesmond");
 
@@ -100,7 +145,7 @@ const camera = (frame: number, fps: number) => {
 
   if (frame >= 27 * fps && frame < 39 * fps) {
     return {
-      scale: interpolate(toTop, [0, 1], [1.06, 2.75]),
+      scale: interpolate(toTop, [0, 1], [1.08, 4.15]),
       x: mix(WIDTH / 2, topBurden.x, toTop),
       y: mix(HEIGHT / 2, topBurden.y, toTop),
     };
@@ -108,7 +153,7 @@ const camera = (frame: number, fps: number) => {
 
   if (frame >= 39 * fps && frame < 53 * fps) {
     return {
-      scale: interpolate(toWalker, [0, 1], [2.55, 2.95]),
+      scale: interpolate(toWalker, [0, 1], [3.6, 5.0]),
       x: mix(topBurden.x, stackFocus.x, toWalker),
       y: mix(topBurden.y, stackFocus.y, toWalker),
     };
@@ -116,7 +161,7 @@ const camera = (frame: number, fps: number) => {
 
   if (frame >= 53 * fps && frame < 66 * fps) {
     return {
-      scale: interpolate(toLow, [0, 1], [2.35, 3.1]),
+      scale: interpolate(toLow, [0, 1], [4.2, 4.75]),
       x: mix(stackFocus.x, lowFocus.x, toLow),
       y: mix(stackFocus.y, lowFocus.y, toLow),
     };
@@ -124,7 +169,7 @@ const camera = (frame: number, fps: number) => {
 
   if (frame >= 66 * fps && frame < 76 * fps) {
     return {
-      scale: interpolate(home, [0, 1], [2.2, 1.08]),
+      scale: interpolate(home, [0, 1], [4.2, 1.08]),
       x: mix(lowFocus.x, WIDTH / 2, home),
       y: mix(lowFocus.y, HEIGHT / 2, home),
     };
@@ -197,21 +242,21 @@ const ShapePath = ({
 }) => {
   const norm = clamp(normShape(shape));
   const lift = rise * (4 + norm * 32 + (highlight ? 8 : 0));
-  const fill = blend("#0f172a", highlight ? lime : teal, clamp(norm * 1.2));
+  const fill = ramp(norm);
 
   return (
     <g>
       <path
         d={shape.d}
-        fill="rgba(0,0,0,0.45)"
-        opacity={0.18 + norm * 0.2}
+        fill="rgba(15,23,42,0.34)"
+        opacity={0.16 + norm * 0.16}
         transform={`translate(${lift * 0.45}, ${lift * 0.72})`}
       />
       <path
         d={shape.d}
         fill={fill}
-        opacity={highlight ? 0.95 : 0.42 + norm * 0.36}
-        stroke={highlight ? "rgba(248,250,252,0.7)" : "rgba(148,163,184,0.16)"}
+        opacity={highlight ? 1 : 0.7 + norm * 0.22}
+        stroke={highlight ? "rgba(2,6,23,0.82)" : "rgba(15,23,42,0.2)"}
         strokeWidth={highlight ? 1.25 : 0.6}
         transform={`translate(0, ${-lift})`}
       />
@@ -219,11 +264,11 @@ const ShapePath = ({
   );
 };
 
-const WardColumn = ({ward, rise, active}: {ward: Ward; rise: number; active: boolean}) => {
+const WardColumn = ({ward, rise, active}: {ward: AnchoredWard; rise: number; active: boolean}) => {
   const norm = clamp(normHours(ward.olderHours));
   const height = rise * (18 + norm * 92);
   const width = active ? 12 : 7;
-  const fill = blend(cyan, active ? lime : softLime, norm);
+  const fill = ramp(norm);
 
   return (
     <g transform={`translate(${ward.x}, ${ward.y})`} opacity={active ? 1 : 0.24}>
@@ -233,7 +278,7 @@ const WardColumn = ({ward, rise, active}: {ward: Ward; rise: number; active: boo
         width={width}
         height={height}
         fill={fill}
-        stroke="rgba(2,6,23,0.7)"
+        stroke="rgba(2,6,23,0.74)"
         strokeWidth="1"
       />
       <path
@@ -256,6 +301,7 @@ const MapLayer = ({frame, fps}: {frame: number; fps: number}) => {
 
   return (
     <svg style={styles.mapSvg} viewBox={`0 0 ${WIDTH} ${HEIGHT}`}>
+      <rect x="0" y="0" width={WIDTH} height={HEIGHT} fill="rgba(219,234,242,0.42)" />
       <g
         style={{
           transform: `translate(${WIDTH / 2}px, ${HEIGHT / 2}px) scale(${cam.scale}) translate(${-cam.x}px, ${-cam.y}px)`,
@@ -269,7 +315,7 @@ const MapLayer = ({frame, fps}: {frame: number; fps: number}) => {
             (lowScene && shape.ward === lowFocus.ward && shape.lad === lowFocus.lad);
           return <ShapePath key={shape.code} shape={shape} rise={rise} highlight={highlight} />;
         })}
-        {wards.map((ward) => {
+        {anchoredWards.map((ward) => {
           const active =
             storyStats.topWards.slice(0, 8).some((row) => row.code === ward.code) ||
             (stackScene && ward.stack > 5.5) ||
@@ -281,7 +327,7 @@ const MapLayer = ({frame, fps}: {frame: number; fps: number}) => {
   );
 };
 
-const PlaceLabel = ({ward, side = "right"}: {ward: Ward; side?: "left" | "right"}) => (
+const PlaceLabel = ({ward, side = "right"}: {ward: AnchoredWard; side?: "left" | "right"}) => (
   <div style={{...styles.placeLabel, ...(side === "left" ? {left: 72} : {right: 72})}}>
     <span>{ward.ward}, {ward.lad}</span>
     <strong>{one.format(ward.olderHours)} hrs/100 residents aged 65+</strong>
@@ -296,8 +342,8 @@ const ComparisonBars = ({progress}: {progress: number}) => {
   return (
     <div style={styles.comparison}>
       {[
-        {label: "Highest older-care burden fifth", data: high, color: lime},
-        {label: "Lowest older-care burden fifth", data: low, color: teal},
+        {label: "Highest older-care burden fifth", data: high, color: red},
+        {label: "Lowest older-care burden fifth", data: low, color: "#34d399"},
       ].map((row) => (
         <div key={row.label} style={styles.barRow}>
           <div style={styles.barMeta}>
@@ -379,9 +425,9 @@ export const HiddenWeekStory = () => {
       <div style={{opacity: stackOpacity}}>
         <PlaceLabel ward={stackFocus} />
         <div style={{...styles.panel, ...styles.leftPanel}}>
-          <p style={styles.kicker}>Where pressures stack</p>
-          <h2 style={styles.panelTitle}>Walker carries the sharpest stack.</h2>
-          <p style={styles.body}>Older care, 50+ hour caring, deprivation, poor health and disability all sit high here.  That is the precarious storyline the map is trying to make visible.</p>
+          <p style={styles.kicker}>Intersectionality</p>
+          <h2 style={styles.panelTitle}>Walker shows the intersection clearly.</h2>
+          <p style={styles.body}>Older care, 50+ hour caring, deprivation, poor health and disability intersect here.  Imagine what would happen if this unpaid care stopped.</p>
         </div>
       </div>
 
@@ -396,18 +442,18 @@ export const HiddenWeekStory = () => {
 
       <div style={{...styles.stackScene, opacity: compareOpacity}}>
         <p style={styles.kicker}>What the data support</p>
-        <h2 style={styles.panelTitle}>The heaviest older-care places are also more pressured places.</h2>
+        <h2 style={styles.panelTitle}>Older care intersects with deprivation, poor health and disability.</h2>
         <ComparisonBars progress={compareProgress} />
-        <p style={styles.body}>This is area context, not an individual diagnosis: the data show where older care, deprivation, poor health and disability cluster together.</p>
+        <p style={styles.body}>This is area context, not an individual diagnosis: the data show where older care, deprivation, poor health and disability intersect.</p>
       </div>
 
       <div style={{...styles.limitScene, opacity: limitOpacity}}>
         <p style={styles.kicker}>Important measurement limit</p>
-        <h2 style={styles.panelTitle}>Provider age is known. Recipient age is not.</h2>
+        <h2 style={styles.panelTitle}>Imagine if the hidden week stopped tomorrow.</h2>
         <p style={styles.body}>
-          The Census table identifies people aged 65+ providing unpaid care.  It does not tell us who receives that care, their age, or their relationship to the carer.
+          The formal system would have to see, fund and staff work that older people are currently doing quietly.  Provider age is known; recipient age is not.
         </p>
-        <p style={styles.note}>Honest numbers first. Better estimates can keep growing.</p>
+        <p style={styles.note}>The take-home is fragility: resilience has limits.</p>
       </div>
     </AbsoluteFill>
   );
@@ -431,7 +477,7 @@ const styles: Record<string, React.CSSProperties> = {
     position: "absolute",
     inset: 0,
     background:
-      "radial-gradient(circle at 76% 34%, rgba(45,212,191,0.16), transparent 32%), radial-gradient(circle at 18% 72%, rgba(163,230,53,0.13), transparent 28%), linear-gradient(90deg, rgba(2,6,23,0.92), rgba(2,6,23,0.44), rgba(2,6,23,0.9))",
+      "radial-gradient(circle at 76% 34%, rgba(45,212,191,0.08), transparent 32%), radial-gradient(circle at 18% 72%, rgba(163,230,53,0.08), transparent 28%), linear-gradient(90deg, rgba(2,6,23,0.9), rgba(2,6,23,0.22), rgba(2,6,23,0.88))",
   },
   mapWrap: {
     position: "absolute",

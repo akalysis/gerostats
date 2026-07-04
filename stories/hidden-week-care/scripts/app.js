@@ -17,17 +17,20 @@ const formatOne = new Intl.NumberFormat("en-GB", {
 });
 
 const deprivationColours = {
-  1: "#8f1d22",
-  2: "#b93a2b",
-  3: "#d86e2e",
-  4: "#e39d32",
-  5: "#c9b94f",
-  6: "#90b567",
-  7: "#4fa276",
-  8: "#2d8f93",
-  9: "#2c6f95",
-  10: "#3d536f",
+  1: "#ef4444",
+  2: "#f97316",
+  3: "#f59e0b",
+  4: "#facc15",
+  5: "#d9f99d",
+  6: "#86efac",
+  7: "#34d399",
+  8: "#2dd4bf",
+  9: "#38bdf8",
+  10: "#60a5fa",
 };
+
+const dataVersion = "20260704-oldercare-colour";
+const metricColour = d3.interpolateRgbBasis(["#34d399", "#facc15", "#f97316", "#ef4444"]);
 
 const focusConfig = {
   all: { label: "All" },
@@ -80,10 +83,6 @@ function wardName(ward) {
   return `${ward.ward}, ${displayLad(ward.lad)}`;
 }
 
-function olderSummary() {
-  return state.summary.older_carers;
-}
-
 function formatThousands(value) {
   return formatNumber.format(Math.round(value));
 }
@@ -98,7 +97,7 @@ function sceneMetric(ward) {
 function sceneUnit() {
   if (state.scene === "heavy") return "% of residents aged 65+ reporting 50+ hours";
   if (state.scene === "deprivation") return "IMD deprivation pressure";
-  if (state.scene === "stack") return "older-care pressure score";
+  if (state.scene === "stack") return "intersectional older-care score";
   return "minimum hours per 100 residents aged 65+";
 }
 
@@ -118,7 +117,7 @@ function sceneCopy(summary) {
       label: "Older carers by named area",
       title: `${formatThousands(older.total_older_carers)} people aged 65+ provide unpaid care.`,
       text:
-        "The raised map shows the minimum weekly care-hours provided by older people, standardised per 100 residents aged 65 and over.  Taller and brighter places carry more of that hidden week.",
+        "The raised map shows the minimum weekly care-hours provided by older people, standardised per 100 residents aged 65 and over.  Green is lower; yellow and red mark the peaks.",
       metrics: [
         {
           value: formatThousands(older.total_older_minimum_weekly_care_hours),
@@ -140,7 +139,7 @@ function sceneCopy(summary) {
     },
     deprivation: {
       label: "Deprivation underneath",
-      title: "The heaviest older-care weeks sit closer to deprivation.",
+      title: "Older care and deprivation intersect.",
       text:
         "The map height still shows older people providing care.  The colour now follows deprivation.  D1 means the most deprived 10% of neighbourhoods in England.",
       metrics: [
@@ -187,10 +186,10 @@ function sceneCopy(summary) {
       valueSuffix: "%",
     },
     stack: {
-      label: "Where pressures stack",
-      title: `${topStack.ward}, ${displayLad(topStack.lad)}: older care, deprivation, poor health and disability stack together.`,
+      label: "Intersectionality",
+      title: `${topStack.ward}, ${displayLad(topStack.lad)}: older care intersects with deprivation, poor health and disability.`,
       text:
-        "This view highlights wards that sit high across older unpaid care-hours, 50+ hour older care, deprivation, bad or very bad health, and disability limited a lot.",
+        "This view highlights wards where older unpaid care-hours, 50+ hour older care, deprivation, bad or very bad health, and disability limited a lot intersect.",
       metrics: [
         {
           value: `${formatOne.format(topStack.older_minimum_hours_per_100_65plus)}`,
@@ -206,7 +205,7 @@ function sceneCopy(summary) {
         },
       ],
       ranks: older.highest_older_ward_stack,
-      rankLabel: "Highest stacked older-care pressure",
+      rankLabel: "Strongest intersectional older-care signal",
       valueKey: "older_minimum_hours_per_100_65plus",
       valueSuffix: " hrs per 100",
     },
@@ -217,26 +216,18 @@ function fillSmallArea(properties, scales) {
   if (state.scene === "deprivation") {
     return deprivationColours[properties.imd_decile] || "#334155";
   }
-  if (state.scene === "heavy") {
-    return d3.interpolateRgb("#0f172a", "#bef264")(scales.smallOlderHeavy(properties.older_heavy_care_pct));
-  }
-  if (state.scene === "stack") {
-    return d3.interpolateRgb("#0f172a", "#a3e635")(scales.smallOlderStack(properties.older_stack_score));
-  }
-  return d3.interpolateRgb("#0f172a", "#2dd4bf")(scales.smallOlderHours(properties.older_minimum_hours_per_100_65plus));
+  if (state.scene === "heavy") return metricColour(scales.smallOlderHeavy(properties.older_heavy_care_pct));
+  if (state.scene === "stack") return metricColour(scales.smallOlderStack(properties.older_stack_score));
+  return metricColour(scales.smallOlderHours(properties.older_minimum_hours_per_100_65plus));
 }
 
 function fillWard(ward, scales) {
   if (state.scene === "deprivation") {
     return deprivationColours[Math.round(ward.imd_decile_mean)] || "#334155";
   }
-  if (state.scene === "heavy") {
-    return d3.interpolateRgb("#38bdf8", "#bef264")(scales.wardOlderHeavy(ward.older_heavy_care_pct));
-  }
-  if (state.scene === "stack") {
-    return d3.interpolateRgb("#2dd4bf", "#a3e635")(scales.wardOlderStack(ward.older_stack_score));
-  }
-  return d3.interpolateRgb("#38bdf8", "#a3e635")(scales.wardOlderHours(ward.older_minimum_hours_per_100_65plus));
+  if (state.scene === "heavy") return metricColour(scales.wardOlderHeavy(ward.older_heavy_care_pct));
+  if (state.scene === "stack") return metricColour(scales.wardOlderStack(ward.older_stack_score));
+  return metricColour(scales.wardOlderHours(ward.older_minimum_hours_per_100_65plus));
 }
 
 function makeScales() {
@@ -284,18 +275,15 @@ function wardPoint(ward) {
 }
 
 function topWards() {
+  if (state.focus !== "all") return focusedWards();
   const key =
     state.scene === "heavy"
       ? "older_heavy_care_pct"
       : state.scene === "stack"
         ? "older_stack_score"
         : "older_minimum_hours_per_100_65plus";
-  const limit = state.width < 650 ? 5 : 8;
+  const limit = state.width < 650 ? 3 : 5;
   const ranked = [...state.wards].sort((a, b) => b[key] - a[key]).slice(0, limit);
-  const focused = focusedWards();
-  for (const ward of focused) {
-    if (!ranked.some((row) => row.ward_code === ward.ward_code)) ranked.push(ward);
-  }
   return ranked;
 }
 
@@ -450,7 +438,7 @@ function updateSmallAreas(scales) {
       const lift = smallAreaLift(feature.properties, scales);
       return `translate(${lift * 0.45},${lift * 0.72})`;
     })
-    .attr("opacity", (feature) => (isHighFeature(feature) ? 0.46 : 0.2));
+    .attr("opacity", (feature) => (isHighFeature(feature) ? 0.28 : 0.12));
 
   const areas = mapLayer
     .selectAll("path")
@@ -469,7 +457,7 @@ function updateSmallAreas(scales) {
     .duration(420)
     .attr("transform", (feature) => `translate(0,${-smallAreaLift(feature.properties, scales)})`)
     .attr("fill", (feature) => fillSmallArea(feature.properties, scales))
-    .attr("opacity", (feature) => (isHighFeature(feature) ? 0.92 : state.scene === "deprivation" ? 0.64 : 0.58));
+    .attr("opacity", (feature) => (isHighFeature(feature) ? 0.98 : state.scene === "deprivation" ? 0.84 : 0.76));
 }
 
 function updateOutlines(scales) {
@@ -514,7 +502,7 @@ function updateWardColumns(scales) {
       .transition()
       .duration(420)
       .attr("transform", `translate(${x},${y})`)
-      .attr("opacity", high ? 0.96 : state.width < 650 ? 0.08 : 0.2);
+      .attr("opacity", high ? 0.98 : state.width < 650 ? 0.18 : 0.38);
 
     group
       .select(".ward-column-stem")
@@ -718,12 +706,39 @@ zoomButtons.forEach((button) => {
   });
 });
 
+function fetchJson(path) {
+  return fetch(`${path}?v=${dataVersion}`).then((response) => {
+    if (!response.ok) throw new Error(`Could not load ${path}`);
+    return response.json();
+  });
+}
+
+function validateData(geo, wards, summary) {
+  const older = summary?.older_carers;
+  if (!older?.highest_older_ward_hours?.length) {
+    throw new Error("The older-carer summary is missing. Please refresh the page.");
+  }
+  const badWard = wards.find(
+    (ward) =>
+      !Number.isFinite(ward.older_minimum_hours_per_100_65plus) ||
+      !Number.isFinite(ward.older_carers) ||
+      !Number.isFinite(ward.lat) ||
+      !Number.isFinite(ward.lon),
+  );
+  if (badWard) throw new Error(`The ward data for ${badWard.ward} is incomplete. Please refresh the page.`);
+  const badFeature = geo.features.find(
+    (feature) => !Number.isFinite(feature.properties.older_minimum_hours_per_100_65plus),
+  );
+  if (badFeature) throw new Error("The small-area older-carer data is incomplete. Please refresh the page.");
+}
+
 Promise.all([
-  fetch("data/processed/hidden_week_map.geojson").then((response) => response.json()),
-  fetch("data/processed/hidden_week_ward_data.json").then((response) => response.json()),
-  fetch("data/processed/summary.json").then((response) => response.json()),
+  fetchJson("data/processed/hidden_week_map.geojson"),
+  fetchJson("data/processed/hidden_week_ward_data.json"),
+  fetchJson("data/processed/summary.json"),
 ])
   .then(([geo, wards, summary]) => {
+    validateData(geo, wards, summary);
     state.geo = geo;
     state.wards = wards;
     state.summary = summary;
