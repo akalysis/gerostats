@@ -6,7 +6,7 @@ export const RemotionRoot = () => {
     <Composition
       id="HiddenWeek"
       component={HiddenWeekStory}
-      durationInFrames={2700}
+      durationInFrames={3600}
       fps={30}
       width={1280}
       height={720}

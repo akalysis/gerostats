@@ -12,9 +12,6 @@ const sceneSelect = document.querySelector("#care-scene-select");
 const placeSelect = document.querySelector("#care-place-select");
 const fullscreenMap = document.querySelector("#fullscreen-map");
 const resetView = document.querySelector("#reset-view");
-const rotateLeft = document.querySelector("#rotate-left");
-const rotateRight = document.querySelector("#rotate-right");
-const reliefToggle = document.querySelector("#relief-toggle");
 const storyToggle = document.querySelector("#story-toggle");
 const storyProgress = document.querySelector("#story-progress");
 const mapReadoutLabel = document.querySelector("#map-readout-label");
@@ -34,7 +31,7 @@ const formatOne = new Intl.NumberFormat("en-GB", {
   maximumFractionDigits: 1,
 });
 
-const dataVersion = "20260704-raised-map";
+const dataVersion = "20260704-flat-care";
 const greenRedRamp = ["#0f766e", "#22c55e", "#a3e635", "#facc15", "#fb923c", "#b91c1c"];
 const heightStops = [80, 700, 1400, 2200, 3200, 4500];
 const emptyCollection = { type: "FeatureCollection", features: [] };
@@ -69,8 +66,8 @@ const sceneConfig = {
     legendLow: "Lower burden",
     legendHigh: "Higher burden",
     legendNote: "Minimum weekly care-hours per 100 residents aged 65+.",
-    heightTitle: "Height is care-hours",
-    heightBody: "Taller wards have more lower-bound weekly care-hours from residents aged 65+.",
+    heightTitle: "Colour is care-hours",
+    heightBody: "Green is lower; amber and red mark higher lower-bound weekly care-hours from residents aged 65+.",
   },
   deprivation: {
     metric: "imd_decile",
@@ -79,20 +76,20 @@ const sceneConfig = {
     legendTitle: "Deprivation decile",
     legendLow: "Most deprived",
     legendHigh: "Least deprived",
-    legendNote: "Height still shows older-care burden; colour shows IMD decile.",
-    heightTitle: "Height stays on care",
-    heightBody: "The surface remains older-care hours while colour shows deprivation beneath it.",
+    legendNote: "Colour shows IMD decile. The care burden stays in the readout and rankings.",
+    heightTitle: "Colour is deprivation",
+    heightBody: "Red marks more deprived small areas. Use this with the care readout to see where pressures intersect.",
   },
   heavy: {
     metric: "older_heavy_care_pct",
     heightMetric: "older_heavy_care_pct",
     highFlag: "high_older_heavy_care",
-    legendTitle: "50+ hour older care",
+    legendTitle: "Full-time-plus older care",
     legendLow: "Lower share",
     legendHigh: "Higher share",
     legendNote: "Share of residents aged 65+ reporting 50 or more unpaid-care hours a week.",
-    heightTitle: "Height is heavy care",
-    heightBody: "Taller wards have a larger share of residents aged 65+ providing 50+ hours a week.",
+    heightTitle: "Colour is full-time-plus care",
+    heightBody: "This highlights older residents reporting 50+ unpaid-care hours a week.",
   },
   stack: {
     metric: "older_stack_score",
@@ -101,9 +98,9 @@ const sceneConfig = {
     legendTitle: "Intersectional signal",
     legendLow: "Lower signal",
     legendHigh: "Higher signal",
-    legendNote: "Older care, heavy care, deprivation, bad health and disability brought together.",
-    heightTitle: "Height is the stacked signal",
-    heightBody: "The highest areas are where several pressures intersect in the same places.",
+    legendNote: "Older care, full-time-plus care, deprivation, bad health and disability brought together.",
+    heightTitle: "Colour is the stacked signal",
+    heightBody: "The strongest areas are where older care, full-time-plus care, deprivation, poor health and disability intersect.",
   },
 };
 
@@ -118,7 +115,7 @@ const state = {
   popup: null,
   loaded: false,
   fallback: false,
-  flatMode: false,
+  flatMode: true,
   storyTimer: null,
   storyIndex: 0,
 };
@@ -159,7 +156,7 @@ function sceneCopy(summary) {
       label: "Older carers by named area",
       title: `${formatThousands(older.total_older_carers)} people aged 65+ provide unpaid care.`,
       text:
-        "The raised map shows the minimum weekly care-hours provided by older people, standardised per 100 residents aged 65 and over.  Green is lower; amber and red mark the peaks.",
+        "The map shows the minimum weekly care-hours provided by older people, standardised per 100 residents aged 65 and over.  Green is lower; amber and red mark the peaks.",
       metrics: [
         {
           value: formatThousands(older.total_older_minimum_weekly_care_hours),
@@ -183,7 +180,7 @@ function sceneCopy(summary) {
       label: "Deprivation underneath",
       title: "Older care and deprivation intersect.",
       text:
-        "The height still shows older people providing care.  The colour now follows deprivation, with the most deprived areas pushed toward red.",
+        "The colour now follows deprivation, with the most deprived areas pushed toward red.  Use the readout and rankings to keep older care in view.",
       metrics: [
         {
           value: `D${formatOne.format(older.high_fifth.decile_mean)}`,
@@ -204,10 +201,10 @@ function sceneCopy(summary) {
       valueSuffix: " hrs per 100",
     },
     heavy: {
-      label: "50+ hours a week",
+      label: "Full-time-plus care",
       title: `${formatThousands(older.total_older_heavy_carers)} older carers report 50+ hours a week.`,
       text:
-        "This is care at a level that can swallow sleep, money, health and ordinary time.  The map now emphasises where 50+ hour care among people aged 65 and over is most visible.",
+        "This is care at a level that can swallow sleep, money, health and ordinary time.  The map now emphasises full-time-plus care among people aged 65 and over.",
       metrics: [
         {
           value: `${formatOne.format(older.older_heavy_care_pct)}%`,
@@ -223,7 +220,7 @@ function sceneCopy(summary) {
         },
       ],
       ranks: older.highest_older_ward_heavy_care,
-      rankLabel: "Highest 50+ hour older-care share",
+      rankLabel: "Highest full-time-plus older-care share",
       valueKey: "older_heavy_care_pct",
       valueSuffix: "%",
     },
@@ -231,7 +228,7 @@ function sceneCopy(summary) {
       label: "Intersectionality",
       title: `${topStack.ward}, ${displayLad(topStack.lad)}: older care intersects with deprivation, poor health and disability.`,
       text:
-        "This view highlights wards where older unpaid care-hours, 50+ hour older care, deprivation, bad or very bad health, and disability limited a lot intersect.",
+        "This view highlights wards where older unpaid care-hours, full-time-plus care, deprivation, bad or very bad health, and disability limited a lot intersect.",
       metrics: [
         {
           value: `${formatOne.format(topStack.older_minimum_hours_per_100_65plus)}`,
@@ -239,7 +236,7 @@ function sceneCopy(summary) {
         },
         {
           value: `${formatOne.format(topStack.older_heavy_care_pct)}%`,
-          label: "50+ hour older care in the highest stacked ward",
+          label: "full-time-plus older care in the highest stacked ward",
         },
         {
           value: `D${formatOne.format(topStack.imd_decile_mean)}`,
@@ -323,6 +320,11 @@ function extrusionHeightExpression() {
     12.6,
     ["*", ["coalesce", ["get", "height"], 0], 1.12],
   ];
+}
+
+function reliefSelectionHeightExpression(offset) {
+  if (state.flatMode) return 0;
+  return ["+", ["coalesce", ["get", "height"], 0], offset];
 }
 
 function highFilterExpression() {
@@ -505,7 +507,6 @@ function updatePanel() {
   }
   if (sceneSelect) sceneSelect.value = state.scene;
   if (placeSelect) placeSelect.value = state.focus;
-  if (reliefToggle) reliefToggle.textContent = state.flatMode ? "3D map" : "Flat map";
 }
 
 function updateTabs() {
@@ -626,7 +627,7 @@ function fitToFocus(focus, duration = 1000) {
     duration,
     maxZoom: all ? 9.55 : 12.75,
     pitch: state.flatMode ? 0 : all ? 62 : 66,
-    bearing: all ? -8 : -26,
+    bearing: 0,
   });
 }
 
@@ -657,6 +658,11 @@ function updateMapStyle() {
   if (areaSource) areaSource.setData(state.geo);
   state.map.setPaintProperty("care-extrusions", "fill-extrusion-height", extrusionHeightExpression());
   state.map.setPaintProperty("care-highlight-fill", "fill-extrusion-height", extrusionHeightExpression());
+  state.map.setPaintProperty("hover-outline", "fill-extrusion-height", reliefSelectionHeightExpression(420));
+  state.map.setPaintProperty("selection-outline", "fill-extrusion-height", reliefSelectionHeightExpression(720));
+  state.map.setPaintProperty("hover-flat-fill", "fill-opacity", state.flatMode ? 0.22 : 0);
+  state.map.setPaintProperty("selection-flat-fill", "fill-opacity", state.flatMode ? 0.2 : 0);
+  state.map.setPaintProperty("selection-flat-line", "line-opacity", state.flatMode ? 0.86 : 0);
   state.map.setFilter("care-highlight-lines", highFilterExpression());
   state.map.setFilter("care-highlight-fill", highFilterExpression());
   const selectionSource = state.map.getSource("selection-feature");
@@ -744,16 +750,12 @@ function renderFallbackMap(reason = "") {
     .map((feature) => {
       const properties = feature.properties;
       const d = pathForGeometry(feature.geometry, project);
-      const norm = normaliseMetric(properties[metric], metric);
-      const lift = 5 + norm * 34;
       const key = `${properties.ward}|||${properties.lad}`;
       const highlighted = highRows.has(key) || focusRows.has(key);
       const opacity = state.focus === "all" || focusRows.size === 0 || focusRows.has(key) ? 0.9 : 0.28;
       const stroke = highlighted ? "#07111f" : "rgba(15, 23, 42, 0.28)";
       return `
-        <path class="fallback-shadow" d="${d}" transform="translate(${(lift * 0.5).toFixed(1)} ${(lift * 0.62).toFixed(1)})" />
-        <path class="fallback-side" d="${d}" transform="translate(${(lift * 0.34).toFixed(1)} ${(-lift * 0.34).toFixed(1)})" opacity="${0.1 + norm * 0.22}" />
-        <path class="fallback-top" d="${d}" transform="translate(0 ${(-lift).toFixed(1)})" fill="${fallbackColour(properties)}" opacity="${opacity}" stroke="${stroke}" stroke-width="${highlighted ? 1.2 : 0.42}" />
+        <path class="fallback-top" d="${d}" fill="${fallbackColour(properties)}" opacity="${opacity}" stroke="${stroke}" stroke-width="${highlighted ? 1.2 : 0.42}" />
       `;
     })
     .join("");
@@ -773,7 +775,7 @@ function renderFallbackMap(reason = "") {
     .join("");
 
   const note = reason
-    ? `<p class="fallback-note">A lightweight map is shown because the 3D map is not available in this browser.</p>`
+    ? `<p class="fallback-note">A lightweight map is shown because the full interactive map is not available in this browser.</p>`
     : "";
 
   mapContainer.innerHTML = `
@@ -849,8 +851,8 @@ function initializeMap() {
       style: mapStyle(),
       center: [-1.49, 54.98],
       zoom: 9.2,
-      pitch: 62,
-      bearing: -8,
+      pitch: state.flatMode ? 0 : 62,
+      bearing: 0,
       minZoom: 8,
       maxZoom: 13,
       dragRotate: false,
@@ -866,7 +868,7 @@ function initializeMap() {
   state.map.addControl(
     new maplibregl.NavigationControl({
       visualizePitch: true,
-      showZoom: false,
+      showZoom: true,
       showCompass: false,
     }),
     "bottom-right",
@@ -969,12 +971,43 @@ function initializeMap() {
     });
 
     state.map.addLayer({
+      id: "hover-flat-fill",
+      type: "fill",
+      source: "hover-feature",
+      paint: {
+        "fill-color": "#ffffff",
+        "fill-opacity": state.flatMode ? 0.22 : 0,
+      },
+    });
+
+    state.map.addLayer({
+      id: "selection-flat-fill",
+      type: "fill",
+      source: "selection-feature",
+      paint: {
+        "fill-color": "#ffffff",
+        "fill-opacity": state.flatMode ? 0.2 : 0,
+      },
+    });
+
+    state.map.addLayer({
+      id: "selection-flat-line",
+      type: "line",
+      source: "selection-feature",
+      paint: {
+        "line-color": "#07111f",
+        "line-opacity": state.flatMode ? 0.86 : 0,
+        "line-width": ["interpolate", ["linear"], ["zoom"], 8, 1.3, 12, 3],
+      },
+    });
+
+    state.map.addLayer({
       id: "hover-outline",
       type: "fill-extrusion",
       source: "hover-feature",
       paint: {
         "fill-extrusion-color": "#f8feff",
-        "fill-extrusion-height": ["+", ["coalesce", ["get", "height"], 0], 420],
+        "fill-extrusion-height": reliefSelectionHeightExpression(420),
         "fill-extrusion-base": 0,
         "fill-extrusion-opacity": 0.24,
         "fill-extrusion-vertical-gradient": false,
@@ -987,7 +1020,7 @@ function initializeMap() {
       source: "selection-feature",
       paint: {
         "fill-extrusion-color": "#ffffff",
-        "fill-extrusion-height": ["+", ["coalesce", ["get", "height"], 0], 720],
+        "fill-extrusion-height": reliefSelectionHeightExpression(720),
         "fill-extrusion-base": 0,
         "fill-extrusion-opacity": 0.28,
         "fill-extrusion-vertical-gradient": false,
@@ -1020,7 +1053,7 @@ function initializeMap() {
       },
     });
 
-    state.map.on("mousemove", "care-extrusions", (event) => {
+    state.map.on("mousemove", "care-footprint", (event) => {
       const feature = event.features && event.features[0];
       if (!feature) return;
       state.map.getCanvas().style.cursor = "pointer";
@@ -1030,14 +1063,14 @@ function initializeMap() {
       state.popup.setLngLat(event.lngLat).setHTML(tooltipHtml(feature.properties)).addTo(state.map);
     });
 
-    state.map.on("mouseleave", "care-extrusions", () => {
+    state.map.on("mouseleave", "care-footprint", () => {
       state.map.getCanvas().style.cursor = "";
       const hoverSource = state.map.getSource("hover-feature");
       if (hoverSource) hoverSource.setData(emptyCollection);
       state.popup.remove();
     });
 
-    state.map.on("click", "care-extrusions", (event) => {
+    state.map.on("click", "care-footprint", (event) => {
       const feature = event.features && event.features[0];
       if (!feature) return;
       const selectionSource = state.map.getSource("selection-feature");
@@ -1061,7 +1094,7 @@ function initializeMap() {
             duration: 900,
             maxZoom: 12.8,
             pitch: state.flatMode ? 0 : 66,
-            bearing: -24,
+            bearing: 0,
           });
         }
       }
@@ -1189,32 +1222,6 @@ if (fullscreenMap) {
   });
 }
 
-if (rotateLeft) {
-  rotateLeft.addEventListener("click", () => {
-    if (!state.loaded) return;
-    state.map.easeTo({ bearing: state.map.getBearing() - 24, duration: 650 });
-  });
-}
-
-if (rotateRight) {
-  rotateRight.addEventListener("click", () => {
-    if (!state.loaded) return;
-    state.map.easeTo({ bearing: state.map.getBearing() + 24, duration: 650 });
-  });
-}
-
-if (reliefToggle) {
-  reliefToggle.addEventListener("click", () => {
-    state.flatMode = !state.flatMode;
-    updatePanel();
-    if (state.fallback) {
-      renderFallbackMap();
-    } else {
-      updateMapStyle();
-      fitToFocus(state.focus, 650);
-    }
-  });
-}
 
 if (storyToggle) {
   storyToggle.addEventListener("click", startStoryTour);

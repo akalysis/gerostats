@@ -62,10 +62,10 @@
           <h2 id="map-heading">Older carers are carrying a <span class="heading-accent">hidden week.</span></h2>
           <p>
             Start with the animated walkthrough, then use the map to explore the
-            named areas yourself.  The raised surface is built from small-area
-            Census data and aggregated to wards.  Height and colour show minimum
-            unpaid care-hours provided by people aged 65 and over, per 100
-            residents aged 65 and over.
+            named areas yourself.  The map is built from small-area Census data
+            and read through named wards.  Colour shows minimum unpaid care-hours
+            provided by people aged 65 and over, per 100 residents aged 65 and
+            over.
           </p>
         </div>
 
@@ -75,20 +75,25 @@
             controls
             playsinline
             preload="metadata"
-            poster="/assets/stories/hidden-week-story-poster.jpg?v=20260704-raised-map"
+            poster="/assets/stories/hidden-week-story-poster.jpg?v=20260704-flat-care"
             aria-label="Animated walkthrough of unpaid care burden across Tyne and Wear"
           >
-            <source src="/assets/stories/hidden-week-story.mp4?v=20260704-raised-map" type="video/mp4">
+            <source src="/assets/stories/hidden-week-story.mp4?v=20260704-flat-care" type="video/mp4">
           </video>
           <div class="story-animation-copy">
             <p class="kicker">Animated walkthrough</p>
             <h3 id="animation-heading">Watch the week accumulate.</h3>
             <p>
-              This guided animation steps through the care clock, the rising ward
-              surface, high and low care places, and the precarious pattern where
-              older unpaid care, deprivation, poor health and disability sit together.
+              This guided animation steps through the care clock, the Deckham
+              small-area spike, the named-ward ranking, full-time-plus care, and
+              the precarious pattern where older unpaid care, deprivation, poor
+              health and disability sit together.
             </p>
             <div class="animation-stat-grid" aria-label="Evidence summary">
+              <div class="animation-stat">
+                <strong>12,776</strong>
+                <span>people aged 65+ report 50+ hours of unpaid care a week</span>
+              </div>
               <div class="animation-stat">
                 <strong>D3.0</strong>
                 <span>average deprivation decile in the highest older-care burden fifth of wards</span>
@@ -112,9 +117,9 @@
               <p class="map-label">Interactive map</p>
               <h3 id="map-title">Older unpaid care across Tyne and Wear</h3>
               <p id="map-desc">
-                Height shows the lower-bound weekly care-hours provided by
-                residents aged 65 and over.  Colour can switch from care burden
-                to deprivation, heavy care and the intersectional signal.
+                Colour shows the lower-bound weekly care-hours provided by
+                residents aged 65 and over.  Switch the view to deprivation,
+                full-time-plus care or the intersectional signal.
               </p>
             </div>
             <div id="legend" class="legend-card" aria-live="polite"></div>
@@ -127,7 +132,7 @@
                 <select id="care-scene-select">
                   <option value="week">Older carers</option>
                   <option value="deprivation">Deprivation</option>
-                  <option value="heavy">50+ hour care</option>
+                  <option value="heavy">Full-time-plus care</option>
                   <option value="stack">Intersection</option>
                 </select>
               </label>
@@ -147,7 +152,7 @@
             <div class="segmented-control" role="tablist" aria-label="Map scenes">
               <button class="scene-tab is-active" type="button" data-scene="week" role="tab" aria-selected="true">Older carers</button>
               <button class="scene-tab" type="button" data-scene="deprivation" role="tab" aria-selected="false">Deprivation</button>
-              <button class="scene-tab" type="button" data-scene="heavy" role="tab" aria-selected="false">50+ hours</button>
+              <button class="scene-tab" type="button" data-scene="heavy" role="tab" aria-selected="false">Full-time+</button>
               <button class="scene-tab" type="button" data-scene="stack" role="tab" aria-selected="false">Intersection</button>
             </div>
 
@@ -163,7 +168,7 @@
 
             <div class="map-overlay-stack">
               <div class="map-note" id="height-note">
-                Taller wards show more lower-bound weekly care-hours from older carers.
+                Colour shows the lower-bound weekly care-hours from older carers.
               </div>
               <div class="map-readout" id="map-readout" aria-live="polite">
                 <p class="map-readout-label" id="map-readout-label">Start point</p>
@@ -200,11 +205,8 @@
                 </p>
                 <p class="story-progress" id="story-progress">Use the controls or hover the map to take over.</p>
               </article>
-              <div class="map-control-cluster" aria-label="Map movement controls">
+              <div class="map-control-cluster" aria-label="Story controls">
                 <button class="story-button story-primary" id="story-toggle" type="button">Tell the story</button>
-                <button class="story-button" id="rotate-left" type="button">Rotate left</button>
-                <button class="story-button" id="rotate-right" type="button">Rotate right</button>
-                <button class="story-button" id="relief-toggle" type="button">Flat map</button>
               </div>
             </div>
           </div>
@@ -305,7 +307,7 @@
     </footer>
 
     <script src="https://unpkg.com/maplibre-gl@5.17.0/dist/maplibre-gl.js"></script>
-    <script src="scripts/app.js?v=20260704-raised-map"></script>
+    <script src="scripts/app.js?v=20260704-flat-care"></script>
     <script src="/assets/site-lockdown.js?v=20260704"></script>
   </body>
 </html>
