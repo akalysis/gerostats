@@ -19,9 +19,9 @@ HTML directly.  After deployment, attach the domain `gerostats.co.uk` in Vercel.
 - `/writing/` is the writing index.
 - `/stories/metro-life-expectancy/` hosts the Metro data story.
 - `/stories/hidden-week-care/` hosts the unpaid-care interactive map.
-- `/remotion/hidden-week/` contains the Remotion source for the Hidden Week
-  animated walkthrough.  Run `npm install` once in that folder, then
-  `npm run render` to regenerate `/assets/stories/hidden-week-story.mp4`.
+- The animation source folder contains the Hidden Week guided animation.
+  Run `npm install` once in that folder, then `npm run render` to regenerate
+  `/assets/stories/hidden-week-story.mp4`.
 - `/about/` is the author page.
 
 ## MathJax

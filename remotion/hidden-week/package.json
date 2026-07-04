@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "render": "remotion render src/index.ts HiddenWeek ../../assets/stories/hidden-week-story.mp4 --codec=h264 --crf=20 --pixel-format=yuv420p && ffmpeg -y -i ../../assets/stories/hidden-week-story.mp4 -an -c:v copy ../../assets/stories/hidden-week-story.noaudio.mp4 && mv ../../assets/stories/hidden-week-story.noaudio.mp4 ../../assets/stories/hidden-week-story.mp4",
-    "still": "remotion still src/index.ts HiddenWeek out/preview.png --frame=520"
+    "still": "remotion still src/index.ts HiddenWeek out/preview.png --frame=1200"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.359",

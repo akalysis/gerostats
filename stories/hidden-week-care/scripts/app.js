@@ -7,6 +7,8 @@ const sceneMetrics = document.querySelector("#scene-metrics");
 const rankPanel = document.querySelector("#rank-panel");
 const mapOverlayList = document.querySelector("#map-overlay-list");
 const sceneTabs = Array.from(document.querySelectorAll(".scene-tab"));
+const focusButtons = Array.from(document.querySelectorAll("[data-focus]"));
+const zoomButtons = Array.from(document.querySelectorAll("[data-zoom]"));
 
 const formatNumber = new Intl.NumberFormat("en-GB");
 const formatOne = new Intl.NumberFormat("en-GB", {
@@ -27,152 +29,185 @@ const deprivationColours = {
   10: "#3d536f",
 };
 
+const focusConfig = {
+  all: { label: "All" },
+  walker: { ward: "Walker", lad: "Newcastle upon Tyne" },
+  redhill: { ward: "Redhill", lad: "Sunderland" },
+  castle: { ward: "Castle", lad: "Sunderland" },
+  "north-jesmond": { ward: "North Jesmond", lad: "Newcastle upon Tyne" },
+  coast: {
+    label: "Coast",
+    wards: new Set([
+      "Beacon and Bents",
+      "Cullercoats & Whitley Bay South",
+      "Monkseaton",
+      "North Shields",
+      "St Mary's",
+      "Tynemouth",
+      "Whitley Bay North",
+      "Whitburn and Marsden",
+    ]),
+  },
+};
+
 const state = {
   geo: null,
   wards: null,
   summary: null,
   scene: "week",
+  focus: "all",
   projection: null,
   path: null,
   width: 0,
   height: 0,
+  transform: d3.zoomIdentity,
 };
 
-const mapLayer = svg.append("g").attr("class", "map-layer");
-const pulseLayer = svg.append("g").attr("class", "pulse-layer");
-const bubbleLayer = svg.append("g").attr("class", "bubble-layer");
-const labelLayer = svg.append("g").attr("class", "label-layer");
+const viewportLayer = svg.append("g").attr("class", "map-viewport");
+const shadowLayer = viewportLayer.append("g").attr("class", "shadow-layer");
+const mapLayer = viewportLayer.append("g").attr("class", "map-layer");
+const outlineLayer = viewportLayer.append("g").attr("class", "outline-layer");
+const columnLayer = viewportLayer.append("g").attr("class", "column-layer");
+const labelLayer = viewportLayer.append("g").attr("class", "label-layer");
 
-function formatMillions(value) {
-  return `${(value / 1_000_000).toFixed(2)} million`;
+let zoomBehaviour = null;
+
+function displayLad(lad) {
+  return lad.replace("Newcastle upon Tyne", "Newcastle");
 }
 
 function wardName(ward) {
-  return `${ward.ward}, ${ward.lad.replace("Newcastle upon Tyne", "Newcastle")}`;
+  return `${ward.ward}, ${displayLad(ward.lad)}`;
+}
+
+function olderSummary() {
+  return state.summary.older_carers;
+}
+
+function formatThousands(value) {
+  return formatNumber.format(Math.round(value));
 }
 
 function sceneMetric(ward) {
-  if (state.scene === "heavy") return ward.heavy_care_pct;
+  if (state.scene === "heavy") return ward.older_heavy_care_pct;
   if (state.scene === "deprivation") return 11 - ward.imd_decile_mean;
-  if (state.scene === "stack") return ward.stack_score;
-  return ward.minimum_hours_per_100;
+  if (state.scene === "stack") return ward.older_stack_score;
+  return ward.older_minimum_hours_per_100_65plus;
 }
 
 function sceneUnit() {
-  if (state.scene === "heavy") return "% reporting 50+ hours";
-  if (state.scene === "deprivation") return "IMD deprivation";
-  if (state.scene === "stack") return "stacked pressure score";
-  return "minimum hours per 100 residents aged 5+";
+  if (state.scene === "heavy") return "% of residents aged 65+ reporting 50+ hours";
+  if (state.scene === "deprivation") return "IMD deprivation pressure";
+  if (state.scene === "stack") return "older-care pressure score";
+  return "minimum hours per 100 residents aged 65+";
 }
 
-function circleValueLabel(ward) {
-  if (state.scene === "heavy") return `${formatOne.format(ward.heavy_care_pct)}%`;
-  if (state.scene === "deprivation") return `D${ward.imd_decile}`;
-  if (state.scene === "stack") return `${formatOne.format(ward.minimum_hours_per_100)} hrs`;
-  return `${formatOne.format(ward.minimum_hours_per_100)} hrs`;
+function valueLabel(ward) {
+  if (state.scene === "heavy") return `${formatOne.format(ward.older_heavy_care_pct)}%`;
+  if (state.scene === "deprivation") return `D${formatOne.format(ward.imd_decile_mean)}`;
+  if (state.scene === "stack") return `${formatOne.format(ward.older_minimum_hours_per_100_65plus)} hrs`;
+  return `${formatOne.format(ward.older_minimum_hours_per_100_65plus)} hrs`;
 }
 
 function sceneCopy(summary) {
-  const topWard = summary.highest_ward_hours[0];
-  const topStack = summary.highest_ward_stack[0];
+  const older = summary.older_carers;
+  const topWard = older.highest_older_ward_hours[0];
+  const topStack = older.highest_older_ward_stack[0];
   return {
     week: {
-      label: "Care burden by named area",
-      title: `${topWard.ward}, ${topWard.lad}: ${formatOne.format(topWard.minimum_hours_per_100)} minimum unpaid care-hours per 100 residents.`,
+      label: "Older carers by named area",
+      title: `${formatThousands(older.total_older_carers)} people aged 65+ provide unpaid care.`,
       text:
-        "This view answers the basic question first: which named areas are carrying the greatest unpaid-care burden?  Bigger and darker circles mean more minimum unpaid care-hours per 100 residents aged 5 and over each week.",
+        "The raised map shows the minimum weekly care-hours provided by older people, standardised per 100 residents aged 65 and over.  Taller and brighter places carry more of that hidden week.",
       metrics: [
         {
-          value: formatMillions(summary.total_minimum_weekly_care_hours),
-          label: "minimum unpaid care-hours across Tyne and Wear each week",
+          value: formatThousands(older.total_older_minimum_weekly_care_hours),
+          label: "minimum care-hours provided by people aged 65+ each week",
         },
         {
-          value: formatNumber.format(summary.minimum_full_time_equivalent_37_5h),
-          label: "37.5-hour working weeks, every week",
+          value: `${formatOne.format(older.older_carer_pct)}%`,
+          label: "of residents aged 65+ provide unpaid care",
         },
         {
-          value: `${formatOne.format(summary.carer_pct)}%`,
-          label: "of residents aged 5+ providing unpaid care",
+          value: `${formatOne.format(older.older_minimum_hours_per_100_65plus)}`,
+          label: "minimum care-hours per 100 residents aged 65+",
         },
       ],
-      ranks: summary.highest_ward_hours,
-      rankLabel: "Highest ward-level unpaid-care burden",
-      valueKey: "minimum_hours_per_100",
+      ranks: older.highest_older_ward_hours,
+      rankLabel: "Highest older-carer burden",
+      valueKey: "older_minimum_hours_per_100_65plus",
       valueSuffix: " hrs per 100",
     },
     deprivation: {
       label: "Deprivation underneath",
-      title: "High care burden sits heavily in deprived places.",
+      title: "The heaviest older-care weeks sit closer to deprivation.",
       text:
-        "The circles still show named wards, but the colour now follows deprivation.  D1 means the most deprived 10% of neighbourhoods in England.",
+        "The map height still shows older people providing care.  The colour now follows deprivation.  D1 means the most deprived 10% of neighbourhoods in England.",
       metrics: [
         {
-          value: `${formatOne.format(summary.deprived_d1_d2_mean_hours_per_100)}`,
-          label: "minimum hours per 100 residents in D1/D2 areas",
+          value: `D${formatOne.format(older.high_fifth.decile_mean)}`,
+          label: "average deprivation decile in the highest older-care fifth",
         },
         {
-          value: `${formatOne.format(summary.least_deprived_d9_d10_mean_hours_per_100)}`,
-          label: "minimum hours per 100 residents in D9/D10 areas",
+          value: `D${formatOne.format(older.low_fifth.decile_mean)}`,
+          label: "average deprivation decile in the lowest older-care fifth",
         },
         {
-          value: `${formatOne.format(
-            summary.deprived_d1_d2_mean_hours_per_100 -
-              summary.least_deprived_d9_d10_mean_hours_per_100,
-          )}`,
-          label: "extra minimum hours per 100 residents in the poorer areas",
+          value: `${formatOne.format(older.high_fifth.hours - older.low_fifth.hours)}`,
+          label: "extra minimum hours per 100 residents aged 65+",
         },
       ],
-      ranks: summary.highest_ward_hours,
+      ranks: older.highest_older_ward_hours,
       rankLabel: "Care burden remains the anchor",
-      valueKey: "minimum_hours_per_100",
+      valueKey: "older_minimum_hours_per_100_65plus",
       valueSuffix: " hrs per 100",
     },
     heavy: {
       label: "50+ hours a week",
-      title: `${formatNumber.format(summary.total_heavy_carers)} people report 50+ hours of unpaid care a week.`,
+      title: `${formatThousands(older.total_older_heavy_carers)} older carers report 50+ hours a week.`,
       text:
-        "This is the group reporting care at a level that can swallow work, sleep, money, health and ordinary time.  Bigger circles show wards where this is more common.",
+        "This is care at a level that can swallow sleep, money, health and ordinary time.  Height and columns now emphasise where 50+ hour care among people aged 65 and over is most visible.",
       metrics: [
         {
-          value: `${formatOne.format(summary.heavy_care_pct)}%`,
-          label: "of residents aged 5+ report 50+ hours unpaid care",
+          value: `${formatOne.format(older.older_heavy_care_pct)}%`,
+          label: "of residents aged 65+ report 50+ hours unpaid care",
         },
         {
-          value: `${formatOne.format(summary.deprived_d1_d2_mean_heavy_care_pct)}%`,
-          label: "average in D1/D2 areas",
+          value: `${formatOne.format(older.high_fifth.heavy_pct)}%`,
+          label: "average in the highest older-care fifth",
         },
         {
-          value: `${formatOne.format(summary.least_deprived_d9_d10_mean_heavy_care_pct)}%`,
-          label: "average in D9/D10 areas",
+          value: `${formatOne.format(older.low_fifth.heavy_pct)}%`,
+          label: "average in the lowest older-care fifth",
         },
       ],
-      ranks: summary.highest_ward_heavy_care,
-      rankLabel: "Highest share reporting 50+ hours",
-      valueKey: "heavy_care_pct",
+      ranks: older.highest_older_ward_heavy_care,
+      rankLabel: "Highest 50+ hour older-care share",
+      valueKey: "older_heavy_care_pct",
       valueSuffix: "%",
     },
     stack: {
       label: "Where pressures stack",
-      title: `${topStack.ward}, ${topStack.lad}: care, deprivation, poor health and disability stack together.`,
+      title: `${topStack.ward}, ${displayLad(topStack.lad)}: older care, deprivation, poor health and disability stack together.`,
       text:
-        "This view highlights named wards that sit high across unpaid care-hours, 50+ hour care, deprivation, bad or very bad health, and disability limited a lot.",
+        "This view highlights wards that sit high across older unpaid care-hours, 50+ hour older care, deprivation, bad or very bad health, and disability limited a lot.",
       metrics: [
         {
-          value: `${formatOne.format(topStack.minimum_hours_per_100)}`,
-          label: `minimum hours per 100 residents in ${topStack.ward}`,
+          value: `${formatOne.format(topStack.older_minimum_hours_per_100_65plus)}`,
+          label: `minimum hours per 100 residents aged 65+ in ${topStack.ward}`,
         },
         {
-          value: `${formatOne.format(topStack.heavy_care_pct)}%`,
-          label: "50+ hour unpaid care in the highest stacked ward",
+          value: `${formatOne.format(topStack.older_heavy_care_pct)}%`,
+          label: "50+ hour older care in the highest stacked ward",
         },
         {
-          value: `D${topStack.imd_decile}`,
-          label: "Index of Multiple Deprivation decile for the highest stacked ward",
+          value: `D${formatOne.format(topStack.imd_decile_mean)}`,
+          label: "average deprivation decile for the highest stacked ward",
         },
       ],
-      ranks: summary.highest_ward_stack,
-      rankLabel: "Highest stacked pressure",
-      valueKey: "minimum_hours_per_100",
+      ranks: older.highest_older_ward_stack,
+      rankLabel: "Highest stacked older-care pressure",
+      valueKey: "older_minimum_hours_per_100_65plus",
       valueSuffix: " hrs per 100",
     },
   };
@@ -180,50 +215,68 @@ function sceneCopy(summary) {
 
 function fillSmallArea(properties, scales) {
   if (state.scene === "deprivation") {
-    return deprivationColours[properties.imd_decile] || "#d3d5d1";
+    return deprivationColours[properties.imd_decile] || "#334155";
   }
   if (state.scene === "heavy") {
-    return d3.interpolateRgb("#edf4ef", "#b4232a")(scales.smallHeavy(properties.heavy_care_pct));
+    return d3.interpolateRgb("#0f172a", "#bef264")(scales.smallOlderHeavy(properties.older_heavy_care_pct));
   }
   if (state.scene === "stack") {
-    return d3.interpolateRgb("#eef1ed", "#7f1620")(scales.smallStack(properties.stack_score));
+    return d3.interpolateRgb("#0f172a", "#a3e635")(scales.smallOlderStack(properties.older_stack_score));
   }
-  return d3.interpolateRgb("#edf4ef", "#b4232a")(scales.smallHours(properties.minimum_hours_per_100));
+  return d3.interpolateRgb("#0f172a", "#2dd4bf")(scales.smallOlderHours(properties.older_minimum_hours_per_100_65plus));
 }
 
 function fillWard(ward, scales) {
   if (state.scene === "deprivation") {
-    return deprivationColours[ward.imd_decile] || "#d3d5d1";
+    return deprivationColours[Math.round(ward.imd_decile_mean)] || "#334155";
   }
   if (state.scene === "heavy") {
-    return d3.interpolateRgb("#f2e8c7", "#b4232a")(scales.wardHeavy(ward.heavy_care_pct));
+    return d3.interpolateRgb("#38bdf8", "#bef264")(scales.wardOlderHeavy(ward.older_heavy_care_pct));
   }
   if (state.scene === "stack") {
-    return d3.interpolateRgb("#f2e8c7", "#8f1d22")(scales.wardStack(ward.stack_score));
+    return d3.interpolateRgb("#2dd4bf", "#a3e635")(scales.wardOlderStack(ward.older_stack_score));
   }
-  return d3.interpolateRgb("#f2e8c7", "#b4232a")(scales.wardHours(ward.minimum_hours_per_100));
+  return d3.interpolateRgb("#38bdf8", "#a3e635")(scales.wardOlderHours(ward.older_minimum_hours_per_100_65plus));
 }
 
 function makeScales() {
   const small = state.geo.features.map((feature) => feature.properties);
   const wards = state.wards;
+  const clampScale = (values) => d3.scaleLinear().domain(d3.extent(values)).range([0, 1]).clamp(true);
+
   return {
-    smallHours: d3.scaleLinear().domain(d3.extent(small, (d) => d.minimum_hours_per_100)).range([0, 1]),
-    smallHeavy: d3.scaleLinear().domain(d3.extent(small, (d) => d.heavy_care_pct)).range([0, 1]),
-    smallStack: d3.scaleLinear().domain(d3.extent(small, (d) => d.stack_score)).range([0, 1]),
-    wardHours: d3.scaleLinear().domain(d3.extent(wards, (d) => d.minimum_hours_per_100)).range([0, 1]),
-    wardHeavy: d3.scaleLinear().domain(d3.extent(wards, (d) => d.heavy_care_pct)).range([0, 1]),
-    wardStack: d3.scaleLinear().domain(d3.extent(wards, (d) => d.stack_score)).range([0, 1]),
-    radiusHours: d3.scaleSqrt().domain(d3.extent(wards, (d) => d.minimum_hours_per_100)).range([6, state.width < 600 ? 19 : 30]),
-    radiusHeavy: d3.scaleSqrt().domain(d3.extent(wards, (d) => d.heavy_care_pct)).range([6, state.width < 600 ? 19 : 30]),
-    radiusStack: d3.scaleSqrt().domain(d3.extent(wards, (d) => d.stack_score)).range([6, state.width < 600 ? 19 : 30]),
+    smallOlderHours: clampScale(small.map((d) => d.older_minimum_hours_per_100_65plus)),
+    smallOlderHeavy: clampScale(small.map((d) => d.older_heavy_care_pct)),
+    smallOlderStack: clampScale(small.map((d) => d.older_stack_score)),
+    wardOlderHours: clampScale(wards.map((d) => d.older_minimum_hours_per_100_65plus)),
+    wardOlderHeavy: clampScale(wards.map((d) => d.older_heavy_care_pct)),
+    wardOlderStack: clampScale(wards.map((d) => d.older_stack_score)),
+    columnOlderHours: d3
+      .scaleSqrt()
+      .domain(d3.extent(wards, (d) => d.older_minimum_hours_per_100_65plus))
+      .range([10, state.width < 650 ? 44 : 82]),
+    columnOlderHeavy: d3
+      .scaleSqrt()
+      .domain(d3.extent(wards, (d) => d.older_heavy_care_pct))
+      .range([10, state.width < 650 ? 44 : 82]),
+    columnOlderStack: d3
+      .scaleSqrt()
+      .domain(d3.extent(wards, (d) => d.older_stack_score))
+      .range([10, state.width < 650 ? 44 : 82]),
   };
 }
 
-function radiusForWard(ward, scales) {
-  if (state.scene === "heavy") return scales.radiusHeavy(ward.heavy_care_pct);
-  if (state.scene === "stack") return scales.radiusStack(ward.stack_score);
-  return scales.radiusHours(ward.minimum_hours_per_100);
+function smallAreaLift(properties, scales) {
+  const maxLift = state.width < 650 ? 15 : 26;
+  if (state.scene === "heavy") return 2 + scales.smallOlderHeavy(properties.older_heavy_care_pct) * maxLift;
+  if (state.scene === "stack") return 2 + scales.smallOlderStack(properties.older_stack_score) * maxLift;
+  return 2 + scales.smallOlderHours(properties.older_minimum_hours_per_100_65plus) * maxLift;
+}
+
+function columnHeight(ward, scales) {
+  if (state.scene === "heavy") return scales.columnOlderHeavy(ward.older_heavy_care_pct);
+  if (state.scene === "stack") return scales.columnOlderStack(ward.older_stack_score);
+  return scales.columnOlderHours(ward.older_minimum_hours_per_100_65plus);
 }
 
 function wardPoint(ward) {
@@ -233,25 +286,32 @@ function wardPoint(ward) {
 function topWards() {
   const key =
     state.scene === "heavy"
-      ? "heavy_care_pct"
+      ? "older_heavy_care_pct"
       : state.scene === "stack"
-        ? "stack_score"
-        : "minimum_hours_per_100";
-  return [...state.wards].sort((a, b) => b[key] - a[key]).slice(0, state.width < 650 ? 5 : 8);
+        ? "older_stack_score"
+        : "older_minimum_hours_per_100_65plus";
+  const limit = state.width < 650 ? 5 : 8;
+  const ranked = [...state.wards].sort((a, b) => b[key] - a[key]).slice(0, limit);
+  const focused = focusedWards();
+  for (const ward of focused) {
+    if (!ranked.some((row) => row.ward_code === ward.ward_code)) ranked.push(ward);
+  }
+  return ranked;
 }
 
 function tooltipHtml(ward) {
   return `
     <strong>${wardName(ward)}</strong>
-    <span>${formatOne.format(ward.minimum_hours_per_100)} minimum care-hours per 100 residents aged 5+</span><br>
-    <span>${formatNumber.format(ward.minimum_weekly_care_hours)} minimum care-hours/week</span><br>
-    <span>${formatOne.format(ward.carer_pct)}% provide unpaid care</span><br>
-    <span>${formatOne.format(ward.heavy_care_pct)}% report 50+ hours/week</span><br>
-    <span>IMD D${ward.imd_decile} · ${formatOne.format(ward.bad_very_bad_health_pct)}% bad or very bad health</span>
+    <span>${formatOne.format(ward.older_minimum_hours_per_100_65plus)} minimum older-care hours per 100 residents aged 65+</span><br>
+    <span>${formatNumber.format(ward.older_carers)} carers aged 65+</span><br>
+    <span>${formatNumber.format(ward.older_minimum_weekly_care_hours)} minimum older-care hours/week</span><br>
+    <span>${formatOne.format(ward.older_heavy_care_pct)}% of residents aged 65+ report 50+ hours/week</span><br>
+    <span>D${formatOne.format(ward.imd_decile_mean)} · ${formatOne.format(ward.bad_very_bad_health_pct)}% bad or very bad health</span>
   `;
 }
 
 function showTooltip(event, ward) {
+  if (!ward) return;
   tooltip.innerHTML = tooltipHtml(ward);
   tooltip.hidden = false;
   const left = Math.min(event.clientX + 16, window.innerWidth - tooltip.offsetWidth - 12);
@@ -285,13 +345,10 @@ function updatePanel() {
       ${copy.ranks
         .slice(0, 8)
         .map((row) => {
-          const value =
-            copy.valueKey === "heavy_care_pct"
-              ? formatOne.format(row[copy.valueKey])
-              : formatOne.format(row[copy.valueKey]);
+          const value = formatOne.format(row[copy.valueKey]);
           return `
             <li>
-              <span>${row.ward}, ${row.lad.replace("Newcastle upon Tyne", "Newcastle")}</span>
+              <span>${row.ward}, ${displayLad(row.lad)}</span>
               <strong>${value}${copy.valueSuffix}</strong>
             </li>
           `;
@@ -306,7 +363,7 @@ function updatePanel() {
         .slice(0, 5)
         .map((row) => {
           const value = formatOne.format(row[copy.valueKey]);
-          const suffix = copy.valueKey === "heavy_care_pct" ? "%" : " hrs/100";
+          const suffix = copy.valueKey === "older_heavy_care_pct" ? "%" : " hrs/100";
           return `
             <li>
               <span>${row.ward}</span>
@@ -327,114 +384,182 @@ function updateTabs() {
   });
 }
 
-function updateSmallAreas(scales) {
-  mapLayer
-    .selectAll("path")
-    .data(state.geo.features, (feature) => feature.properties.lsoa_code)
-    .join("path")
-    .attr("class", "lsoa")
-    .attr("d", state.path)
-    .transition()
-    .duration(360)
-    .attr("fill", (feature) => fillSmallArea(feature.properties, scales))
-    .attr("opacity", state.scene === "deprivation" ? 0.6 : 0.38);
-}
-
-function updateBubbles(scales) {
-  const bubbles = bubbleLayer
-    .selectAll("g")
-    .data(state.wards, (ward) => ward.ward_code)
-    .join((enter) => {
-      const group = enter
-        .append("g")
-        .attr("class", "ward-bubble")
-        .on("mousemove", (event, ward) => showTooltip(event, ward))
-        .on("mouseleave", hideTooltip);
-      group.append("circle").attr("class", "bubble-halo");
-      group.append("circle").attr("class", "bubble");
-      group.append("text").attr("class", "bubble-value");
-      return group;
-    });
-
-  bubbles.each(function updateBubble(ward) {
-    const [x, y] = wardPoint(ward);
-    const radius = radiusForWard(ward, scales);
-    const active =
-      (state.scene === "heavy" && ward.high_heavy_care) ||
-      (state.scene === "stack" && ward.high_stack) ||
-      (state.scene !== "heavy" && state.scene !== "stack" && ward.high_burden);
-
-    const group = d3.select(this);
-    group
-      .transition()
-      .duration(360)
-      .attr("transform", `translate(${x},${y})`)
-      .attr("opacity", state.scene === "stack" && !ward.high_stack ? 0.52 : 0.96);
-
-    group
-      .select(".bubble-halo")
-      .transition()
-      .duration(360)
-      .attr("r", radius + 5)
-      .attr("fill", active ? "rgba(180, 35, 42, 0.18)" : "rgba(255, 255, 255, 0.52)");
-
-    group
-      .select(".bubble")
-      .transition()
-      .duration(360)
-      .attr("r", radius)
-      .attr("fill", fillWard(ward, scales))
-      .attr("stroke", active ? "#111415" : "rgba(17,20,21,0.35)")
-      .attr("stroke-width", active ? 2.2 : 1);
-
-    group
-      .select(".bubble-value")
-      .transition()
-      .duration(360)
-      .attr("y", 4)
-      .attr("opacity", active && radius > 17 ? 1 : 0)
-      .text(circleValueLabel(ward));
+function updateFocusButtons() {
+  focusButtons.forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.focus === state.focus);
   });
 }
 
-function updatePulses(scales) {
-  const pulseData = topWards().slice(0, state.width < 650 ? 5 : 8);
-  const pulses = pulseLayer.selectAll("circle").data(pulseData, (ward) => ward.ward_code);
+function wardForFeature(feature) {
+  return state.wards.find(
+    (ward) => ward.ward === feature.properties.ward && ward.lad === feature.properties.lad,
+  );
+}
 
-  pulses.exit().remove();
+function focusMatchesFeature(feature) {
+  if (state.focus === "all") return false;
+  const config = focusConfig[state.focus];
+  if (!config) return false;
+  if (config.ward) {
+    return feature.properties.ward === config.ward && feature.properties.lad === config.lad;
+  }
+  if (config.wards) return config.wards.has(feature.properties.ward);
+  return false;
+}
 
-  const entered = pulses.enter().append("circle").attr("class", "pulse-ring");
-  entered
-    .merge(pulses)
-    .attr("cx", (ward) => wardPoint(ward)[0])
-    .attr("cy", (ward) => wardPoint(ward)[1])
-    .attr("r", (ward) => radiusForWard(ward, scales) + 5);
+function focusMatchesWard(ward) {
+  if (state.focus === "all") return false;
+  const config = focusConfig[state.focus];
+  if (!config) return false;
+  if (config.ward) return ward.ward === config.ward && ward.lad === config.lad;
+  if (config.wards) return config.wards.has(ward.ward);
+  return false;
+}
+
+function focusedWards() {
+  if (state.focus === "all") return [];
+  return state.wards.filter(focusMatchesWard);
+}
+
+function isHighFeature(feature) {
+  if (focusMatchesFeature(feature)) return true;
+  if (state.scene === "heavy") return feature.properties.high_older_heavy_care;
+  if (state.scene === "stack") return feature.properties.high_older_stack;
+  return feature.properties.high_older_burden;
+}
+
+function isHighWard(ward) {
+  if (focusMatchesWard(ward)) return true;
+  if (state.scene === "heavy") return ward.high_older_heavy_care;
+  if (state.scene === "stack") return ward.high_older_stack;
+  return ward.high_older_burden;
+}
+
+function updateSmallAreas(scales) {
+  const shadows = shadowLayer
+    .selectAll("path")
+    .data(state.geo.features, (feature) => feature.properties.lsoa_code);
+
+  shadows
+    .join("path")
+    .attr("class", "lsoa-shadow")
+    .attr("d", state.path)
+    .transition()
+    .duration(420)
+    .attr("transform", (feature) => {
+      const lift = smallAreaLift(feature.properties, scales);
+      return `translate(${lift * 0.45},${lift * 0.72})`;
+    })
+    .attr("opacity", (feature) => (isHighFeature(feature) ? 0.46 : 0.2));
+
+  const areas = mapLayer
+    .selectAll("path")
+    .data(state.geo.features, (feature) => feature.properties.lsoa_code);
+
+  areas
+    .join((enter) =>
+      enter
+        .append("path")
+        .on("mousemove", (event, feature) => showTooltip(event, wardForFeature(feature)))
+        .on("mouseleave", hideTooltip),
+    )
+    .attr("class", (feature) => `lsoa${isHighFeature(feature) ? " is-raised" : ""}`)
+    .attr("d", state.path)
+    .transition()
+    .duration(420)
+    .attr("transform", (feature) => `translate(0,${-smallAreaLift(feature.properties, scales)})`)
+    .attr("fill", (feature) => fillSmallArea(feature.properties, scales))
+    .attr("opacity", (feature) => (isHighFeature(feature) ? 0.92 : state.scene === "deprivation" ? 0.64 : 0.58));
+}
+
+function updateOutlines(scales) {
+  const outlineData = state.geo.features.filter(isHighFeature);
+  const outlines = outlineLayer.selectAll("path").data(outlineData, (feature) => feature.properties.lsoa_code);
+
+  outlines.exit().remove();
+
+  outlines
+    .join("path")
+    .attr("class", "lsoa-outline")
+    .attr("d", state.path)
+    .transition()
+    .duration(420)
+    .attr("transform", (feature) => `translate(0,${-smallAreaLift(feature.properties, scales)})`);
+}
+
+function updateWardColumns(scales) {
+  const columns = columnLayer.selectAll("g").data(state.wards, (ward) => ward.ward_code);
+
+  columns.exit().remove();
+
+  const entered = columns
+    .enter()
+    .append("g")
+    .attr("class", "ward-column")
+    .on("mousemove", (event, ward) => showTooltip(event, ward))
+    .on("mouseleave", hideTooltip);
+
+  entered.append("rect").attr("class", "ward-column-stem");
+  entered.append("path").attr("class", "ward-column-cap");
+
+  const merged = entered.merge(columns);
+
+  merged.each(function updateColumn(ward) {
+    const [x, y] = wardPoint(ward);
+    const height = columnHeight(ward, scales);
+    const high = isHighWard(ward);
+    const group = d3.select(this);
+
+    group
+      .transition()
+      .duration(420)
+      .attr("transform", `translate(${x},${y})`)
+      .attr("opacity", high ? 0.96 : state.width < 650 ? 0.08 : 0.2);
+
+    group
+      .select(".ward-column-stem")
+      .transition()
+      .duration(420)
+      .attr("x", high ? -4.5 : -2.5)
+      .attr("y", -height)
+      .attr("width", high ? 9 : 5)
+      .attr("height", height)
+      .attr("fill", fillWard(ward, scales));
+
+    group
+      .select(".ward-column-cap")
+      .transition()
+      .duration(420)
+      .attr("d", `M ${high ? -11 : -7} ${-height} L 0 ${-height - (high ? 8 : 5)} L ${high ? 11 : 7} ${-height} L 0 ${-height + (high ? 8 : 5)} Z`)
+      .attr("fill", fillWard(ward, scales));
+  });
 }
 
 function updateLabels(scales) {
   const labels = topWards();
   const nodes = labels.map((ward) => {
     const [x, y] = wardPoint(ward);
+    const height = columnHeight(ward, scales);
     return {
       ...ward,
       anchorX: x,
-      anchorY: y,
+      anchorY: y - height,
       x,
-      y: y - radiusForWard(ward, scales) - 12,
-      radius: radiusForWard(ward, scales),
+      y: y - height - 20,
+      height,
     };
   });
 
   d3.forceSimulation(nodes)
-    .force("x", d3.forceX((d) => d.anchorX).strength(0.16))
-    .force("y", d3.forceY((d) => d.anchorY - d.radius - 24).strength(0.22))
-    .force("collide", d3.forceCollide(state.width < 650 ? 28 : 46))
+    .force("x", d3.forceX((d) => d.anchorX).strength(0.17))
+    .force("y", d3.forceY((d) => d.anchorY - 26).strength(0.23))
+    .force("collide", d3.forceCollide(state.width < 650 ? 34 : 54))
     .stop()
     .tick(90);
 
   nodes.forEach((node) => {
-    node.x = Math.max(42, Math.min(state.width - 42, node.x));
-    node.y = Math.max(28, Math.min(state.height - 52, node.y));
+    node.x = Math.max(46, Math.min(state.width - 46, node.x));
+    node.y = Math.max(30, Math.min(state.height - 56, node.y));
   });
 
   const labelGroups = labelLayer.selectAll("g").data(nodes, (ward) => ward.ward_code);
@@ -449,27 +574,87 @@ function updateLabels(scales) {
 
   merged.each(function updateLabel(ward) {
     const group = d3.select(this);
-    const text = `${ward.ward} ${circleValueLabel(ward)}`;
-    const labelWidth = Math.max(78, text.length * 6.5 + 16);
-    const labelHeight = 24;
+    const text = `${ward.ward} ${valueLabel(ward)}`;
+    const labelWidth = Math.max(86, text.length * 6.5 + 18);
+    const labelHeight = 25;
 
-    group.select(".label-line")
+    group
+      .select(".label-line")
       .attr("x1", ward.anchorX)
       .attr("y1", ward.anchorY)
       .attr("x2", ward.x)
       .attr("y2", ward.y);
 
-    group.select(".label-bg")
+    group
+      .select(".label-bg")
       .attr("x", ward.x - labelWidth / 2)
       .attr("y", ward.y - labelHeight / 2)
       .attr("width", labelWidth)
       .attr("height", labelHeight);
 
-    group.select(".ward-label")
-      .attr("x", ward.x)
-      .attr("y", ward.y + 4)
-      .text(text);
+    group.select(".ward-label").attr("x", ward.x).attr("y", ward.y + 4).text(text);
   });
+}
+
+function setupZoom() {
+  if (zoomBehaviour) return;
+  zoomBehaviour = d3
+    .zoom()
+    .scaleExtent([1, 8])
+    .on("zoom", (event) => {
+      state.transform = event.transform;
+      viewportLayer.attr("transform", state.transform);
+    });
+  svg.call(zoomBehaviour).on("dblclick.zoom", null);
+}
+
+function featuresForFocus(focus) {
+  if (focus === "all") return state.geo.features;
+  const config = focusConfig[focus];
+  if (!config) return state.geo.features;
+  if (config.ward) {
+    return state.geo.features.filter(
+      (feature) => feature.properties.ward === config.ward && feature.properties.lad === config.lad,
+    );
+  }
+  if (config.wards) {
+    return state.geo.features.filter((feature) => config.wards.has(feature.properties.ward));
+  }
+  return state.geo.features;
+}
+
+function zoomToFocus(focus) {
+  if (!zoomBehaviour || !state.path) return;
+  const features = featuresForFocus(focus);
+  if (!features.length || focus === "all") {
+    svg.transition().duration(700).call(zoomBehaviour.transform, d3.zoomIdentity);
+    return;
+  }
+
+  const bounds = features.reduce(
+    (acc, feature) => {
+      const [[x0, y0], [x1, y1]] = state.path.bounds(feature);
+      return [
+        [Math.min(acc[0][0], x0), Math.min(acc[0][1], y0)],
+        [Math.max(acc[1][0], x1), Math.max(acc[1][1], y1)],
+      ];
+    },
+    [
+      [Infinity, Infinity],
+      [-Infinity, -Infinity],
+    ],
+  );
+  const dx = bounds[1][0] - bounds[0][0];
+  const dy = bounds[1][1] - bounds[0][1];
+  const cx = (bounds[0][0] + bounds[1][0]) / 2;
+  const cy = (bounds[0][1] + bounds[1][1]) / 2;
+  const scale = Math.max(1, Math.min(7, 0.78 / Math.max(dx / state.width, dy / state.height)));
+  const transform = d3.zoomIdentity
+    .translate(state.width / 2, state.height / 2)
+    .scale(scale)
+    .translate(-cx, -cy);
+
+  svg.transition().duration(900).call(zoomBehaviour.transform, transform);
 }
 
 function renderMap() {
@@ -483,18 +668,20 @@ function renderMap() {
 
   state.projection = d3.geoMercator().fitExtent(
     [
-      [28, 24],
-      [state.width - 28, state.height - 54],
+      [28, 38],
+      [state.width - 28, state.height - 68],
     ],
     state.geo,
   );
   state.path = d3.geoPath(state.projection);
+  setupZoom();
 
   const scales = makeScales();
   updateSmallAreas(scales);
-  updateBubbles(scales);
-  updatePulses(scales);
+  updateOutlines(scales);
+  updateWardColumns(scales);
   updateLabels(scales);
+  viewportLayer.attr("transform", state.transform);
 }
 
 function setScene(scene) {
@@ -504,8 +691,31 @@ function setScene(scene) {
   renderMap();
 }
 
+function setFocus(focus) {
+  state.focus = focus;
+  updateFocusButtons();
+  renderMap();
+  zoomToFocus(focus);
+}
+
 sceneTabs.forEach((button) => {
   button.addEventListener("click", () => setScene(button.dataset.scene));
+});
+
+focusButtons.forEach((button) => {
+  button.addEventListener("click", () => setFocus(button.dataset.focus));
+});
+
+zoomButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (!zoomBehaviour) return;
+    if (button.dataset.zoom === "reset") {
+      setFocus("all");
+      return;
+    }
+    const factor = button.dataset.zoom === "in" ? 1.35 : 0.74;
+    svg.transition().duration(350).call(zoomBehaviour.scaleBy, factor);
+  });
 });
 
 Promise.all([
@@ -518,6 +728,7 @@ Promise.all([
     state.wards = wards;
     state.summary = summary;
     updatePanel();
+    updateFocusButtons();
     renderMap();
   })
   .catch((error) => {

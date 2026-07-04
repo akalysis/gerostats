@@ -33,14 +33,15 @@
         <div class="opening-copy">
           <p class="kicker">Unpaid care across Tyne and Wear</p>
           <p class="story-date"><time datetime="2026-06-09">9 June 2026</time></p>
-          <h1>The hidden week being carried in plain sight.</h1>
+          <h1>The hidden week being carried in <span class="heading-accent">plain sight.</span></h1>
           <p class="lede">
             Across Newcastle, Gateshead, North Tyneside, South Tyneside and Sunderland,
-            Census 2021 shows at least <strong>2.65 million unpaid care-hours</strong>
-            every week.  That is the lower bound, counted cautiously from the hours
-            people reported.  It is not a service rota.  It is people getting someone
-            washed, dressed, fed, medicated, watched over, taken to appointments,
-            settled at night, and held together again the next day.
+            Census 2021 shows <strong>24,107 people aged 65 and over</strong>
+            providing unpaid care across Tyne and Wear.  On a cautious lower-bound
+            count, that is at least <strong>726,492 care-hours</strong> every week.
+            It is older people getting someone washed, dressed, fed, medicated,
+            watched over, taken to appointments, settled at night, and held together
+            again the next day.
           </p>
           <p>
             Some places are not just poorer.  They are doing more care, with less
@@ -48,21 +49,22 @@
           </p>
         </div>
         <div class="opening-stat" aria-label="Headline unpaid care statistic">
-          <span class="stat-number">2.65m</span>
-          <span class="stat-label">minimum unpaid care-hours each week</span>
-          <span class="stat-note">Census 2021, residents aged 5 and over</span>
+          <span class="stat-number">24,107</span>
+          <span class="stat-label">unpaid carers aged 65 and over</span>
+          <span class="stat-note">Census 2021 RM113, Tyne and Wear LSOAs aggregated to wards</span>
         </div>
       </section>
 
       <section class="map-section" id="map" aria-labelledby="map-heading">
         <div class="section-heading">
           <p class="kicker">The map</p>
-          <h2 id="map-heading">Every circle is a named area.  Bigger and darker means more unpaid care.</h2>
+          <h2 id="map-heading">Older carers are carrying a <span class="heading-accent">hidden week.</span></h2>
           <p>
             Start with the animated walkthrough, then use the map to explore the
-            named areas yourself.  Each circle is a ward, built from the
-            small-area Census data underneath.  The figure is minimum unpaid
-            care-hours per 100 residents aged 5 and over each week.
+            named areas yourself.  The raised surface is built from small-area
+            Census data and aggregated to wards.  Height and colour show minimum
+            unpaid care-hours provided by people aged 65 and over, per 100
+            residents aged 65 and over.
           </p>
         </div>
 
@@ -72,33 +74,33 @@
             controls
             playsinline
             preload="metadata"
-            poster="/assets/stories/hidden-week-story-poster.jpg?v=20260704"
+            poster="/assets/stories/hidden-week-story-poster.jpg?v=20260704-oldercare"
             aria-label="Animated walkthrough of unpaid care burden across Tyne and Wear"
           >
-            <source src="/assets/stories/hidden-week-story.mp4?v=20260704" type="video/mp4">
+            <source src="/assets/stories/hidden-week-story.mp4?v=20260704-oldercare" type="video/mp4">
           </video>
           <div class="story-animation-copy">
             <p class="kicker">Animated walkthrough</p>
             <h3 id="animation-heading">Watch the week accumulate.</h3>
             <p>
-              This Remotion story steps through the care clock, the rising ward
-              burden, high and low care places, and the precarious pattern where
-              unpaid care, deprivation, poor health and disability sit together.
+              This guided animation steps through the care clock, the rising ward
+              surface, high and low care places, and the precarious pattern where
+              older unpaid care, deprivation, poor health and disability sit together.
             </p>
             <div class="animation-stat-grid" aria-label="Evidence summary">
               <div class="animation-stat">
-                <strong>D2.6</strong>
-                <span>average deprivation decile in the highest care-burden fifth of wards</span>
+                <strong>D3.0</strong>
+                <span>average deprivation decile in the highest older-care burden fifth of wards</span>
               </div>
               <div class="animation-stat">
-                <strong>9.2%</strong>
-                <span>average bad or very bad health in that highest burden fifth</span>
+                <strong>8.7%</strong>
+                <span>average bad or very bad health in that highest older-care burden fifth</span>
               </div>
             </div>
             <p class="evidence-note">
-              The Census table measures residents providing unpaid care.  It
-              does not identify whether the person receiving care is aged 65 and
-              over, so this is not labelled as older-person care only.
+              This counts people aged 65 and over who provide unpaid care.  It
+              does not identify the age or relationship of the person receiving
+              that care.
             </p>
           </div>
         </div>
@@ -106,17 +108,33 @@
         <div class="map-shell">
           <div class="scene-tabs" role="tablist" aria-label="Map scenes">
             <button class="scene-tab is-active" type="button" data-scene="week" role="tab" aria-selected="true">
-              <span>1</span>Care burden
+              <span>1</span>Older carers
             </button>
             <button class="scene-tab" type="button" data-scene="deprivation" role="tab" aria-selected="false">
               <span>2</span>Deprivation
             </button>
             <button class="scene-tab" type="button" data-scene="heavy" role="tab" aria-selected="false">
-              <span>3</span>50+ hours
+              <span>3</span>Heavy care
             </button>
             <button class="scene-tab" type="button" data-scene="stack" role="tab" aria-selected="false">
               <span>4</span>The stack
             </button>
+          </div>
+
+          <div class="map-controls" aria-label="Map controls">
+            <div class="map-tour-controls" aria-label="Jump to places">
+              <button class="map-control is-active" type="button" data-focus="all">All</button>
+              <button class="map-control" type="button" data-focus="walker">Walker</button>
+              <button class="map-control" type="button" data-focus="redhill">Redhill</button>
+              <button class="map-control" type="button" data-focus="castle">Castle</button>
+              <button class="map-control" type="button" data-focus="north-jesmond">North Jesmond</button>
+              <button class="map-control" type="button" data-focus="coast">Coast</button>
+            </div>
+            <div class="map-zoom-controls" aria-label="Zoom controls">
+              <button class="map-control map-control-icon" type="button" data-zoom="in" aria-label="Zoom in">+</button>
+              <button class="map-control map-control-icon" type="button" data-zoom="out" aria-label="Zoom out">-</button>
+              <button class="map-control map-control-icon" type="button" data-zoom="reset" aria-label="Reset zoom">0</button>
+            </div>
           </div>
 
           <div class="map-stage">
@@ -125,15 +143,16 @@
             <div class="map-overlay-list" id="map-overlay-list" aria-live="polite"></div>
             <div class="map-caption">
               <strong id="map-title">Tyne and Wear ward-level unpaid care burden.</strong>
-              <span id="map-desc">Circles show named wards.  Background areas show the small-area data underneath.</span>
+              <span id="map-desc">Raised areas and columns show older people providing unpaid care.  Scroll or use the buttons to zoom.</span>
             </div>
           </div>
 
           <div class="scene-panel" aria-live="polite">
             <p class="panel-label" id="scene-label">The hidden week</p>
-            <h3 id="scene-title">At least 2.65 million hours every week.</h3>
+            <h3 id="scene-title">24,107 older people providing unpaid care.</h3>
             <p id="scene-text">
-              This is the minimum visible week of unpaid care across Tyne and Wear.
+              This is the minimum visible week of unpaid care provided by
+              people aged 65 and over across Tyne and Wear.
             </p>
             <div class="metric-grid" id="scene-metrics"></div>
             <div class="rank-panel" id="rank-panel"></div>
@@ -142,11 +161,11 @@
           <div class="legend-row" aria-label="Map legend">
             <div>
               <span class="legend-key high"></span>
-              Bigger/darker circle: higher ward burden
+              Taller/brighter area: higher older-care burden
             </div>
             <div>
               <span class="legend-key low"></span>
-              Smaller/lighter circle: lower ward burden
+              Lower/dimmer area: lower older-care burden
             </div>
             <div>
               <span class="legend-key deprived"></span>
@@ -154,7 +173,7 @@
             </div>
             <div>
               <span class="legend-key pulse"></span>
-              Pulse: highest named areas
+              Outline: highest named areas
             </div>
           </div>
         </div>
@@ -163,7 +182,7 @@
       <article class="story" id="story">
         <section>
           <p class="kicker">What this shows</p>
-          <h2>Unpaid care is not evenly shared.</h2>
+          <h2>Unpaid care is <span class="heading-accent">not evenly shared.</span></h2>
           <p>
             The map is not saying that care is a problem.  Care is love, duty,
             reciprocity, family, friendship and survival.  The problem is what happens
@@ -172,19 +191,19 @@
           </p>
           <p>
             In the most deprived fifth of local neighbourhoods here, the minimum
-            unpaid-care burden is about <strong>293 hours per 100 residents aged 5 and
-            over each week</strong>.  In the least deprived fifth, it is about
-            <strong>187 hours</strong>.  That is not a small difference in a week.
+            older-carer burden is about <strong>418 hours per 100 residents aged
+            65 and over each week</strong>.  In the lowest older-care burden fifth,
+            it is about <strong>246 hours</strong>.  That is not a small difference in a week.
             It is a different social load.
           </p>
         </section>
 
         <section>
-          <h2>The public health question is blunt.</h2>
+          <h2>The public health question is <span class="heading-accent">blunt.</span></h2>
           <p>
             What happens to a place when thousands of people are quietly absorbing
             work that would otherwise break the formal care system?  What happens
-            when many of those carers are also living in communities already carrying
+            when many of those older carers are living in communities already carrying
             more disability, poorer health, and fewer resources?
           </p>
           <p>
@@ -198,23 +217,23 @@
       <section class="method" id="method" aria-labelledby="method-heading">
         <div>
           <p class="kicker">Method</p>
-          <h2 id="method-heading">A conservative measure of hidden labour.</h2>
+          <h2 id="method-heading">A cautious count of <span class="heading-accent">hidden labour.</span></h2>
         </div>
         <p>
-          The care-hours metric uses Census 2021 unpaid-care bands at LSOA level.
-          To avoid overclaiming, each band is counted at its lower bound: 1 hour for
-          1-9 hours, 10 for 10-19, 20 for 20-34, 35 for 35-49, and 50 for 50+.
-          This means the total is a minimum estimate, not a maximum.  The public map
-          aggregates those small areas to wards so the burden can be read through
-          named local areas.
+          The older-carer metric uses Census 2021 RM113 at LSOA level.  It counts
+          residents aged 65 and over who provide unpaid care.  To avoid overclaiming,
+          the 19-or-less, 20-to-49 and 50-plus hour bands are counted at 1, 20 and
+          50 hours respectively.  This means the total is a minimum estimate, not a
+          maximum.  The public map aggregates those small areas to wards so the
+          burden can be read through named local areas.
         </p>
         <a class="text-link" href="technical-note/">Read the technical note</a>
       </section>
 
       <section class="sources" aria-labelledby="sources-heading">
-        <h2 id="sources-heading">Sources</h2>
+        <h2 id="sources-heading"><span class="heading-accent">Sources</span></h2>
         <ul>
-          <li><a href="https://www.nomisweb.co.uk/datasets/c2021ts039">Census 2021 TS039: Provision of unpaid care</a></li>
+          <li><a href="https://www.nomisweb.co.uk/datasets/c2021rm113">Census 2021 RM113: Provision of unpaid care by age</a></li>
           <li><a href="https://www.nomisweb.co.uk/datasets/c2021ts037">Census 2021 TS037: General health</a></li>
           <li><a href="https://www.nomisweb.co.uk/datasets/c2021ts038">Census 2021 TS038: Disability</a></li>
           <li><a href="https://www.gov.uk/government/statistics/english-indices-of-deprivation-2025">English Indices of Deprivation 2025</a></li>
@@ -224,7 +243,7 @@
 
       <section class="author" id="author" aria-labelledby="author-heading">
         <p class="kicker">Author</p>
-        <h2 id="author-heading">Andrew Kingston</h2>
+        <h2 id="author-heading">Andrew <span class="heading-accent">Kingston</span></h2>
         <p>
           I am a statistical epidemiologist from the North East.  Gerostats is
           where I can write personally about public health statistics, local
