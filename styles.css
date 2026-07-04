@@ -250,15 +250,24 @@ h3 {
 
 .intro-band {
   display: grid;
-  grid-template-columns: minmax(220px, 0.65fr) minmax(0, 1fr);
-  gap: 2rem;
+  grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(1.5rem, 5vw, 4rem);
   padding: 2.5rem 0 4rem;
   border-bottom: 1px solid var(--line);
 }
 
+.intro-band h2 {
+  max-width: 620px;
+  font-size: clamp(2rem, 3.3vw, 3.6rem);
+  line-height: 1.06;
+}
+
 .intro-band p:last-child {
+  align-self: start;
   max-width: 720px;
-  font-size: 1.2rem;
+  padding-top: 1.05rem;
+  color: var(--ink);
+  font-size: 1.16rem;
 }
 
 .section-head {
