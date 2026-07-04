@@ -308,14 +308,17 @@ h3 {
 }
 
 .intro-copy {
-  align-self: start;
-  padding-top: 0.5rem;
+  align-self: center;
+  justify-self: center;
+  padding-top: 0;
 }
 
 .intro-copy > p {
   max-width: 720px;
+  margin-inline: auto;
   color: #cbd5e1;
   font-size: 1.16rem;
+  text-align: center;
 }
 
 .intro-thread-grid {
