@@ -110,26 +110,50 @@ nav a:focus {
 .hero {
   position: relative;
   isolation: isolate;
-  min-height: clamp(500px, 70svh, 680px);
+  min-height: clamp(440px, 62svh, 620px);
   display: grid;
   align-items: center;
-  padding: clamp(4rem, 8vw, 7rem) clamp(1rem, 4vw, 4rem);
+  padding: clamp(3rem, 6vw, 5rem) clamp(1rem, 4vw, 4rem);
   overflow: hidden;
-  background:
-    linear-gradient(90deg, rgba(16, 18, 23, 0.92) 0%, rgba(16, 18, 23, 0.72) 44%, rgba(16, 18, 23, 0.18) 100%),
-    url("/assets/newcastle-osm-hero-map.png") center right / cover no-repeat;
+  background: #0b0b0e;
   color: var(--white);
 }
 
+.hero::before,
 .hero::after {
   content: "";
   position: absolute;
+  pointer-events: none;
+}
+
+.hero::before {
+  z-index: 1;
+  inset: 0;
+  background:
+    radial-gradient(circle at 78% 18%, rgba(189, 132, 24, 0.16), transparent 34%),
+    linear-gradient(90deg, rgba(16, 18, 23, 0.94) 0%, rgba(16, 18, 23, 0.74) 48%, rgba(16, 18, 23, 0.28) 100%);
+}
+
+.hero::after {
+  z-index: 3;
   inset: auto 0 0;
   height: 10px;
   background: linear-gradient(90deg, var(--red), var(--teal), var(--gold), var(--blue));
 }
 
+.hero-video {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.05) contrast(1.08);
+}
+
 .hero-copy {
+  position: relative;
+  z-index: 2;
   width: min(840px, 100%);
 }
 
@@ -157,7 +181,7 @@ p {
 
 h1 {
   margin-bottom: 1.2rem;
-  font-size: clamp(4.2rem, 13vw, 10rem);
+  font-size: clamp(4rem, 11vw, 8.5rem);
   line-height: 0.85;
   letter-spacing: 0;
 }
@@ -502,9 +526,12 @@ h3 {
     min-height: auto;
     padding-top: 4.5rem;
     padding-bottom: 5rem;
+  }
+
+  .hero::before {
     background:
-      linear-gradient(180deg, rgba(16, 18, 23, 0.92), rgba(16, 18, 23, 0.74)),
-      url("/assets/newcastle-osm-hero-map.png") center / cover no-repeat;
+      linear-gradient(180deg, rgba(16, 18, 23, 0.94), rgba(16, 18, 23, 0.76)),
+      radial-gradient(circle at 50% 20%, rgba(186, 49, 40, 0.18), transparent 42%);
   }
 
   .intro-band,
