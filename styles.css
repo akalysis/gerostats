@@ -87,15 +87,16 @@ img {
 
 .brand-mark {
   display: grid;
-  width: 2rem;
-  height: 2rem;
+  width: 2.25rem;
+  height: 2.25rem;
   place-items: center;
-  border: 1px solid rgba(163, 230, 53, 0.42);
+  border: 0;
   border-radius: 8px;
-  background: linear-gradient(135deg, rgba(163, 230, 53, 0.22), rgba(45, 212, 191, 0.12));
-  color: var(--red);
-  font-size: 1rem;
+  background: url("/favicon.svg?v=mark-20260704") center / cover no-repeat;
+  color: transparent;
+  font-size: 0;
   line-height: 1;
+  box-shadow: 0 0 24px rgba(163, 230, 53, 0.14);
 }
 
 nav {
