@@ -1,0 +1,542 @@
+:root {
+  color-scheme: light;
+  --ink: #101217;
+  --muted: #5b6472;
+  --paper: #f7f6f0;
+  --paper-strong: #efeee6;
+  --white: #ffffff;
+  --line: #d8d9d2;
+  --red: #ba3128;
+  --teal: #08766e;
+  --gold: #bd8418;
+  --blue: #315f9b;
+  --plum: #613a55;
+  --shadow: 0 18px 48px rgba(16, 18, 23, 0.14);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.55;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 20;
+  padding: 0.7rem 1rem;
+  border-radius: 6px;
+  background: var(--ink);
+  color: var(--white);
+  font-weight: 800;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.85rem clamp(1rem, 4vw, 4rem);
+  border-bottom: 1px solid rgba(16, 18, 23, 0.13);
+  background: rgba(247, 246, 240, 0.92);
+  backdrop-filter: blur(16px);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--ink);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.brand-mark {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--red);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--muted);
+  font-size: 0.96rem;
+}
+
+nav a {
+  text-decoration: none;
+}
+
+nav a:hover,
+nav a:focus {
+  color: var(--ink);
+}
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  min-height: clamp(500px, 70svh, 680px);
+  display: grid;
+  align-items: center;
+  padding: clamp(4rem, 8vw, 7rem) clamp(1rem, 4vw, 4rem);
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(16, 18, 23, 0.92) 0%, rgba(16, 18, 23, 0.72) 44%, rgba(16, 18, 23, 0.18) 100%),
+    url("/assets/newcastle-osm-hero-map.png") center right / cover no-repeat;
+  color: var(--white);
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 10px;
+  background: linear-gradient(90deg, var(--red), var(--teal), var(--gold), var(--blue));
+}
+
+.hero-copy {
+  width: min(840px, 100%);
+}
+
+.kicker,
+.section-label,
+.eyebrow {
+  margin: 0 0 0.8rem;
+  color: var(--red);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero .kicker {
+  color: #ffb7ad;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 1.2rem;
+  font-size: clamp(4.2rem, 13vw, 10rem);
+  line-height: 0.85;
+  letter-spacing: 0;
+}
+
+h2 {
+  margin-bottom: 1rem;
+  font-size: clamp(2rem, 4.2vw, 4.5rem);
+  line-height: 1.03;
+  letter-spacing: 0;
+}
+
+h3 {
+  margin-bottom: 0.55rem;
+  font-size: 1.25rem;
+  line-height: 1.18;
+}
+
+.lede {
+  max-width: 780px;
+  color: inherit;
+  font-size: clamp(1.25rem, 2.4vw, 2rem);
+  line-height: 1.34;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1.8rem;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0.78rem 1.05rem;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.button.primary {
+  border-color: var(--white);
+  background: var(--white);
+  color: var(--ink);
+}
+
+.button:hover,
+.button:focus {
+  transform: translateY(-1px);
+}
+
+.intro-band,
+.featured-section,
+.principles,
+.math-band,
+.about-strip,
+.article-page,
+.writing-page {
+  width: min(1120px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.intro-band {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.65fr) minmax(0, 1fr);
+  gap: 2rem;
+  padding: 2.5rem 0 4rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.intro-band p:last-child {
+  max-width: 720px;
+  font-size: 1.2rem;
+}
+
+.section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.featured-section,
+.principles,
+.math-band,
+.about-strip {
+  padding: 4.5rem 0;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.story-card {
+  min-height: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--white);
+  box-shadow: 0 10px 28px rgba(16, 18, 23, 0.06);
+  overflow: hidden;
+}
+
+.story-card-large {
+  grid-row: span 2;
+}
+
+.story-card-link {
+  display: grid;
+  min-height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.story-card-link:hover h3,
+.story-card-link:focus h3 {
+  text-decoration: underline;
+  text-decoration-color: var(--red);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.14em;
+}
+
+.story-thumb {
+  min-height: 190px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-strong);
+}
+
+.story-card-large .story-thumb {
+  min-height: 310px;
+}
+
+.image-thumb {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)),
+    var(--thumb-image) center / cover no-repeat;
+}
+
+.care-thumb {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 2rem;
+  background:
+    linear-gradient(135deg, rgba(186, 49, 40, 0.1), rgba(8, 118, 110, 0.14)),
+    var(--paper-strong);
+}
+
+.care-thumb span {
+  width: 2.3rem;
+  border: 1px solid rgba(16, 18, 23, 0.18);
+  border-radius: 999px 999px 0 0;
+  background: linear-gradient(180deg, var(--red), var(--teal));
+}
+
+.story-card-body {
+  padding: 1.35rem;
+}
+
+.story-card-body p:last-child {
+  margin-bottom: 0;
+}
+
+.story-meta {
+  display: block;
+  margin-top: 1.1rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 750;
+}
+
+.text-link {
+  color: var(--ink);
+  font-weight: 850;
+  text-decoration: underline;
+  text-decoration-color: var(--red);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.18em;
+}
+
+.principles {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.principle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.principle-grid article {
+  padding: 1.35rem;
+  border-left: 6px solid var(--teal);
+  background: var(--white);
+}
+
+.principle-grid article:nth-child(2) {
+  border-left-color: var(--gold);
+}
+
+.principle-grid article:nth-child(3) {
+  border-left-color: var(--blue);
+}
+
+.about-strip {
+  border-top: 1px solid var(--line);
+}
+
+.about-strip p {
+  max-width: 780px;
+  font-size: 1.12rem;
+}
+
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 2rem clamp(1rem, 4vw, 4rem);
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+.writing-page,
+.article-page {
+  padding: 4.5rem 0;
+}
+
+.page-kicker {
+  color: var(--red);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.page-title {
+  max-width: 920px;
+  font-size: clamp(3rem, 8vw, 7rem);
+}
+
+.page-intro {
+  max-width: 820px;
+  color: var(--muted);
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+}
+
+.post-list {
+  display: grid;
+  gap: 1rem;
+  margin-top: 3rem;
+}
+
+.post-listing {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.25fr) minmax(0, 1fr);
+  gap: 1.25rem;
+  padding: 1.35rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--white);
+}
+
+.post-listing time,
+.post-listing .post-type {
+  display: block;
+  color: var(--muted);
+  font-size: 0.94rem;
+  font-weight: 760;
+}
+
+.post-listing h2 {
+  margin-bottom: 0.5rem;
+  font-size: clamp(1.5rem, 2.6vw, 2.6rem);
+}
+
+.post-listing p {
+  max-width: 760px;
+  margin-bottom: 0.8rem;
+}
+
+.article-shell {
+  display: grid;
+  grid-template-columns: minmax(160px, 0.22fr) minmax(0, 760px);
+  gap: 2rem;
+}
+
+.article-meta {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.article-content {
+  font-size: 1.1rem;
+}
+
+.article-content h2 {
+  margin-top: 3rem;
+  font-size: clamp(1.8rem, 3vw, 3rem);
+}
+
+.article-content p,
+.article-content li {
+  max-width: 760px;
+}
+
+.article-content code {
+  padding: 0.12rem 0.3rem;
+  border-radius: 4px;
+  background: rgba(16, 18, 23, 0.08);
+}
+
+.note {
+  padding: 1rem;
+  border-left: 5px solid var(--gold);
+  background: var(--white);
+}
+
+@media (max-width: 860px) {
+  .site-header {
+    position: static;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  nav {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+  }
+
+  .hero {
+    min-height: auto;
+    padding-top: 4.5rem;
+    padding-bottom: 5rem;
+    background:
+      linear-gradient(180deg, rgba(16, 18, 23, 0.92), rgba(16, 18, 23, 0.74)),
+      url("/assets/newcastle-osm-hero-map.png") center / cover no-repeat;
+  }
+
+  .intro-band,
+  .math-band,
+  .article-shell,
+  .post-listing {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-grid,
+  .principle-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .story-card-large {
+    grid-row: auto;
+  }
+
+  .section-head,
+  .site-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 520px) {
+  .hero-actions,
+  .button {
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 4rem;
+  }
+}

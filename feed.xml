@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Gerostats</title>
+    <link>https://gerostats.co.uk/</link>
+    <description>Public health statistics with place, people and ageing kept in view.</description>
+    <language>en-gb</language>
+    <lastBuildDate>Sat, 04 Jul 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>I was born in D1. This map made that feel different.</title>
+      <link>https://gerostats.co.uk/stories/metro-life-expectancy/</link>
+      <guid>https://gerostats.co.uk/stories/metro-life-expectancy/</guid>
+      <pubDate>Sat, 04 Jul 2026 00:00:00 +0000</pubDate>
+      <description>A Newcastle Metro map story about deprivation, life expectancy and local health inequality.</description>
+    </item>
+    <item>
+      <title>The hidden week being carried in plain sight.</title>
+      <link>https://gerostats.co.uk/stories/hidden-week-care/</link>
+      <guid>https://gerostats.co.uk/stories/hidden-week-care/</guid>
+      <pubDate>Sat, 04 Jul 2026 00:00:00 +0000</pubDate>
+      <description>An interactive map of unpaid care-hours, deprivation, poor health and disability across Tyne and Wear.</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Technical note | The Hidden Week | Gerostats</title>
+    <meta name="author" content="Andrew Kingston PhD CStat SFHEA">
+    <link rel="canonical" href="https://gerostats.co.uk/stories/hidden-week-care/technical-note/">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/">Gerostats</a>
+      <nav aria-label="Primary navigation">
+        <a href="/writing/">Writing</a>
+        <a href="/stories/hidden-week-care/">Story</a>
+        <a href="../#map">Map</a>
+        <a href="../#method">Method</a>
+      </nav>
+    </header>
+
+    <main>
+      <article class="story technical-note">
+        <section>
+          <p class="kicker">Technical note</p>
+          <h1>How the unpaid-care map was calculated.</h1>
+          <p class="lede">
+            This note explains the data, geography and assumptions behind the
+            Hidden Week map.  The central idea is simple: take the unpaid-care
+            hours people reported in Census 2021, count them cautiously, and show
+            how that hidden labour is distributed across local neighbourhoods.
+          </p>
+        </section>
+
+        <section>
+          <h2>Who is counted?</h2>
+          <p>
+            The main data source is Census 2021 table TS039, provision of unpaid
+            care.  It counts usual residents aged 5 and over by the number of
+            hours of unpaid care they reported providing each week.  The figures
+            refer to Census Day, 21 March 2021.
+          </p>
+          <p>
+            In plain terms, this is about people who provide unpaid help or support
+            because someone has long-term physical or mental health conditions,
+            disability, or problems related to old age.  It does not count children
+            aged under 5, because they were not asked the unpaid-care question.
+          </p>
+        </section>
+
+        <section>
+          <h2>How are care-hours estimated?</h2>
+          <p>
+            Census 2021 gives unpaid care in bands rather than exact hours.  To
+            avoid exaggerating, the map uses a lower-bound estimate:
+          </p>
+          <ul>
+            <li>1 to 9 hours is counted as 1 hour.</li>
+            <li>10 to 19 hours is counted as 10 hours.</li>
+            <li>20 to 34 hours is counted as 20 hours.</li>
+            <li>35 to 49 hours is counted as 35 hours.</li>
+            <li>50 or more hours is counted as 50 hours.</li>
+          </ul>
+          <p>
+            The result is a conservative minimum number of unpaid care-hours per
+            week.  Many people in each band will provide more than the lower-bound
+            value used here, especially in the 50+ hours category.
+          </p>
+        </section>
+
+        <section>
+          <h2>What does the map height show?</h2>
+          <p>
+            For each lower layer super output area, the map calculates:
+          </p>
+          <p>
+            <strong>Minimum unpaid care-hours per week ÷ residents aged 5 and over × 100.</strong>
+          </p>
+          <p>
+            This gives a comparable local burden: minimum unpaid care-hours per
+            100 residents aged 5 and over each week.  The total across the five
+            Tyne and Wear local authorities is at least 2,648,586 unpaid care-hours
+            per week.
+          </p>
+        </section>
+
+        <section>
+          <h2>Why not age-standardise this?</h2>
+          <p>
+            The map is designed to show the actual burden of unpaid care being
+            carried in local places, not the underlying age-adjusted propensity to
+            provide care.  Age structure matters, and some neighbourhoods will have
+            more unpaid care partly because they have more people at ages where care
+            needs are higher.
+          </p>
+          <p>
+            That is not a flaw for this purpose.  If a place carries more care
+            because it has more older or disabled residents, that is still real work
+            being carried by real people.  A different analysis could age-standardise
+            care rates to ask a different question.
+          </p>
+        </section>
+
+        <section>
+          <h2>Deprivation, health and disability</h2>
+          <p>
+            Deprivation is shown using the English Indices of Deprivation 2025,
+            specifically the Index of Multiple Deprivation decile.  D1 means the
+            most deprived 10% of neighbourhoods in England, and D10 means the least
+            deprived 10%.
+          </p>
+          <p>
+            Bad or very bad health comes from Census 2021 table TS037.  Disability
+            limited a lot comes from Census 2021 table TS038.  These are shown to
+            identify places where unpaid care, poor health, disability and deprivation
+            stack together.
+          </p>
+        </section>
+
+        <section>
+          <h2>Geography</h2>
+          <p>
+            The geography is lower layer super output areas in Newcastle upon Tyne,
+            Gateshead, North Tyneside, South Tyneside and Sunderland.  These are
+            small statistical neighbourhoods, not named communities.  For the public
+            map, LSOA counts are aggregated to 2024 wards using the official best-fit
+            lookup.  The circles therefore show named ward-level burden, while the
+            background keeps the small-area pattern visible.
+          </p>
+        </section>
+
+        <section>
+          <h2>Limitations</h2>
+          <p>
+            These are self-reported Census data from 2021.  The figures do not show
+            whether care is adequate, whether carers are supported, or whether the
+            person receiving care lives in the same household.  The care-hours total
+            is deliberately conservative and should be read as a lower-bound estimate.
+          </p>
+          <p>
+            The deprivation data are from IMD 2025, while the care, health and
+            disability data are from Census 2021.  The deprivation overlay should
+            be read as area context, not as proof of causation.
+          </p>
+        </section>
+
+        <section>
+          <h2>Sources</h2>
+          <ul>
+            <li><a href="https://www.nomisweb.co.uk/datasets/c2021ts039">Census 2021 TS039: Provision of unpaid care</a></li>
+            <li><a href="https://www.nomisweb.co.uk/datasets/c2021ts037">Census 2021 TS037: General health</a></li>
+            <li><a href="https://www.nomisweb.co.uk/datasets/c2021ts038">Census 2021 TS038: Disability</a></li>
+            <li><a href="https://www.gov.uk/government/statistics/english-indices-of-deprivation-2025">English Indices of Deprivation 2025</a></li>
+            <li><a href="https://geoportal.statistics.gov.uk/datasets/ons::lsoa-2021-to-electoral-ward-2024-to-lad-2024-best-fit-lookup-in-ew/about">ONS LSOA 2021 to Ward 2024 lookup</a></li>
+            <li><a href="https://www.data.gov.uk/dataset/1a99061d-af4b-4ffb-9577-dbc3f5a6feb9/lower-layer-super-output-areas-december-2021-boundaries-ew-bfc-v10">ONS LSOA 2021 boundaries</a></li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </body>
+</html>

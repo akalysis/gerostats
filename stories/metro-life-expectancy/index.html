@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>I was born in D1 | Gerostats</title>
+    <meta
+      name="description"
+      content="A personal Newcastle Metro map story about deprivation, life expectancy and why local health inequality must change."
+    >
+    <meta name="author" content="Andrew Kingston PhD CStat SFHEA">
+    <link rel="canonical" href="https://gerostats.co.uk/stories/metro-life-expectancy/">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#story">Skip to story</a>
+
+    <header class="site-header">
+      <a class="brand" href="/">Gerostats</a>
+      <nav aria-label="Primary navigation">
+        <a href="/writing/">Writing</a>
+        <a href="#map">Map</a>
+        <a href="#numbers">Numbers</a>
+        <a href="#change">Change</a>
+        <a href="/stories/metro-life-expectancy/technical-note/">Technical note</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" id="story">
+        <p class="kicker">Newcastle, deprivation and life expectancy</p>
+        <h1>I was born in D1.  This map made that feel different.</h1>
+        <p class="lede">
+          D1 means Index of Multiple Deprivation decile 1: one of the most deprived
+          10% of neighbourhoods in England.  The place I was born was ranked
+          478 out of 33,755 small areas, where rank 1 is the most deprived.  That puts it in the most deprived 1.4% nationally.  That might sound
+          like a dry rank, but it is not dry when the places are part of where
+          you feel you belong.  This is not only a Newcastle story.  It reaches
+          across Gateshead, North Tyneside, South Tyneside and Sunderland too, through
+          names and journeys that feel familiar.
+        </p>
+        <p>
+          I was born long before the 2019 to 2023 data period used here.  This map is not a prediction about my life,
+          or anyone else's.  It uses recent area life expectancy estimates from
+          2019 to 2023.  As a Geordie, when the geography is this familiar, the
+          pattern is hard to treat as abstract.  These are not just names on a
+          Metro map.  They are places with memories: the Toon, Shields, Whitley,
+          Gossy, long summers at Eddie's Bay in Tynemouth, Shields Road in Byker,
+          the Airport run, Sunderland.  So I wanted to know what happens when you
+          look at how long people live along these lines.  The number that stops
+          me is the 13.7-year male gap: Byker at 69.7 years versus Ilford Road
+          and South Gosforth at 83.4.  This animation is where that question starts.
+        </p>
+        <div class="hero-actions" aria-label="Page actions">
+          <a class="button primary" href="#map">Watch the map</a>
+          <a class="button" href="/stories/metro-life-expectancy/technical-note/">Read the method</a>
+        </div>
+      </section>
+
+      <section class="map-stage" id="map" aria-labelledby="map-heading">
+        <div class="section-label">The map</div>
+        <h2 id="map-heading">The same Metro map, but with life expectancy on it</h2>
+        <p class="section-intro">
+          The animation keeps the Metro map at the centre and asks a simple
+          question: how far apart are the life chances of places that sit on the
+          same network?
+        </p>
+
+        <div class="video-frame">
+          <video
+            id="metroVideo"
+            controls
+            controlslist="nodownload noremoteplayback"
+            disablepictureinpicture
+            disableremoteplayback
+            oncontextmenu="return false"
+            preload="metadata"
+            playsinline
+            src="assets/metro_life_expectancy_male_female_comparison_animation.mp4?v=no-draft-20260703"
+          >
+            Your browser does not support embedded video.
+          </video>
+        </div>
+
+        <div class="chapter-bar" aria-label="Animation chapters">
+          <button type="button" data-time="0">Opening</button>
+          <button type="button" data-time="12">Measure</button>
+          <button type="button" data-time="24">Whole map</button>
+          <button type="button" data-time="36">D1 explained</button>
+          <button type="button" data-time="48">Lower LE</button>
+          <button type="button" data-time="59">Higher LE</button>
+          <button type="button" data-time="69">Adjacent gap</button>
+          <button type="button" data-time="77">Male/female</button>
+        </div>
+      </section>
+
+      <section class="stat-band" id="numbers" aria-labelledby="numbers-heading">
+        <div>
+          <p class="section-label">The numbers</p>
+          <h2 id="numbers-heading">What the map is asking us to face</h2>
+        </div>
+        <div class="stat-grid">
+          <article class="stat-card accent-red">
+            <p class="stat-value">13.7 years</p>
+            <h3>Largest male gap</h3>
+            <p>Byker is 69.7 years.  Ilford Road and South Gosforth are 83.4 years.</p>
+          </article>
+          <article class="stat-card accent-teal">
+            <p class="stat-value">9.0 years</p>
+            <h3>Nearby contrast</h3>
+            <p>Fawdon is 74.4 years.  South Gosforth is 83.4 years.</p>
+          </article>
+          <article class="stat-card accent-gold">
+            <p class="stat-value">6.1 years</p>
+            <h3>Male deprivation gap</h3>
+            <p>D9/D10 station-local areas average 79.5 years.  D1/D2 areas average 73.4 years.</p>
+          </article>
+          <article class="stat-card accent-blue">
+            <p class="stat-value">4.5 years</p>
+            <h3>Female deprivation gap</h3>
+            <p>D9/D10 station-local areas average 83.3 years.  D1/D2 areas average 78.8 years.</p>
+          </article>
+        </div>
+      </section>
+
+      <article class="essay">
+        <section>
+          <h2>A map I know by feel</h2>
+          <p>
+            I wanted the story to begin with something recognisable, because the
+            Metro map is not just a diagram to me.  It is a way of seeing places
+            I know, routes I have taken and names that carry memory.
+          </p>
+          <p>
+            That is what makes it a familiar map with an uncomfortable number.
+            Once life expectancy is placed against the stations, a name becomes a
+            place, and a place becomes an estimate of how long life is expected to
+            last.
+          </p>
+          <p>
+            For me, that is the point.  Not a distant regional average, not a
+            national chart, but a set of local contrasts.  A few stops can carry
+            years of difference.
+          </p>
+        </section>
+
+        <section>
+          <h2>What health means here</h2>
+          <p>
+            The main measure is life expectancy at birth for the MSOA around each
+            Metro station.  MSOAs are small statistical areas used in public health
+            reporting.  A station does not have its own life expectancy, so the
+            map uses the best local area estimate around the station.
+          </p>
+          <p>
+            Put simply, this is not saying males and females were born between 2019 and
+            2023.  It uses deaths and population in those years to estimate how
+            long a newborn male or female born in that local area could expect
+            to live, from the day they are born, if those death rates continued.
+          </p>
+          <p>
+            That distinction matters.  This is not saying that every person in
+            Byker, Fawdon, Gateshead, South Gosforth or Ilford Road will live to
+            the number shown.  It is saying that the conditions around places are
+            unequal enough to show up in one of the most basic measures of health:
+            expected length of life.
+          </p>
+        </section>
+
+        <section>
+          <h2>The nearby shock</h2>
+          <p>
+            Inequality is sometimes spoken about as if it sits far away, somewhere
+            else, in another kind of place.  The Metro map challenges that.  The
+            Fawdon to South Gosforth comparison is about adjacency, not distance.  On this analysis the male life expectancy estimate moves from 74.4
+            years to 83.4 years.
+          </p>
+          <p>
+            That feels different when you think of it locally.  Fawdon and Gossy
+            are not opposite ends of a country.  They sit close enough for people
+            to move between them as part of ordinary life.  The inequality is not
+            somewhere else.  It is folded into familiar local movement.
+          </p>
+          <p>
+            That is a 9.0-year difference between nearby station-local areas.  The
+            point is not to blame places or people.  The point is to make visible
+            the scale of difference that can exist within a city people think
+            they already understand.
+          </p>
+        </section>
+
+        <section>
+          <h2>What does this mean for me?</h2>
+          <p>
+            I was born in D1, in an area ranked 478 out of 33,755.  I cannot take
+            a current area estimate and read my own life from it.  Nobody should.  I was born long before the 2019 to 2023 data period used here.
+          </p>
+          <p>
+            But the numbers still make me pause.  They make me think about time
+            in the most ordinary human sense: time with family, time with friends,
+            time to grow older with the people who matter.  I am uncomfortable
+            with the idea that where you are born might carry that much weight in
+            how much of that time you get.
+          </p>
+          <p>
+            There is a lifetime story here too.  Health is not made at birth, or
+            in one postcode.  The advantages and disadvantages around people build
+            up over years: childhood, school, work, housing, stress, illness,
+            care, opportunity and the local environment.  That does not make the map less uncomfortable.
+            It makes it more serious.
+          </p>
+          <p>
+            For me, D1 is not an abstract label.  I can ask what it means when
+            disadvantage has been allowed to cluster so persistently that it is
+            visible in health and mortality.  And I can ask the question that
+            matters now: is this gap getting better, getting worse, or simply
+            being tolerated?
+          </p>
+        </section>
+
+        <section>
+          <h2>This is not geography.  It is policy made visible.</h2>
+          <p>
+            Health inequality is not only about hospitals or individual choices.  It is about income, housing, work, education, transport, air, safety,
+            services, environment, stress and power.  And as the climate changes,
+            heat, air quality and the places people can safely live, work and
+            move through will matter even more.  It is about whether people have the
+            conditions that let them live long and well.
+          </p>
+          <p>
+            A fairer region would not ask people to absorb these differences as the
+            price of where they are born.  It would treat them as a public responsibility:
+            something to measure honestly, explain clearly and reduce deliberately.
+          </p>
+        </section>
+      </article>
+
+      <section class="closing-call" id="change">
+        <div>
+          <p class="section-label">The challenge</p>
+          <h2>Do not just 'mind the gap'.  Close it.</h2>
+        </div>
+        <p>
+          The map makes the gap harder to shrug off.  Where you are born should not carry this much weight in how long life is expected to last.
+          <br><br>
+          For me, the public health challenge is blunt: make the gap smaller, not easier to accept.  Measure it honestly, talk about it plainly, and build the conditions that let people live longer lives wherever they start.
+          <br><br>
+          And for those people who do live longer, are those extra years healthy
+          ones?  That is another question, and it matters too, but it is for
+          another time.
+        </p>
+      </section>
+
+      <section class="author-note" id="author" aria-labelledby="author-heading">
+        <p class="section-label">About the author</p>
+        <h2 id="author-heading">Andrew Kingston</h2>
+        <p>
+          I am a statistical epidemiologist from the North East.  My work focuses
+          on ageing, multimorbidity, disability, care need, health expectancy and
+          health inequalities.  This piece is also personal: it sits between
+          evidence, place and what inequality feels like when the geography is
+          part of your own story.
+        </p>
+        <p><a class="text-link" href="mailto:mrakingston@gmail.com">mrakingston@gmail.com</a></p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Author: Andrew Kingston.  Email: mrakingston@gmail.com.</p>
+    </footer>
+
+    <script>
+      const video = document.querySelector("#metroVideo");
+      const buttons = document.querySelectorAll("[data-time]");
+
+      video.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+      });
+
+      document.addEventListener("copy", (event) => {
+        event.preventDefault();
+      });
+
+      document.addEventListener("cut", (event) => {
+        event.preventDefault();
+      });
+
+      document.addEventListener("dragstart", (event) => {
+        event.preventDefault();
+      });
+
+      document.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+      });
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const seconds = Number(button.dataset.time);
+          if (!Number.isFinite(seconds)) return;
+          video.currentTime = seconds;
+          video.play();
+        });
+      });
+    </script>
+  </body>
+</html>

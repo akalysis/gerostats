@@ -1,0 +1,50 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": true,
+  "redirects": [
+    {
+      "source": "/blog",
+      "destination": "/writing/",
+      "permanent": true
+    },
+    {
+      "source": "/metro",
+      "destination": "/stories/metro-life-expectancy/",
+      "permanent": true
+    },
+    {
+      "source": "/writing/mathjax-demo",
+      "destination": "/writing/",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/stories/metro-life-expectancy/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/stories/hidden-week-care/data/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    }
+  ]
+}

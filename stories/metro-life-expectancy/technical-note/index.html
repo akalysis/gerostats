@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Technical note | Gerostats</title>
+    <meta
+      name="description"
+      content="Methods, data sources and limitations for the Newcastle Metro life expectancy and deprivation map."
+    >
+    <meta name="author" content="Andrew Kingston PhD CStat SFHEA">
+    <link rel="canonical" href="https://gerostats.co.uk/stories/metro-life-expectancy/technical-note/">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/">Gerostats</a>
+      <nav aria-label="Primary navigation">
+        <a href="/writing/">Writing</a>
+        <a href="/stories/metro-life-expectancy/">Story</a>
+        <a href="/stories/metro-life-expectancy/#map">Map</a>
+        <a href="/stories/metro-life-expectancy/#numbers">Numbers</a>
+      </nav>
+    </header>
+
+    <main class="note-page">
+      <p class="kicker">Technical note</p>
+      <h1>How the Newcastle Metro life expectancy map was made</h1>
+      <p class="lede">
+        The map is a station-local view of life expectancy and deprivation.  It
+        does not estimate life expectancy for passengers, births at stations or
+        individual people.  It connects each Metro station to the small public
+        health geography around it and uses published area estimates.
+      </p>
+
+      <h2>What the map measures</h2>
+      <p>
+        The health measure is life expectancy at birth, shown in years.  It refers
+        to newborn males and females, from the day they are born.  The
+        figures used in the animation are sex-specific MSOA estimates for the
+        period 2019 to 2023.  MSOA means Middle Layer Super Output Area: a small
+        statistical geography used for local public health reporting.
+      </p>
+      <p>
+        The map focuses on male life expectancy in the main station view because
+        it shows the largest spread across the station-local areas in this extract.
+        Female estimates are included in the final comparison table so the reader
+        can see whether the broad inequality pattern also appears for females.
+      </p>
+
+      <h2>Who the figures refer to</h2>
+      <p>
+        The figures refer to newborn males and females, from the day they are
+        born.  They do not refer to adults living near the stations now, older
+        residents, Metro passengers or people who were born between 2019 and
+        2023.
+      </p>
+      <p>
+        The phrase "2019 to 2023" is the mortality period used to calculate the
+        estimate.  It means deaths and population at each age were observed over
+        those five years, then used to estimate how long a newborn male or female
+        would live if those local death rates continued through life.
+      </p>
+      <p>
+        The animation uses the published OHID Fingertips MSOA life expectancy
+        estimates.  The points below explain the life-table logic behind that
+        type of estimate.
+      </p>
+      <ul>
+        <li>
+          The calculation uses deaths and population across all ages, separately
+          for males and females, in the local MSOA.
+        </li>
+        <li>
+          Those age-specific death rates are put into a life table.  The life
+          table follows a hypothetical newborn through life as if the 2019 to
+          2023 death rates applied at each age.
+        </li>
+        <li>
+          The result is expressed as expected years from birth.  A value of 69.7
+          means about 69.7 expected years for a newborn male under that area's
+          2019 to 2023 mortality pattern.
+        </li>
+        <li>
+          It is a period estimate, not a prediction for a named person.  Real
+          lives will depend on future mortality, migration, health care, housing,
+          income, environment and many other things.
+        </li>
+        <li>
+          Five years are pooled because small-area life expectancy is unstable
+          when based on a single year.  The trade-off is that the estimate also
+          includes the COVID-19 pandemic years.
+        </li>
+      </ul>
+      <p>
+        This is why the figures can be compared across the mapped station-local areas.  Each
+        station-local value is calculated on the same basis: newborn males or
+        females, the MSOA around the station, and the same 2019 to 2023 mortality
+        period.  The gaps shown on the map are therefore differences in expected
+        years from birth between station-local areas, not differences in the ages
+        of current residents.
+      </p>
+
+      <h2>Data sources</h2>
+      <table class="note-table">
+        <tbody>
+          <tr>
+            <th>Life expectancy</th>
+            <td>
+              Office for Health Improvement and Disparities Fingertips, life
+              expectancy at birth, MSOA based, 2019 to 2023, male and female.
+              See <a href="https://fingertips.phe.org.uk/search/life%20expectancy">OHID Fingertips search</a>.
+            </td>
+          </tr>
+          <tr>
+            <th>Deprivation</th>
+            <td>
+              English Indices of Deprivation 2025.  IMD ranks 33,755 LSOAs in
+              England from most deprived to least deprived and divides them into
+              10 deciles.  D1 is the most deprived 10%; D10 is the least deprived
+              10%.  See the
+              <a href="https://www.gov.uk/government/statistics/english-indices-of-deprivation-2025/english-indices-of-deprivation-2025-statistical-release">official statistical release</a>
+              and
+              <a href="https://www.gov.uk/government/statistics/english-indices-of-deprivation-2025/english-indices-of-deprivation-2025-frequently-asked-questions">FAQ on ranks and deciles</a>.
+            </td>
+          </tr>
+          <tr>
+            <th>Station locations</th>
+            <td>
+              Department for Transport National Public Transport Access Nodes
+              data.  NaPTAN provides public transport access points including rail,
+              tram, underground and metro stations.  See
+              <a href="https://beta-naptan.dft.gov.uk/download">NaPTAN data portal</a>.
+            </td>
+          </tr>
+          <tr>
+            <th>Geography lookups</th>
+            <td>
+              Office for National Statistics geography products and lookup files
+              for LSOA and MSOA geographies.  See the
+              <a href="https://geoportal.statistics.gov.uk/">ONS Open Geography Portal</a>.
+            </td>
+          </tr>
+          <tr>
+            <th>Base map</th>
+            <td>
+              The animation was designed around the Tyne and Wear Metro map
+              sourced from the Travel North East Metro maps page:
+              <a href="https://travelnortheast.uk/ways-to-travel/metro/metro-maps/">Tyne and Wear Metro Maps</a>.
+            </td>
+          </tr>
+          <tr>
+            <th>Opening Newcastle map</th>
+            <td>
+              The faded Newcastle map at the start of the page uses
+              <a href="https://commons.wikimedia.org/wiki/File:Newcastle_upon_Tyne_OSM_02.png">Newcastle upon Tyne OSM 02</a>
+              from Wikimedia Commons.  The map image is credited to OpenStreetMap
+              contributors and is licensed under CC BY-SA 2.0.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>How station-local values were created</h2>
+      <ol>
+        <li>Metro station points were matched to the local small-area geography around the station.</li>
+        <li>The station's local LSOA supplied the deprivation rank and decile.</li>
+        <li>The station's local MSOA supplied the male and female life expectancy estimates.</li>
+        <li>The animation retained stations where a stable MSOA life expectancy estimate was available.</li>
+      </ol>
+      <p>
+        This means the numbers are best read as "the area around this station",
+        not "the people using this station".  Some nearby stations can share an
+        MSOA value if they sit in the same small-area geography.
+      </p>
+
+      <h2>How the headline gaps were calculated</h2>
+      <ul>
+        <li>
+          The largest male gap is the highest station-local male life expectancy
+          minus the lowest station-local male life expectancy.  In this extract:
+          83.4 years at Ilford Road and South Gosforth minus 69.7 years at Byker,
+          giving 13.7 years.
+        </li>
+        <li>
+          The nearby contrast is South Gosforth minus Fawdon for male life
+          expectancy: 83.4 minus 74.4, giving 9.0 years.
+        </li>
+        <li>
+          The deprivation gap compares the average life expectancy for D9/D10
+          station-local areas with the average for D1/D2 station-local areas.
+          In this extract the gap is 6.1 years for males and 4.5 years for females.
+        </li>
+        <li>
+          My personal birth-area rank of 478 out of 33,755 is interpreted
+          as D1 because rank 1 is the most deprived and D1 is the most deprived
+          tenth of English LSOAs.
+        </li>
+      </ul>
+
+      <h2>Important interpretation points</h2>
+      <ul>
+        <li>Life expectancy at birth is a period measure.  It summarises mortality rates during the period used; it is not a forecast for a named person.</li>
+        <li>The 2019 to 2023 period includes the COVID-19 pandemic years, so the estimates reflect that mortality context.</li>
+        <li>MSOA averages can hide variation inside the area.  They are useful for showing broad local patterns, but they are not the lived experience of every resident.</li>
+        <li>Deprivation is a summary of several domains.  It is not a judgement on a place or its people.</li>
+        <li>The map shows association and geography.  It should be read alongside wider evidence on income, housing, work, environment, services and health systems.</li>
+      </ul>
+
+      <p>
+        <a class="button primary" href="/stories/metro-life-expectancy/">Back to the story</a>
+      </p>
+    </main>
+
+    <footer class="site-footer">
+      <p>Author: Andrew Kingston.  Email: mrakingston@gmail.com.</p>
+    </footer>
+  </body>
+</html>

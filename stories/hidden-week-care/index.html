@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>The Hidden Week | Gerostats</title>
+    <meta
+      name="description"
+      content="An interactive map of unpaid care hours, deprivation, poor health and disability across Tyne and Wear using Census 2021 and official deprivation data."
+    >
+    <meta name="author" content="Andrew Kingston PhD CStat SFHEA">
+    <link rel="canonical" href="https://gerostats.co.uk/stories/hidden-week-care/">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Gerostats home">Gerostats</a>
+      <nav aria-label="Primary navigation">
+        <a href="/writing/">Writing</a>
+        <a href="#map">Map</a>
+        <a href="#story">Story</a>
+        <a href="#method">Method</a>
+        <a href="/stories/hidden-week-care/technical-note/">Technical note</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="opening">
+        <div class="opening-copy">
+          <p class="kicker">Unpaid care across Tyne and Wear</p>
+          <h1>The hidden week being carried in plain sight.</h1>
+          <p class="lede">
+            Across Newcastle, Gateshead, North Tyneside, South Tyneside and Sunderland,
+            Census 2021 shows at least <strong>2.65 million unpaid care-hours</strong>
+            every week.  That is the lower bound, counted cautiously from the hours
+            people reported.  It is not a service rota.  It is people getting someone
+            washed, dressed, fed, medicated, watched over, taken to appointments,
+            settled at night, and held together again the next day.
+          </p>
+          <p>
+            Some places are not just poorer.  They are doing more care, with less
+            money, poorer health, and less margin for anything to go wrong.
+          </p>
+        </div>
+        <div class="opening-stat" aria-label="Headline unpaid care statistic">
+          <span class="stat-number">2.65m</span>
+          <span class="stat-label">minimum unpaid care-hours each week</span>
+          <span class="stat-note">Census 2021, residents aged 5 and over</span>
+        </div>
+      </section>
+
+      <section class="map-section" id="map" aria-labelledby="map-heading">
+        <div class="section-heading">
+          <p class="kicker">The map</p>
+          <h2 id="map-heading">Every circle is a named area.  Bigger and darker means more unpaid care.</h2>
+          <p>
+            The map now shows ward-level unpaid care burden.  Each circle is a ward,
+            built from the small-area Census data underneath.  The figure is minimum
+            unpaid care-hours per 100 residents aged 5 and over each week.
+          </p>
+        </div>
+
+        <div class="map-shell">
+          <div class="scene-tabs" role="tablist" aria-label="Map scenes">
+            <button class="scene-tab is-active" type="button" data-scene="week" role="tab" aria-selected="true">
+              <span>1</span>Care burden
+            </button>
+            <button class="scene-tab" type="button" data-scene="deprivation" role="tab" aria-selected="false">
+              <span>2</span>Deprivation
+            </button>
+            <button class="scene-tab" type="button" data-scene="heavy" role="tab" aria-selected="false">
+              <span>3</span>50+ hours
+            </button>
+            <button class="scene-tab" type="button" data-scene="stack" role="tab" aria-selected="false">
+              <span>4</span>The stack
+            </button>
+          </div>
+
+          <div class="map-stage">
+            <svg id="care-map" role="img" aria-labelledby="map-title map-desc"></svg>
+            <div class="map-tooltip" id="map-tooltip" hidden></div>
+            <div class="map-overlay-list" id="map-overlay-list" aria-live="polite"></div>
+            <div class="map-caption">
+              <strong id="map-title">Tyne and Wear ward-level unpaid care burden.</strong>
+              <span id="map-desc">Circles show named wards.  Background areas show the small-area data underneath.</span>
+            </div>
+          </div>
+
+          <div class="scene-panel" aria-live="polite">
+            <p class="panel-label" id="scene-label">The hidden week</p>
+            <h3 id="scene-title">At least 2.65 million hours every week.</h3>
+            <p id="scene-text">
+              This is the minimum visible week of unpaid care across Tyne and Wear.
+            </p>
+            <div class="metric-grid" id="scene-metrics"></div>
+            <div class="rank-panel" id="rank-panel"></div>
+          </div>
+
+          <div class="legend-row" aria-label="Map legend">
+            <div>
+              <span class="legend-key high"></span>
+              Bigger/darker circle: higher ward burden
+            </div>
+            <div>
+              <span class="legend-key low"></span>
+              Smaller/lighter circle: lower ward burden
+            </div>
+            <div>
+              <span class="legend-key deprived"></span>
+              Background: small-area pattern
+            </div>
+            <div>
+              <span class="legend-key pulse"></span>
+              Pulse: highest named areas
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <article class="story" id="story">
+        <section>
+          <p class="kicker">What this shows</p>
+          <h2>Unpaid care is not evenly shared.</h2>
+          <p>
+            The map is not saying that care is a problem.  Care is love, duty,
+            reciprocity, family, friendship and survival.  The problem is what happens
+            when the need for care, the work of care, poor health and deprivation all
+            concentrate in the same places.
+          </p>
+          <p>
+            In the most deprived fifth of local neighbourhoods here, the minimum
+            unpaid-care burden is about <strong>293 hours per 100 residents aged 5 and
+            over each week</strong>.  In the least deprived fifth, it is about
+            <strong>187 hours</strong>.  That is not a small difference in a week.
+            It is a different social load.
+          </p>
+        </section>
+
+        <section>
+          <h2>The public health question is blunt.</h2>
+          <p>
+            What happens to a place when thousands of people are quietly absorbing
+            work that would otherwise break the formal care system?  What happens
+            when many of those carers are also living in communities already carrying
+            more disability, poorer health, and fewer resources?
+          </p>
+          <p>
+            This should not sit in the background as “family responsibility”.  It is
+            part of the health of a place.  It is infrastructure, even when it happens
+            in kitchens, bedrooms, buses, clinics, pharmacies and broken sleep.
+          </p>
+        </section>
+      </article>
+
+      <section class="method" id="method" aria-labelledby="method-heading">
+        <div>
+          <p class="kicker">Method</p>
+          <h2 id="method-heading">A conservative measure of hidden labour.</h2>
+        </div>
+        <p>
+          The care-hours metric uses Census 2021 unpaid-care bands at LSOA level.
+          To avoid overclaiming, each band is counted at its lower bound: 1 hour for
+          1-9 hours, 10 for 10-19, 20 for 20-34, 35 for 35-49, and 50 for 50+.
+          This means the total is a minimum estimate, not a maximum.  The public map
+          aggregates those small areas to wards so the burden can be read through
+          named local areas.
+        </p>
+        <a class="text-link" href="technical-note/">Read the technical note</a>
+      </section>
+
+      <section class="sources" aria-labelledby="sources-heading">
+        <h2 id="sources-heading">Sources</h2>
+        <ul>
+          <li><a href="https://www.nomisweb.co.uk/datasets/c2021ts039">Census 2021 TS039: Provision of unpaid care</a></li>
+          <li><a href="https://www.nomisweb.co.uk/datasets/c2021ts037">Census 2021 TS037: General health</a></li>
+          <li><a href="https://www.nomisweb.co.uk/datasets/c2021ts038">Census 2021 TS038: Disability</a></li>
+          <li><a href="https://www.gov.uk/government/statistics/english-indices-of-deprivation-2025">English Indices of Deprivation 2025</a></li>
+          <li><a href="https://www.data.gov.uk/dataset/1a99061d-af4b-4ffb-9577-dbc3f5a6feb9/lower-layer-super-output-areas-december-2021-boundaries-ew-bfc-v10">ONS Open Geography Portal: LSOA 2021 boundaries</a></li>
+        </ul>
+      </section>
+
+      <section class="author" id="author" aria-labelledby="author-heading">
+        <p class="kicker">Author</p>
+        <h2 id="author-heading">Andrew Kingston</h2>
+        <p>
+          I am a statistical epidemiologist from the North East.  Gerostats is
+          where I can write personally about public health statistics, local
+          places and the hidden labour that official numbers can make visible.
+        </p>
+        <p><a class="text-link" href="mailto:mrakingston@gmail.com">mrakingston@gmail.com</a></p>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="scripts/app.js"></script>
+  </body>
+</html>

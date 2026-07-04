@@ -1,0 +1,733 @@
+{
+  "title": "The Hidden Week",
+  "geography": "Tyne and Wear LSOAs: Newcastle upon Tyne, Gateshead, North Tyneside, South Tyneside and Sunderland",
+  "source_date": "Census Day, 21 March 2021",
+  "lsoa_count": 727,
+  "total_5plus": 1068836,
+  "total_carers": 105984,
+  "total_heavy_carers": 35489,
+  "total_minimum_weekly_care_hours": 2648586,
+  "total_midpoint_weekly_care_hours": 3023880,
+  "minimum_hours_per_week_human": "2,648,586",
+  "minimum_full_time_equivalent_37_5h": 70628,
+  "carer_pct": 9.9,
+  "heavy_care_pct": 3.3,
+  "mean_minimum_hours_per_100": 252.6,
+  "deprived_d1_d2_mean_hours_per_100": 293.0,
+  "least_deprived_d9_d10_mean_hours_per_100": 186.6,
+  "deprived_d1_d2_mean_heavy_care_pct": 3.9,
+  "least_deprived_d9_d10_mean_heavy_care_pct": 2.5,
+  "highest_hours": [
+    {
+      "lsoa_code": "E01008825",
+      "area": "Sunderland 023C",
+      "ward": "Sandhill",
+      "lad": "Sunderland",
+      "imd_decile": 2,
+      "minimum_hours_per_100": 470.0,
+      "heavy_care_pct": 6.9,
+      "carer_pct": 13.9,
+      "bad_very_bad_health_pct": 10.7,
+      "limited_lot_pct": 14.1,
+      "minimum_hours_total": 6726
+    },
+    {
+      "lsoa_code": "E01008804",
+      "area": "Sunderland 027B",
+      "ward": "Doxford",
+      "lad": "Sunderland",
+      "imd_decile": 2,
+      "minimum_hours_per_100": 435.4,
+      "heavy_care_pct": 5.7,
+      "carer_pct": 14.4,
+      "bad_very_bad_health_pct": 9.6,
+      "limited_lot_pct": 16.6,
+      "minimum_hours_total": 6662
+    },
+    {
+      "lsoa_code": "E01008689",
+      "area": "South Tyneside 019B",
+      "ward": "Whiteleas",
+      "lad": "South Tyneside",
+      "imd_decile": 1,
+      "minimum_hours_per_100": 428.8,
+      "heavy_care_pct": 6.4,
+      "carer_pct": 12.8,
+      "bad_very_bad_health_pct": 13.6,
+      "limited_lot_pct": 18.1,
+      "minimum_hours_total": 5798
+    },
+    {
+      "lsoa_code": "E01008714",
+      "area": "Sunderland 034A",
+      "ward": "Copt Hill",
+      "lad": "Sunderland",
+      "imd_decile": 1,
+      "minimum_hours_per_100": 423.8,
+      "heavy_care_pct": 5.7,
+      "carer_pct": 13.3,
+      "bad_very_bad_health_pct": 9.8,
+      "limited_lot_pct": 14.1,
+      "minimum_hours_total": 6005
+    },
+    {
+      "lsoa_code": "E01008817",
+      "area": "Sunderland 004B",
+      "ward": "Southwick",
+      "lad": "Sunderland",
+      "imd_decile": 1,
+      "minimum_hours_per_100": 423.6,
+      "heavy_care_pct": 5.8,
+      "carer_pct": 11.9,
+      "bad_very_bad_health_pct": 12.5,
+      "limited_lot_pct": 18.0,
+      "minimum_hours_total": 4799
+    },
+    {
+      "lsoa_code": "E01008827",
+      "area": "Sunderland 023E",
+      "ward": "Silksworth",
+      "lad": "Sunderland",
+      "imd_decile": 1,
+      "minimum_hours_per_100": 410.7,
+      "heavy_care_pct": 5.8,
+      "carer_pct": 12.4,
+      "bad_very_bad_health_pct": 10.2,
+      "limited_lot_pct": 13.8,
+      "minimum_hours_total": 4522
+    },
+    {
+      "lsoa_code": "E01008819",
+      "area": "Sunderland 004C",
+      "ward": "Redhill",
+      "lad": "Sunderland",
+      "imd_decile": 2,
+      "minimum_hours_per_100": 410.1,
+      "heavy_care_pct": 6.0,
+      "carer_pct": 12.7,
+      "bad_very_bad_health_pct": 10.4,
+      "limited_lot_pct": 15.0,
+      "minimum_hours_total": 5368
+    },
+    {
+      "lsoa_code": "E01008874",
+      "area": "Sunderland 010B",
+      "ward": "Washington West",
+      "lad": "Sunderland",
+      "imd_decile": 2,
+      "minimum_hours_per_100": 406.9,
+      "heavy_care_pct": 5.8,
+      "carer_pct": 13.2,
+      "bad_very_bad_health_pct": 7.9,
+      "limited_lot_pct": 13.3,
+      "minimum_hours_total": 6682
+    }
+  ],
+  "lowest_hours": [
+    {
+      "lsoa_code": "E01033543",
+      "area": "Newcastle upon Tyne 036C",
+      "ward": "Monument",
+      "lad": "Newcastle upon Tyne",
+      "imd_decile": 4,
+      "minimum_hours_per_100": 19.0,
+      "heavy_care_pct": 0.2,
+      "carer_pct": 2.6,
+      "bad_very_bad_health_pct": 1.3,
+      "limited_lot_pct": 2.3,
+      "minimum_hours_total": 344
+    },
+    {
+      "lsoa_code": "E01008373",
+      "area": "Newcastle upon Tyne 013E",
+      "ward": "North Jesmond",
+      "lad": "Newcastle upon Tyne",
+      "imd_decile": 8,
+      "minimum_hours_per_100": 22.3,
+      "heavy_care_pct": 0.2,
+      "carer_pct": 1.9,
+      "bad_very_bad_health_pct": 1.1,
+      "limited_lot_pct": 2.1,
+      "minimum_hours_total": 480
+    },
+    {
+      "lsoa_code": "E01035620",
+      "area": "Newcastle upon Tyne 039B",
+      "ward": "Arthur's Hill",
+      "lad": "Newcastle upon Tyne",
+      "imd_decile": 5,
+      "minimum_hours_per_100": 24.9,
+      "heavy_care_pct": 0.2,
+      "carer_pct": 2.0,
+      "bad_very_bad_health_pct": 2.2,
+      "limited_lot_pct": 2.8,
+      "minimum_hours_total": 431
+    },
+    {
+      "lsoa_code": "E01033553",
+      "area": "Newcastle upon Tyne 037B",
+      "ward": "Ouseburn",
+      "lad": "Newcastle upon Tyne",
+      "imd_decile": 6,
+      "minimum_hours_per_100": 29.0,
+      "heavy_care_pct": 0.3,
+      "carer_pct": 2.8,
+      "bad_very_bad_health_pct": 2.0,
+      "limited_lot_pct": 3.0,
+      "minimum_hours_total": 862
+    },
+    {
+      "lsoa_code": "E01008367",
+      "area": "Newcastle upon Tyne 017A",
+      "ward": "South Jesmond",
+      "lad": "Newcastle upon Tyne",
+      "imd_decile": 8,
+      "minimum_hours_per_100": 37.1,
+      "heavy_care_pct": 0.5,
+      "carer_pct": 2.4,
+      "bad_very_bad_health_pct": 1.4,
+      "limited_lot_pct": 2.4,
+      "minimum_hours_total": 788
+    },
+    {
+      "lsoa_code": "E01008368",
+      "area": "Newcastle upon Tyne 017B",
+      "ward": "North Jesmond",
+      "lad": "Newcastle upon Tyne",
+      "imd_decile": 9,
+      "minimum_hours_per_100": 37.8,
+      "heavy_care_pct": 0.5,
+      "carer_pct": 2.7,
+      "bad_very_bad_health_pct": 1.4,
+      "limited_lot_pct": 2.0,
+      "minimum_hours_total": 646
+    },
+    {
+      "lsoa_code": "E01008397",
+      "area": "Newcastle upon Tyne 036B",
+      "ward": "Monument",
+      "lad": "Newcastle upon Tyne",
+      "imd_decile": 4,
+      "minimum_hours_per_100": 41.3,
+      "heavy_care_pct": 0.3,
+      "carer_pct": 2.7,
+      "bad_very_bad_health_pct": 2.1,
+      "limited_lot_pct": 3.6,
+      "minimum_hours_total": 1150
+    },
+    {
+      "lsoa_code": "E01033545",
+      "area": "Newcastle upon Tyne 036D",
+      "ward": "Monument",
+      "lad": "Newcastle upon Tyne",
+      "imd_decile": 5,
+      "minimum_hours_per_100": 42.6,
+      "heavy_care_pct": 0.3,
+      "carer_pct": 3.4,
+      "bad_very_bad_health_pct": 1.9,
+      "limited_lot_pct": 3.2,
+      "minimum_hours_total": 861
+    }
+  ],
+  "highest_heavy_care": [
+    {
+      "lsoa_code": "E01008825",
+      "area": "Sunderland 023C",
+      "ward": "Sandhill",
+      "lad": "Sunderland",
+      "imd_decile": 2,
+      "minimum_hours_per_100": 470.0,
+      "heavy_care_pct": 6.9,
+      "carer_pct": 13.9,
+      "bad_very_bad_health_pct": 10.7,
+      "limited_lot_pct": 14.1,
+      "minimum_hours_total": 6726
+    },
+    {
+      "lsoa_code": "E01008689",
+      "area": "South Tyneside 019B",
+      "ward": "Whiteleas",
+      "lad": "South Tyneside",
+      "imd_decile": 1,
+      "minimum_hours_per_100": 428.8,
+      "heavy_care_pct": 6.4,
+      "carer_pct": 12.8,
+      "bad_very_bad_health_pct": 13.6,
+      "limited_lot_pct": 18.1,
+      "minimum_hours_total": 5798
+    },
+    {
+      "lsoa_code": "E01008229",
+      "area": "Gateshead 018A",
+      "ward": "Windy Nook and Whitehills",
+      "lad": "Gateshead",
+      "imd_decile": 4,
+      "minimum_hours_per_100": 404.8,
+      "heavy_care_pct": 6.1,
+      "carer_pct": 13.7,
+      "bad_very_bad_health_pct": 9.5,
+      "limited_lot_pct": 14.4,
+      "minimum_hours_total": 4857
+    },
+    {
+      "lsoa_code": "E01008391",
+      "area": "Newcastle upon Tyne 035C",
+      "ward": "Walkergate",
+      "lad": "Newcastle upon Tyne",
+      "imd_decile": 1,
+      "minimum_hours_per_100": 402.7,
+      "heavy_care_pct": 6.1,
+      "carer_pct": 11.8,
+      "bad_very_bad_health_pct": 9.3,
+      "limited_lot_pct": 12.6,
+      "minimum_hours_total": 6041
+    },
+    {
+      "lsoa_code": "E01008819",
+      "area": "Sunderland 004C",
+      "ward": "Redhill",
+      "lad": "Sunderland",
+      "imd_decile": 2,
+      "minimum_hours_per_100": 410.1,
+      "heavy_care_pct": 6.0,
+      "carer_pct": 12.7,
+      "bad_very_bad_health_pct": 10.4,
+      "limited_lot_pct": 15.0,
+      "minimum_hours_total": 5368
+    },
+    {
+      "lsoa_code": "E01008874",
+      "area": "Sunderland 010B",
+      "ward": "Washington West",
+      "lad": "Sunderland",
+      "imd_decile": 2,
+      "minimum_hours_per_100": 406.9,
+      "heavy_care_pct": 5.8,
+      "carer_pct": 13.2,
+      "bad_very_bad_health_pct": 7.9,
+      "limited_lot_pct": 13.3,
+      "minimum_hours_total": 6682
+    },
+    {
+      "lsoa_code": "E01008684",
+      "area": "South Tyneside 018B",
+      "ward": "Whitburn and Marsden",
+      "lad": "South Tyneside",
+      "imd_decile": 3,
+      "minimum_hours_per_100": 397.0,
+      "heavy_care_pct": 5.8,
+      "carer_pct": 14.0,
+      "bad_very_bad_health_pct": 12.0,
+      "limited_lot_pct": 15.9,
+      "minimum_hours_total": 3942
+    },
+    {
+      "lsoa_code": "E01008817",
+      "area": "Sunderland 004B",
+      "ward": "Southwick",
+      "lad": "Sunderland",
+      "imd_decile": 1,
+      "minimum_hours_per_100": 423.6,
+      "heavy_care_pct": 5.8,
+      "carer_pct": 11.9,
+      "bad_very_bad_health_pct": 12.5,
+      "limited_lot_pct": 18.0,
+      "minimum_hours_total": 4799
+    }
+  ],
+  "highest_stack": [
+    {
+      "lsoa_code": "E01008689",
+      "area": "South Tyneside 019B",
+      "ward": "Whiteleas",
+      "lad": "South Tyneside",
+      "imd_decile": 1,
+      "minimum_hours_per_100": 428.8,
+      "heavy_care_pct": 6.4,
+      "carer_pct": 12.8,
+      "bad_very_bad_health_pct": 13.6,
+      "limited_lot_pct": 18.1,
+      "minimum_hours_total": 5798
+    },
+    {
+      "lsoa_code": "E01008817",
+      "area": "Sunderland 004B",
+      "ward": "Southwick",
+      "lad": "Sunderland",
+      "imd_decile": 1,
+      "minimum_hours_per_100": 423.6,
+      "heavy_care_pct": 5.8,
+      "carer_pct": 11.9,
+      "bad_very_bad_health_pct": 12.5,
+      "limited_lot_pct": 18.0,
+      "minimum_hours_total": 4799
+    },
+    {
+      "lsoa_code": "E01008709",
+      "area": "Sunderland 005B",
+      "ward": "Southwick",
+      "lad": "Sunderland",
+      "imd_decile": 1,
+      "minimum_hours_per_100": 378.6,
+      "heavy_care_pct": 5.2,
+      "carer_pct": 11.0,
+      "bad_very_bad_health_pct": 14.5,
+      "limited_lot_pct": 18.0,
+      "minimum_hours_total": 4218
+    },
+    {
+      "lsoa_code": "E01008829",
+      "area": "Sunderland 023G",
+      "ward": "Sandhill",
+      "lad": "Sunderland",
+      "imd_decile": 1,
+      "minimum_hours_per_100": 380.1,
+      "heavy_care_pct": 5.0,
+      "carer_pct": 12.9,
+      "bad_very_bad_health_pct": 14.2,
+      "limited_lot_pct": 20.2,
+      "minimum_hours_total": 4603
+    },
+    {
+      "lsoa_code": "E01008762",
+      "area": "Sunderland 012B",
+      "ward": "Pallion",
+      "lad": "Sunderland",
+      "imd_decile": 1,
+      "minimum_hours_per_100": 354.9,
+      "heavy_care_pct": 5.4,
+      "carer_pct": 10.4,
+      "bad_very_bad_health_pct": 13.3,
+      "limited_lot_pct": 18.5,
+      "minimum_hours_total": 5554
+    },
+    {
+      "lsoa_code": "E01034514",
+      "area": "Sunderland 005H",
+      "ward": "Southwick",
+      "lad": "Sunderland",
+      "imd_decile": 1,
+      "minimum_hours_per_100": 373.2,
+      "heavy_care_pct": 5.2,
+      "carer_pct": 12.6,
+      "bad_very_bad_health_pct": 12.2,
+      "limited_lot_pct": 17.8,
+      "minimum_hours_total": 11331
+    },
+    {
+      "lsoa_code": "E01008459",
+      "area": "Newcastle upon Tyne 004E",
+      "ward": "Kingston Park South & Newbiggin Hall",
+      "lad": "Newcastle upon Tyne",
+      "imd_decile": 1,
+      "minimum_hours_per_100": 400.1,
+      "heavy_care_pct": 5.5,
+      "carer_pct": 12.7,
+      "bad_very_bad_health_pct": 11.2,
+      "limited_lot_pct": 16.2,
+      "minimum_hours_total": 6861
+    },
+    {
+      "lsoa_code": "E01008216",
+      "area": "Gateshead 012C",
+      "ward": "Felling",
+      "lad": "Gateshead",
+      "imd_decile": 1,
+      "minimum_hours_per_100": 357.5,
+      "heavy_care_pct": 5.2,
+      "carer_pct": 11.6,
+      "bad_very_bad_health_pct": 12.6,
+      "limited_lot_pct": 16.0,
+      "minimum_hours_total": 4705
+    }
+  ],
+  "ward_count": 111,
+  "highest_ward_hours": [
+    {
+      "ward": "Redhill",
+      "lad": "Sunderland",
+      "minimum_hours_per_100": 356.9,
+      "minimum_hours_total": 37726,
+      "heavy_care_pct": 4.9,
+      "carer_pct": 11.5,
+      "imd_decile": 1
+    },
+    {
+      "ward": "Sandhill",
+      "lad": "Sunderland",
+      "minimum_hours_per_100": 356.4,
+      "minimum_hours_total": 35259,
+      "heavy_care_pct": 4.9,
+      "carer_pct": 11.9,
+      "imd_decile": 2
+    },
+    {
+      "ward": "Southwick",
+      "lad": "Sunderland",
+      "minimum_hours_per_100": 342.7,
+      "minimum_hours_total": 33364,
+      "heavy_care_pct": 4.7,
+      "carer_pct": 11.6,
+      "imd_decile": 2
+    },
+    {
+      "ward": "Whiteleas",
+      "lad": "South Tyneside",
+      "minimum_hours_per_100": 341.9,
+      "minimum_hours_total": 27151,
+      "heavy_care_pct": 4.9,
+      "carer_pct": 11.9,
+      "imd_decile": 3
+    },
+    {
+      "ward": "Bede",
+      "lad": "South Tyneside",
+      "minimum_hours_per_100": 339.7,
+      "minimum_hours_total": 17300,
+      "heavy_care_pct": 4.6,
+      "carer_pct": 11.7,
+      "imd_decile": 2
+    },
+    {
+      "ward": "Walker",
+      "lad": "Newcastle upon Tyne",
+      "minimum_hours_per_100": 338.8,
+      "minimum_hours_total": 34780,
+      "heavy_care_pct": 4.6,
+      "carer_pct": 10.9,
+      "imd_decile": 1
+    },
+    {
+      "ward": "Silksworth",
+      "lad": "Sunderland",
+      "minimum_hours_per_100": 330.9,
+      "minimum_hours_total": 30570,
+      "heavy_care_pct": 4.6,
+      "carer_pct": 12.0,
+      "imd_decile": 3
+    },
+    {
+      "ward": "St Anne's",
+      "lad": "Sunderland",
+      "minimum_hours_per_100": 330.8,
+      "minimum_hours_total": 31525,
+      "heavy_care_pct": 4.4,
+      "carer_pct": 11.4,
+      "imd_decile": 2
+    },
+    {
+      "ward": "Castle",
+      "lad": "Sunderland",
+      "minimum_hours_per_100": 330.7,
+      "minimum_hours_total": 34444,
+      "heavy_care_pct": 4.5,
+      "carer_pct": 11.5,
+      "imd_decile": 2
+    },
+    {
+      "ward": "High Fell",
+      "lad": "Gateshead",
+      "minimum_hours_per_100": 330.1,
+      "minimum_hours_total": 29274,
+      "heavy_care_pct": 4.6,
+      "carer_pct": 10.9,
+      "imd_decile": 2
+    }
+  ],
+  "highest_ward_heavy_care": [
+    {
+      "ward": "Sandhill",
+      "lad": "Sunderland",
+      "minimum_hours_per_100": 356.4,
+      "heavy_care_pct": 4.9,
+      "carer_pct": 11.9,
+      "imd_decile": 2
+    },
+    {
+      "ward": "Redhill",
+      "lad": "Sunderland",
+      "minimum_hours_per_100": 356.9,
+      "heavy_care_pct": 4.9,
+      "carer_pct": 11.5,
+      "imd_decile": 1
+    },
+    {
+      "ward": "Whiteleas",
+      "lad": "South Tyneside",
+      "minimum_hours_per_100": 341.9,
+      "heavy_care_pct": 4.9,
+      "carer_pct": 11.9,
+      "imd_decile": 3
+    },
+    {
+      "ward": "Southwick",
+      "lad": "Sunderland",
+      "minimum_hours_per_100": 342.7,
+      "heavy_care_pct": 4.7,
+      "carer_pct": 11.6,
+      "imd_decile": 2
+    },
+    {
+      "ward": "High Fell",
+      "lad": "Gateshead",
+      "minimum_hours_per_100": 330.1,
+      "heavy_care_pct": 4.6,
+      "carer_pct": 10.9,
+      "imd_decile": 2
+    },
+    {
+      "ward": "Silksworth",
+      "lad": "Sunderland",
+      "minimum_hours_per_100": 330.9,
+      "heavy_care_pct": 4.6,
+      "carer_pct": 12.0,
+      "imd_decile": 3
+    },
+    {
+      "ward": "Walker",
+      "lad": "Newcastle upon Tyne",
+      "minimum_hours_per_100": 338.8,
+      "heavy_care_pct": 4.6,
+      "carer_pct": 10.9,
+      "imd_decile": 1
+    },
+    {
+      "ward": "Bede",
+      "lad": "South Tyneside",
+      "minimum_hours_per_100": 339.7,
+      "heavy_care_pct": 4.6,
+      "carer_pct": 11.7,
+      "imd_decile": 2
+    },
+    {
+      "ward": "Castle",
+      "lad": "Sunderland",
+      "minimum_hours_per_100": 330.7,
+      "heavy_care_pct": 4.5,
+      "carer_pct": 11.5,
+      "imd_decile": 2
+    },
+    {
+      "ward": "Windy Nook and Whitehills",
+      "lad": "Gateshead",
+      "minimum_hours_per_100": 312.6,
+      "heavy_care_pct": 4.4,
+      "carer_pct": 11.6,
+      "imd_decile": 3
+    }
+  ],
+  "highest_ward_stack": [
+    {
+      "ward": "Walker",
+      "lad": "Newcastle upon Tyne",
+      "minimum_hours_per_100": 338.8,
+      "heavy_care_pct": 4.6,
+      "bad_very_bad_health_pct": 11.8,
+      "limited_lot_pct": 14.9,
+      "imd_decile": 1
+    },
+    {
+      "ward": "Redhill",
+      "lad": "Sunderland",
+      "minimum_hours_per_100": 356.9,
+      "heavy_care_pct": 4.9,
+      "bad_very_bad_health_pct": 10.2,
+      "limited_lot_pct": 14.3,
+      "imd_decile": 1
+    },
+    {
+      "ward": "Southwick",
+      "lad": "Sunderland",
+      "minimum_hours_per_100": 342.7,
+      "heavy_care_pct": 4.7,
+      "bad_very_bad_health_pct": 11.8,
+      "limited_lot_pct": 16.1,
+      "imd_decile": 2
+    },
+    {
+      "ward": "Sandhill",
+      "lad": "Sunderland",
+      "minimum_hours_per_100": 356.4,
+      "heavy_care_pct": 4.9,
+      "bad_very_bad_health_pct": 9.7,
+      "limited_lot_pct": 13.8,
+      "imd_decile": 2
+    },
+    {
+      "ward": "Bede",
+      "lad": "South Tyneside",
+      "minimum_hours_per_100": 339.7,
+      "heavy_care_pct": 4.6,
+      "bad_very_bad_health_pct": 10.0,
+      "limited_lot_pct": 13.2,
+      "imd_decile": 2
+    },
+    {
+      "ward": "High Fell",
+      "lad": "Gateshead",
+      "minimum_hours_per_100": 330.1,
+      "heavy_care_pct": 4.6,
+      "bad_very_bad_health_pct": 10.3,
+      "limited_lot_pct": 13.1,
+      "imd_decile": 2
+    },
+    {
+      "ward": "St Anne's",
+      "lad": "Sunderland",
+      "minimum_hours_per_100": 330.8,
+      "heavy_care_pct": 4.4,
+      "bad_very_bad_health_pct": 9.3,
+      "limited_lot_pct": 13.8,
+      "imd_decile": 2
+    },
+    {
+      "ward": "Felling",
+      "lad": "Gateshead",
+      "minimum_hours_per_100": 309.8,
+      "heavy_care_pct": 4.1,
+      "bad_very_bad_health_pct": 11.0,
+      "limited_lot_pct": 13.6,
+      "imd_decile": 2
+    },
+    {
+      "ward": "Castle",
+      "lad": "Sunderland",
+      "minimum_hours_per_100": 330.7,
+      "heavy_care_pct": 4.5,
+      "bad_very_bad_health_pct": 9.3,
+      "limited_lot_pct": 13.1,
+      "imd_decile": 2
+    },
+    {
+      "ward": "Whiteleas",
+      "lad": "South Tyneside",
+      "minimum_hours_per_100": 341.9,
+      "heavy_care_pct": 4.9,
+      "bad_very_bad_health_pct": 8.9,
+      "limited_lot_pct": 12.7,
+      "imd_decile": 3
+    }
+  ],
+  "sources": [
+    {
+      "name": "Census 2021 TS039: Provision of unpaid care",
+      "url": "https://www.nomisweb.co.uk/datasets/c2021ts039"
+    },
+    {
+      "name": "Census 2021 TS037: General health",
+      "url": "https://www.nomisweb.co.uk/datasets/c2021ts037"
+    },
+    {
+      "name": "Census 2021 TS038: Disability",
+      "url": "https://www.nomisweb.co.uk/datasets/c2021ts038"
+    },
+    {
+      "name": "English Indices of Deprivation 2025",
+      "url": "https://www.gov.uk/government/statistics/english-indices-of-deprivation-2025"
+    },
+    {
+      "name": "ONS Open Geography Portal LSOA 2021 boundaries",
+      "url": "https://www.data.gov.uk/dataset/1a99061d-af4b-4ffb-9577-dbc3f5a6feb9/lower-layer-super-output-areas-december-2021-boundaries-ew-bfc-v10"
+    }
+  ]
+}
