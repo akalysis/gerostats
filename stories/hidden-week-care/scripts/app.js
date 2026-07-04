@@ -31,7 +31,7 @@ const formatOne = new Intl.NumberFormat("en-GB", {
   maximumFractionDigits: 1,
 });
 
-const dataVersion = "20260704-flat-care";
+const dataVersion = "20260705-hours";
 const greenRedRamp = ["#0f766e", "#22c55e", "#a3e635", "#facc15", "#fb923c", "#b91c1c"];
 const heightStops = [80, 700, 1400, 2200, 3200, 4500];
 const emptyCollection = { type: "FeatureCollection", features: [] };
@@ -154,9 +154,9 @@ function sceneCopy(summary) {
   return {
     week: {
       label: "Older carers by named area",
-      title: `${formatThousands(older.total_older_carers)} people aged 65+ provide unpaid care.`,
+      title: `${formatThousands(older.total_older_minimum_weekly_care_hours)} minimum unpaid care-hours a week.`,
       text:
-        "The map shows the minimum weekly care-hours provided by older people, standardised per 100 residents aged 65 and over.  Green is lower; amber and red mark the peaks.",
+        `That is the cautious lower-bound estimate from ${formatThousands(older.total_older_carers)} people aged 65 and over providing unpaid care.  Green is lower; amber and red mark the peaks per 100 residents aged 65+.`,
       metrics: [
         {
           value: formatThousands(older.total_older_minimum_weekly_care_hours),

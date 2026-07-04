@@ -179,6 +179,7 @@ h1 {
   font-size: clamp(3.1rem, 8vw, 7.8rem);
   line-height: 0.88;
   letter-spacing: 0;
+  overflow-wrap: break-word;
 }
 
 h2 {
@@ -225,7 +226,7 @@ p {
 
 .opening-stat {
   display: grid;
-  gap: 8px;
+  gap: 9px;
   padding: 24px;
   border: 1px solid rgba(17, 20, 21, 0.14);
   border-radius: 8px;
@@ -233,9 +234,19 @@ p {
   box-shadow: var(--shadow);
 }
 
+.stat-overline {
+  color: var(--red);
+  font-size: 0.78rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
 .stat-number {
   color: var(--red);
-  font-size: clamp(3rem, 6vw, 5.8rem);
+  font-size: clamp(2.9rem, 5.1vw, 4.75rem);
+  font-variant-numeric: tabular-nums;
   font-weight: 900;
   line-height: 0.9;
 }
@@ -247,10 +258,18 @@ p {
   line-height: 1.12;
 }
 
+.stat-secondary {
+  color: var(--ink);
+  font-size: 0.98rem;
+  font-weight: 780;
+  line-height: 1.25;
+}
+
 .stat-note {
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.35;
+  overflow-wrap: break-word;
 }
 
 .map-section {
@@ -1034,7 +1053,11 @@ p {
   }
 
   h1 {
-    font-size: clamp(2.7rem, 18vw, 4.8rem);
+    font-size: clamp(2.35rem, 11.4vw, 3rem);
+  }
+
+  h1 .heading-accent {
+    display: block;
   }
 
   .map-stage,
@@ -1163,6 +1186,7 @@ nav a:focus-visible {
 }
 
 .stat-label,
+.stat-secondary,
 .map-caption strong,
 .map-overlay-list h4,
 .rank-panel h4 {
@@ -1406,10 +1430,21 @@ nav a:focus-visible {
   background: rgba(2, 6, 23, 0.46);
 }
 
+.animation-stat-primary {
+  grid-column: 1 / -1;
+  min-height: 132px;
+  background: linear-gradient(135deg, rgba(163, 230, 53, 0.16), rgba(45, 212, 191, 0.08) 54%, rgba(2, 6, 23, 0.52));
+}
+
 .animation-stat strong {
   color: var(--red);
   font-size: clamp(1.6rem, 3vw, 2.25rem);
   line-height: 1;
+}
+
+.animation-stat-primary strong {
+  color: var(--red);
+  font-size: clamp(2.2rem, 4.7vw, 4rem);
 }
 
 .animation-stat span {
