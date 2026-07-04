@@ -282,26 +282,6 @@
       const video = document.querySelector("#metroVideo");
       const buttons = document.querySelectorAll("[data-time]");
 
-      video.addEventListener("contextmenu", (event) => {
-        event.preventDefault();
-      });
-
-      document.addEventListener("copy", (event) => {
-        event.preventDefault();
-      });
-
-      document.addEventListener("cut", (event) => {
-        event.preventDefault();
-      });
-
-      document.addEventListener("dragstart", (event) => {
-        event.preventDefault();
-      });
-
-      document.addEventListener("contextmenu", (event) => {
-        event.preventDefault();
-      });
-
       buttons.forEach((button) => {
         button.addEventListener("click", () => {
           const seconds = Number(button.dataset.time);
@@ -311,5 +291,6 @@
         });
       });
     </script>
+    <script src="/assets/site-lockdown.js?v=20260704"></script>
   </body>
 </html>

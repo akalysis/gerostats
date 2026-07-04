@@ -17,6 +17,8 @@
 
 * {
   box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 html {
@@ -30,6 +32,20 @@ body {
 }
 
 a {
+  color: inherit;
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+img,
+video,
+svg {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+::selection {
+  background: transparent;
   color: inherit;
 }
 
