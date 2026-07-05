@@ -14,6 +14,7 @@
   --card: rgba(15, 23, 42, 0.74);
   --card-strong: rgba(15, 23, 42, 0.92);
   --shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+  --header-height: 72px;
 }
 
 * {
@@ -30,6 +31,7 @@ html {
 
 body {
   margin: 0;
+  padding-top: var(--header-height);
   overflow-x: hidden;
   color: var(--ink);
   background:
@@ -81,18 +83,24 @@ svg {
 }
 
 .site-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
+  width: 100%;
+  min-height: var(--header-height);
   padding: 0.85rem clamp(1rem, 4vw, 4rem);
   border-bottom: 1px solid var(--line);
   background: rgba(2, 6, 23, 0.78);
   backdrop-filter: blur(16px);
   max-width: 100%;
+}
+
+:where(section, article, [id]) {
+  scroll-margin-top: calc(var(--header-height) + 1rem);
 }
 
 .brand {
@@ -1008,8 +1016,11 @@ h3 {
 }
 
 @media (max-width: 860px) {
+  :root {
+    --header-height: 132px;
+  }
+
   .site-header {
-    position: static;
     align-items: flex-start;
     flex-direction: column;
     overflow: hidden;

@@ -11,6 +11,7 @@
   --blue: #355c96;
   --green: #4d7f4c;
   --shadow: 0 18px 45px rgba(17, 19, 24, 0.12);
+  --header-height: 72px;
 }
 
 * {
@@ -25,6 +26,7 @@ html {
 
 body {
   margin: 0;
+  padding-top: var(--header-height);
   overflow-x: hidden;
   color: var(--ink);
   background: var(--paper);
@@ -68,17 +70,23 @@ svg {
 }
 
 .site-header {
-  position: sticky;
-  top: 0;
-  z-index: 4;
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
+  width: 100%;
+  min-height: var(--header-height);
   padding: 1rem clamp(1rem, 4vw, 4rem);
   border-bottom: 1px solid rgba(17, 19, 24, 0.12);
   background: rgba(248, 248, 244, 0.92);
   backdrop-filter: blur(16px);
+}
+
+:where(section, article, [id]) {
+  scroll-margin-top: calc(var(--header-height) + 1rem);
 }
 
 .brand {
@@ -520,8 +528,11 @@ code {
 }
 
 @media (max-width: 850px) {
+  :root {
+    --header-height: 132px;
+  }
+
   .site-header {
-    position: static;
     align-items: flex-start;
     flex-direction: column;
     overflow: hidden;
