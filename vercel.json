@@ -21,11 +21,6 @@
       "source": "/metro",
       "destination": "/stories/metro-life-expectancy/",
       "permanent": true
-    },
-    {
-      "source": "/writing/mathjax-demo",
-      "destination": "/writing/",
-      "permanent": true
     }
   ],
   "headers": [

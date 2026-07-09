@@ -24,11 +24,11 @@ HTML directly.  After deployment, attach the domain `gerostats.co.uk` in Vercel.
   `/assets/stories/hidden-week-story.mp4`.
 - `/about/` is the author page.
 
-## MathJax
+## Formula rendering
 
-Pages that need formulas can include the MathJax config and script in the page
-head.  Inline notation such as `\( r_i = d_i / n_i \)` and display equations
-such as this are supported:
+Pages that need formulas can include the formula-rendering config and script in
+the page head.  Inline notation such as `\( r_i = d_i / n_i \)` and display
+equations such as this are supported:
 
 ```tex
 \[
