@@ -1,0 +1,114 @@
+{
+  "generated_at_utc": "2026-07-09T14:02:07.812375+00:00",
+  "measure": "Modelled station-local healthy life expectancy at birth",
+  "training_authorities": {
+    "Male": 151,
+    "Female": 151
+  },
+  "features": [
+    "life_expectancy",
+    "good_health_rate",
+    "bad_health_rate",
+    "disabled_rate",
+    "limited_lot_rate",
+    "no_ltc_rate",
+    "age0_15_rate",
+    "age65plus_rate",
+    "age85plus_rate",
+    "sex_share"
+  ],
+  "diagnostics": [
+    {
+      "sex": "Male",
+      "lambda": 10.0,
+      "cv_rmse": 1.4968588395984164,
+      "cv_mae": 1.1549984828097233,
+      "n_authorities": 151,
+      "life_expectancy_coef": 0.3946326754011743,
+      "coefficients": {
+        "life_expectancy": 0.3946326754011743,
+        "good_health_rate": 36.26233952950957,
+        "bad_health_rate": -56.685729853330756,
+        "disabled_rate": -14.321433132115098,
+        "limited_lot_rate": -19.086324934346013,
+        "no_ltc_rate": 7.973101970248405,
+        "age0_15_rate": -16.28416997096599,
+        "age65plus_rate": 7.91734393010235,
+        "age85plus_rate": 115.23478875217036,
+        "sex_share": -40.12106929177231
+      }
+    },
+    {
+      "sex": "Female",
+      "lambda": 1.0,
+      "cv_rmse": 1.7204391222269715,
+      "cv_mae": 1.34908872242995,
+      "n_authorities": 151,
+      "life_expectancy_coef": 0.24650878348599545,
+      "coefficients": {
+        "life_expectancy": 0.24650878348599545,
+        "good_health_rate": 106.89169890996565,
+        "bad_health_rate": -72.71360904188825,
+        "disabled_rate": -20.267568529952595,
+        "limited_lot_rate": 76.06749607103657,
+        "no_ltc_rate": 0.6410815954469345,
+        "age0_15_rate": -12.091240127181678,
+        "age65plus_rate": 15.057512574234348,
+        "age85plus_rate": 157.17529761304718,
+        "sex_share": 8.15532923036646
+      }
+    }
+  ],
+  "validation": {
+    "station_count": 60,
+    "unmatched_station_count": 0,
+    "max_authority_calibration_error_years": 2.842170943040401e-14,
+    "male_station_range": [
+      46.59947890249532,
+      71.56370649403618
+    ],
+    "female_station_range": [
+      46.70327713743522,
+      72.98567010055785
+    ],
+    "male_station_life_expectancy_imputed_count": 1,
+    "female_station_life_expectancy_imputed_count": 0
+  },
+  "map_display": {
+    "written": true,
+    "station_count": 59,
+    "missing_reference_matches": [],
+    "excluded_from_map": [
+      "Manors"
+    ],
+    "male": {
+      "min": 49.484034394092966,
+      "max": 69.30060980918851,
+      "gap": 19.81657541509555,
+      "lowestStation": "Percy Main",
+      "highestStation": "Ilford Road"
+    },
+    "female": {
+      "min": 49.01002830466631,
+      "max": 70.06315345744561,
+      "gap": 21.0531251527793,
+      "lowestStation": "Percy Main",
+      "highestStation": "Ilford Road"
+    },
+    "bayesian_borrowing": {
+      "likelihood": "Calibrated covariate model fitted to official authority HLE and projected to station MSOAs",
+      "prior": "ONS England 2022 to 2024 HLE deprivation decile gradient, centred within each authority",
+      "deprivation_prior_sd_years": 1.0,
+      "structural_uncertainty_sd_years": 2.0,
+      "map_display_calibration": "Posterior station estimates are centred within authority for the mapped station set"
+    }
+  },
+  "source_urls": {
+    "ohid_msoa_life_expectancy": "https://fingertips.phe.org.uk/api/all_data/csv/by_indicator_id?indicator_ids=93283&child_area_type_id=3",
+    "ohid_ctyua_healthy_life_expectancy": "https://fingertips.phe.org.uk/api/all_data/csv/by_indicator_id?indicator_ids=90362&child_area_type_id=502",
+    "nomis_census_bulk_template": "https://www.nomisweb.co.uk/output/census/2021/census2021-{code}.zip",
+    "ons_msoa_to_ctyua_lookup": "https://open-geography-portalx-ons.hub.arcgis.com/api/download/v1/items/15abc3e5a1d8478a981d9cc512e8fb35/csv?layers=0",
+    "dft_naptan_access_nodes": "https://naptan.api.dft.gov.uk/v1/access-nodes?dataFormat=csv",
+    "ons_msoa_boundary_query": "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Middle_layer_Super_Output_Areas_December_2021_Boundaries_EW_BGC_V3/FeatureServer/0/query"
+  }
+}
