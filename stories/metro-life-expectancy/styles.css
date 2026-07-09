@@ -141,14 +141,35 @@ nav {
 }
 
 nav a {
-  padding: 0.3rem 0.38rem;
+  position: relative;
+  padding: 0.34rem 0.4rem 0.48rem;
   border-radius: 6px;
   text-decoration: none;
+  transition: color 180ms ease;
+}
+
+nav a::after {
+  content: "";
+  position: absolute;
+  left: 0.4rem;
+  right: 0.4rem;
+  bottom: 0.22rem;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #a3e635, #2dd4bf);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 220ms ease;
 }
 
 nav a:hover,
-nav a:focus {
+nav a:focus-visible {
   color: var(--ink);
+}
+
+nav a:hover::after,
+nav a:focus-visible::after {
+  transform: scaleX(1);
 }
 
 main {
@@ -653,7 +674,7 @@ nav {
 }
 
 nav a:hover,
-nav a:focus {
+nav a:focus-visible {
   color: var(--red);
 }
 
