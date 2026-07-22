@@ -33,10 +33,11 @@
       <p class="kicker">Technical note</p>
       <h1>How the Newcastle Metro <span class="heading-accent">life expectancy map</span> was made</h1>
       <p class="lede">
-        The map is a station-local view of life expectancy and deprivation.  It
-        does not estimate life expectancy for passengers, births at stations or
-        individual people.  It connects each Metro station to the small public
-        health geography around it and uses published area estimates.
+        The map is a station-local view of life expectancy, deprivation and
+        public-transport connectivity.  It does not estimate life expectancy for
+        passengers, births at stations or individual people.  It connects each
+        Metro station to the small public health geography around it and uses
+        published area estimates.
       </p>
 
       <h2>What the map <span class="heading-accent">measures</span></h2>
@@ -140,6 +141,16 @@
             </td>
           </tr>
           <tr>
+            <th>Transport connectivity</th>
+            <td>
+              Department for Transport, Connectivity metrics 2025, LSOA-level
+              overall public-transport connectivity score for quarter 4 of 2024.
+              Scores range from 0 to 100 and describe opportunity to reach
+              destinations.  See the
+              <a href="https://www.gov.uk/government/publications/transport-connectivity-metric">official data and methodology</a>.
+            </td>
+          </tr>
+          <tr>
             <th>Geography lookups</th>
             <td>
               Office for National Statistics geography products and lookup files
@@ -172,6 +183,7 @@
         <li>Metro station points were matched to the local small-area geography around the station.</li>
         <li>The station's local LSOA supplied the deprivation rank and decile.</li>
         <li>The station's local MSOA supplied the male and female life expectancy estimates.</li>
+        <li>The station's local LSOA supplied the overall public-transport connectivity score.</li>
         <li>The animation retained stations where a stable MSOA life expectancy estimate was available.</li>
       </ol>
       <p>
@@ -202,6 +214,11 @@
           as D1 because rank 1 is the most deprived and D1 is the most deprived
           tenth of English LSOAs.
         </li>
+        <li>
+          The transport comparison uses the overall public-transport connectivity
+          score for the station's LSOA.  Values are rounded to one decimal: 84.2
+          for Byker, 82.7 for South Gosforth and 80.3 for Ilford Road.
+        </li>
       </ul>
 
       <h2>Important interpretation <span class="heading-accent">points</span></h2>
@@ -210,6 +227,11 @@
         <li>The 2019 to 2023 period includes the COVID-19 pandemic years, so the estimates reflect that mortality context.</li>
         <li>MSOA averages can hide variation inside the area.  They are useful for showing broad local patterns, but they are not the lived experience of every resident.</li>
         <li>Deprivation is a summary of several domains.  It is not a judgement on a place or its people.</li>
+        <li>The connectivity metric is experimental statistics for quarter 4 of 2024.  It describes relative opportunity to reach destinations, not journeys actually taken.</li>
+        <li>The connectivity estimates use theoretical journey planning and published timetables.  They do not measure disruption, fares, affordability, individual access needs or lived experience.</li>
+        <li>Transport-mode scores should not be compared directly.  This story uses only the overall public-transport score.</li>
+        <li>A station's LSOA is not its passenger catchment.  Because this is a station-local story, it says little about communities beyond the Metro network or people's ability to reach a station.</li>
+        <li>The transport comparison is descriptive.  It does not estimate a causal effect of transport on life expectancy or deprivation.</li>
         <li>The map shows association and geography.  It should be read alongside wider evidence on income, housing, work, environment, services and health systems.</li>
       </ul>
 

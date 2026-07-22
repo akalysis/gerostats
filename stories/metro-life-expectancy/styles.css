@@ -434,6 +434,80 @@ video {
   color: var(--ink);
 }
 
+.station-comparison {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 2rem 0 1rem;
+}
+
+.station-card {
+  min-width: 0;
+  padding: 1.15rem;
+  border: 1px solid var(--line);
+  border-top: 5px solid var(--red);
+  border-radius: 8px;
+  background: var(--card, var(--white));
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.16);
+}
+
+.essay .station-card p {
+  max-width: none;
+}
+
+.station-name {
+  margin-bottom: 0.15rem;
+  color: var(--ink);
+  font-size: 1.18rem;
+  font-weight: 850;
+}
+
+.station-context {
+  margin-bottom: 1rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.station-card dl {
+  margin: 0;
+}
+
+.station-card dl div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: end;
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.station-card dt {
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.3;
+}
+
+.station-card dd {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.02rem;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.essay .transport-caption {
+  margin-bottom: 1.5rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.transport-caption a {
+  color: var(--ink);
+  font-weight: 750;
+  text-decoration-color: var(--red);
+  text-underline-offset: 0.16em;
+}
+
 .closing-call {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -596,6 +670,10 @@ code {
   }
 
   .stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .station-comparison {
     grid-template-columns: 1fr;
   }
 
