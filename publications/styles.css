@@ -205,27 +205,37 @@
 
 .year-navigation {
   display: flex;
+  flex-wrap: nowrap;
   justify-content: flex-start;
+  align-items: stretch;
   gap: 0;
   margin: 0 0 3rem;
   overflow-x: auto;
-  border-top: 1px solid var(--shell-line);
-  border-bottom: 1px solid var(--shell-line);
+  border: 1px solid var(--shell-line);
   scrollbar-width: thin;
 }
 
 .year-navigation a {
-  flex: 0 0 auto;
-  padding: 0.75rem 0.9rem;
+  display: grid;
+  flex: 1 0 3.55rem;
+  min-height: 3rem;
+  place-items: center;
+  padding: 0.68rem 0.4rem;
   border-left: 1px solid var(--shell-line);
+  border-radius: 0;
   color: #cbd5e1;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 800;
+  text-align: center;
   text-decoration: none;
 }
 
 .year-navigation a:first-child {
   border-left: 0;
+}
+
+.year-navigation a:last-child {
+  flex-basis: 5rem;
 }
 
 .year-navigation a:hover,
