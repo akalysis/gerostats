@@ -64,6 +64,22 @@
   line-height: 1.38;
 }
 
+.n85-leadership {
+  max-width: 660px;
+  margin: 1.25rem 0 0;
+  color: #d9f99d;
+  font-size: 0.95rem;
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.n85-leadership a {
+  color: #fff;
+  text-decoration-color: var(--red);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.22rem;
+}
+
 .n85-hero-note {
   margin: 1.5rem 0 0;
   color: var(--n85-muted);
