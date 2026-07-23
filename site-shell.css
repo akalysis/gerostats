@@ -6,6 +6,10 @@
   --shell-muted: #9aa6b2;
 }
 
+html:has(#collections:target) {
+  scroll-behavior: auto;
+}
+
 body {
   background:
     radial-gradient(circle at 8% 4%, rgba(163, 230, 53, 0.075), transparent 28rem),
