@@ -13,6 +13,7 @@
     <link rel="alternate" type="application/rss+xml" title="Gerostats" href="/feed.xml">
     <link rel="icon" href="/favicon.svg?v=mark-20260704" type="image/svg+xml">
     <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/site-shell.css">
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -21,13 +22,14 @@
         <span class="brand-mark" aria-hidden="true"></span>
         <span class="brand-word"><span>Gero</span><span class="brand-accent">stats</span></span>
       </a>
+      <p class="brand-tagline">Ageing, health &amp; public statistics</p>
       <nav aria-label="Primary navigation">
-        <a href="/writing/">Garden notes</a>
+        <a href="/writing/" aria-current="page">Garden notes</a>
         <a href="/data-stories/">Data stories</a>
-        <a href="/methods/">Statistical methods</a>
+        <a href="/methods/">Methods</a>
         <a href="/projects/">Projects</a>
-        <a href="/about/">About Andrew</a>
-        <a href="/contact/">Contact</a>
+        <a href="/about/">About</a>
+        <a class="nav-contact" href="/contact/">Contact</a>
       </nav>
     </header>
 
@@ -35,11 +37,28 @@
       <p class="page-kicker">Garden notes</p>
       <h1 class="page-title writing-title">Garden notes on <span class="heading-accent">ageing and statistics</span>, public health.</h1>
       <p class="page-intro">
-        Garden Notes are not always finished essays. Some are early ideas. Some
-        are growing explanations. Some are fragments that may later become
-        talks, papers, tools or data stories. Each note has a status so readers
-        know how developed it is.
+        Garden Notes are the chronological front door to the site: early ideas,
+        growing explanations, practical guides and finished pieces in one place.
+        Data stories and methods also have their own focused collections below.
+        Each note has a status so readers know how developed it is.
       </p>
+      <nav class="collection-nav" aria-label="Browse Gerostats content">
+        <a href="/writing/" aria-current="page">
+          <span class="collection-number">01</span>
+          <strong>Garden notes</strong>
+          <small>All notes, guides and unfinished thinking</small>
+        </a>
+        <a href="/data-stories/">
+          <span class="collection-number">02</span>
+          <strong>Data stories</strong>
+          <small>Visual essays, maps and public data</small>
+        </a>
+        <a href="/methods/">
+          <span class="collection-number">03</span>
+          <strong>Statistical methods</strong>
+          <small>Reusable explainers and technical notes</small>
+        </a>
+      </nav>
       <div class="garden-note">
         <strong>Seedling:</strong> an early note or idea. <strong>Growing:</strong> a
         note being developed or revised. <strong>Evergreen:</strong> a more settled

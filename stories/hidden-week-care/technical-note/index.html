@@ -8,6 +8,7 @@
     <link rel="canonical" href="https://gerostats.co.uk/stories/hidden-week-care/technical-note/">
     <link rel="icon" href="/favicon.svg?v=mark-20260704" type="image/svg+xml">
     <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="/site-shell.css">
   </head>
   <body>
     <header class="site-header">
@@ -15,15 +16,25 @@
         <span class="brand-mark" aria-hidden="true"></span>
         <span class="brand-word"><span>Gero</span><span class="brand-accent">stats</span></span>
       </a>
+      <p class="brand-tagline">Ageing, health &amp; public statistics</p>
       <nav aria-label="Primary navigation">
         <a href="/writing/">Garden notes</a>
-        <a href="/data-stories/">Data stories</a>
-        <a href="/methods/">Statistical methods</a>
+        <a href="/data-stories/" aria-current="page">Data stories</a>
+        <a href="/methods/">Methods</a>
         <a href="/projects/">Projects</a>
-        <a href="/about/">About Andrew</a>
-        <a href="/contact/">Contact</a>
+        <a href="/about/">About</a>
+        <a class="nav-contact" href="/contact/">Contact</a>
       </nav>
     </header>
+
+    <nav class="story-trail" aria-label="Technical note navigation">
+      <a href="/data-stories/">Data stories</a>
+      <strong>Technical note · The hidden week</strong>
+      <a class="story-trail-technical" href="/stories/hidden-week-care/">
+        Back to the story
+        <span>Return to the map and narrative</span>
+      </a>
+    </nav>
 
     <main>
       <article class="story technical-note">

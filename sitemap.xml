@@ -2,19 +2,19 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://gerostats.co.uk/</loc>
-    <lastmod>2026-07-04</lastmod>
+    <lastmod>2026-07-23</lastmod>
   </url>
   <url>
     <loc>https://gerostats.co.uk/writing/</loc>
-    <lastmod>2026-07-04</lastmod>
+    <lastmod>2026-07-23</lastmod>
   </url>
   <url>
     <loc>https://gerostats.co.uk/data-stories/</loc>
-    <lastmod>2026-07-04</lastmod>
+    <lastmod>2026-07-23</lastmod>
   </url>
   <url>
     <loc>https://gerostats.co.uk/methods/</loc>
-    <lastmod>2026-07-04</lastmod>
+    <lastmod>2026-07-23</lastmod>
   </url>
   <url>
     <loc>https://gerostats.co.uk/projects/</loc>
@@ -54,11 +54,19 @@
   </url>
   <url>
     <loc>https://gerostats.co.uk/stories/metro-life-expectancy/</loc>
-    <lastmod>2026-07-04</lastmod>
+    <lastmod>2026-07-23</lastmod>
+  </url>
+  <url>
+    <loc>https://gerostats.co.uk/stories/metro-life-expectancy/technical-note/</loc>
+    <lastmod>2026-07-23</lastmod>
   </url>
   <url>
     <loc>https://gerostats.co.uk/stories/hidden-week-care/</loc>
-    <lastmod>2026-07-04</lastmod>
+    <lastmod>2026-07-23</lastmod>
+  </url>
+  <url>
+    <loc>https://gerostats.co.uk/stories/hidden-week-care/technical-note/</loc>
+    <lastmod>2026-07-23</lastmod>
   </url>
   <url>
     <loc>https://gerostats.co.uk/about/</loc>

@@ -12,6 +12,7 @@
     <link rel="canonical" href="https://gerostats.co.uk/stories/metro-life-expectancy/">
     <link rel="icon" href="/favicon.svg?v=mark-20260704" type="image/svg+xml">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/site-shell.css">
   </head>
   <body>
     <a class="skip-link" href="#story">Skip to story</a>
@@ -21,15 +22,25 @@
         <span class="brand-mark" aria-hidden="true"></span>
         <span class="brand-word"><span>Gero</span><span class="brand-accent">stats</span></span>
       </a>
+      <p class="brand-tagline">Ageing, health &amp; public statistics</p>
       <nav aria-label="Primary navigation">
         <a href="/writing/">Garden notes</a>
-        <a href="/data-stories/">Data stories</a>
-        <a href="/methods/">Statistical methods</a>
+        <a href="/data-stories/" aria-current="page">Data stories</a>
+        <a href="/methods/">Methods</a>
         <a href="/projects/">Projects</a>
-        <a href="/about/">About Andrew</a>
-        <a href="/contact/">Contact</a>
+        <a href="/about/">About</a>
+        <a class="nav-contact" href="/contact/">Contact</a>
       </nav>
     </header>
+
+    <nav class="story-trail" aria-label="Data story navigation">
+      <a href="/data-stories/">Data stories</a>
+      <strong>I was born in D1</strong>
+      <a class="story-trail-technical" href="/stories/metro-life-expectancy/technical-note/">
+        Technical note
+        <span>Data, method &amp; limitations</span>
+      </a>
+    </nav>
 
     <main>
       <section class="hero" id="story">
@@ -58,7 +69,7 @@
         </p>
         <div class="hero-actions" aria-label="Page actions">
           <a class="button primary" href="#map">Watch the map</a>
-          <a class="button" href="/stories/metro-life-expectancy/technical-note/">Read the method</a>
+          <a class="button" href="/stories/metro-life-expectancy/technical-note/">Read the technical note</a>
         </div>
       </section>
 

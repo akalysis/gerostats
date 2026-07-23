@@ -12,6 +12,7 @@
     <link rel="canonical" href="https://gerostats.co.uk/methods/">
     <link rel="icon" href="/favicon.svg?v=mark-20260704" type="image/svg+xml">
     <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/site-shell.css">
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -20,13 +21,14 @@
         <span class="brand-mark" aria-hidden="true"></span>
         <span class="brand-word"><span>Gero</span><span class="brand-accent">stats</span></span>
       </a>
+      <p class="brand-tagline">Ageing, health &amp; public statistics</p>
       <nav aria-label="Primary navigation">
         <a href="/writing/">Garden notes</a>
         <a href="/data-stories/">Data stories</a>
-        <a href="/methods/">Statistical methods</a>
+        <a href="/methods/" aria-current="page">Methods</a>
         <a href="/projects/">Projects</a>
-        <a href="/about/">About Andrew</a>
-        <a href="/contact/">Contact</a>
+        <a href="/about/">About</a>
+        <a class="nav-contact" href="/contact/">Contact</a>
       </nav>
     </header>
 
@@ -35,10 +37,26 @@
       <h1 class="page-title">Plain-English <span class="heading-accent">methods notes</span> for ageing, health and inequality.</h1>
       <p class="page-intro">
         This section collects general statistical methods notes, explainers and
-        practical reflections. Story-specific technical notes stay with the
-        story they document; this page is for reusable ideas such as uncertainty,
-        health expectancy, modelling and measurement.
+        practical reflections. Reusable ideas sit first; the technical notes for
+        individual data stories are gathered in their own shelf below.
       </p>
+      <nav class="collection-nav" aria-label="Browse Gerostats content">
+        <a href="/writing/">
+          <span class="collection-number">01</span>
+          <strong>Garden notes</strong>
+          <small>All notes, guides and unfinished thinking</small>
+        </a>
+        <a href="/data-stories/">
+          <span class="collection-number">02</span>
+          <strong>Data stories</strong>
+          <small>Visual essays, maps and public data</small>
+        </a>
+        <a href="/methods/" aria-current="page">
+          <span class="collection-number">03</span>
+          <strong>Statistical methods</strong>
+          <small>Reusable explainers and technical notes</small>
+        </a>
+      </nav>
 
       <div class="garden-note">
         Method areas: health expectancy, microsimulation, longitudinal data,
@@ -93,6 +111,27 @@
           </div>
         </article>
       </div>
+
+      <section class="technical-notes-index" aria-labelledby="story-notes-heading">
+        <p class="page-kicker">Behind the data stories</p>
+        <h2 id="story-notes-heading">Story <span class="heading-accent">technical notes</span></h2>
+        <p>
+          The data sources, calculations, geography choices and limitations
+          behind each published visual story.
+        </p>
+        <div class="technical-note-grid">
+          <a class="technical-note-card" href="/stories/metro-life-expectancy/technical-note/">
+            <span>Technical note · Data story</span>
+            <strong>How the Newcastle Metro life expectancy map was made</strong>
+            <small>Life expectancy, deprivation, station geographies and transport connectivity.</small>
+          </a>
+          <a class="technical-note-card" href="/stories/hidden-week-care/technical-note/">
+            <span>Technical note · Interactive story</span>
+            <strong>How the unpaid-care map was calculated</strong>
+            <small>Census 2021 care-hours, denominators, geography and limitations.</small>
+          </a>
+        </div>
+      </section>
     </main>
 
     <footer class="site-footer">
