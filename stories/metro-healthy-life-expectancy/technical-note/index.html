@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Technical note | Healthy years on the Metro | Gerostats</title>
+    <meta
+      name="description"
+      content="Statistical method, data sources, validation and limitations for modelled station-local healthy life expectancy on the Newcastle Metro."
+    >
+    <meta name="author" content="Andrew Kingston PhD CStat SFHEA">
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="canonical" href="https://gerostats.co.uk/stories/metro-healthy-life-expectancy/technical-note/">
+    <link rel="icon" href="/favicon.svg?v=mark-20260704" type="image/svg+xml">
+    <link rel="stylesheet" href="../styles.css">
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [["\\(", "\\)"]],
+          displayMath: [["\\[", "\\]"]],
+        },
+        chtml: {
+          scale: 1,
+        },
+      };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Gerostats home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-word"><span>Gero</span><span class="brand-accent">stats</span></span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="/writing/">Garden</a>
+        <a href="/data-stories/">Stories</a>
+        <a href="/methods/">Methods</a>
+        <a href="/about/">About</a>
+        <a href="/contact/">Contact</a>
+      </nav>
+    </header>
+
+    <main class="note-page">
+      <p class="kicker">Technical note</p>
+      <h1>How the Metro healthy life expectancy estimates were <span class="heading-accent">made</span></h1>
+      <p class="lede">
+        This is a calibrated synthetic small-area estimator for station-local
+        healthy life expectancy.  It is not an official ONS station estimate, and
+        it should not be read as one.  It is the methodological follow-on to the
+        <a href="/stories/metro-life-expectancy/">Metro life expectancy map</a>.
+      </p>
+
+      <h2>Plain-English <span class="heading-accent">summary</span></h2>
+      <p>
+        A Bayesian model is a formal way of updating what is already known with
+        new evidence.  It starts with an initial expectation, called a prior,
+        compares that with the local evidence, called the likelihood, and
+        combines them into an updated estimate, called the posterior.
+      </p>
+      <p>
+        Bayesian borrowing means that a small-area estimate is allowed to learn
+        from related information instead of relying only on a small local sample.
+        Here, the related information is official local-authority HLE, the ONS
+        deprivation gradient, MSOA life expectancy, and Census health and
+        disability measures.  The station area still matters, but it is not asked
+        to carry more statistical weight than the available evidence can support.
+      </p>
+
+      <h2>Feasibility <span class="heading-accent">judgement</span></h2>
+      <p>
+        Current official healthy life expectancy at birth is available for
+        larger local areas, but not for the MSOAs around every Metro station.
+        A station map is therefore feasible only as a modelled estimate.  The
+        statistically defensible route is Bayesian borrowing: use official
+        larger-area HLE as the anchor, use a local covariate model for
+        station-area pattern, use the ONS deprivation gradient as a prior, and
+        make the uncertainty and limitations visible.
+      </p>
+      <p>
+        Disability-free life expectancy was not used as the main outcome here.
+        It remains a relevant health-expectancy measure, but this map needs a
+        current deprivation benchmark and local HLE calibration target.  HLE is
+        therefore the clearer current basis for this offshoot; DFLE could be a
+        separate sensitivity analysis if suitable local disability inputs and
+        geography are assembled.  For ONS health state life expectancy methods,
+        see the
+        <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/healthandlifeexpectancies/methodologies/healthstatelifeexpectanciesukqmi2020to2022">ONS health state life expectancies QMI</a>.
+      </p>
+
+      <h2>Data <span class="heading-accent">sources</span></h2>
+      <table class="note-table">
+        <tbody>
+          <tr>
+            <th>Official HLE target</th>
+            <td>
+              OHID Fingertips indicator 90362, healthy life expectancy at birth,
+              counties and unitary authorities, 2022 to 2024, male and female.
+              Source: <a href="https://fingertips.phe.org.uk/search/healthy%20life%20expectancy">OHID Fingertips</a>
+              and <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/healthandlifeexpectancies/bulletins/healthstatelifeexpectanciesuk/between2011to2013and2022to2024">ONS health state life expectancies</a>.
+            </td>
+          </tr>
+          <tr>
+            <th>Deprivation prior</th>
+            <td>
+              ONS healthy life expectancy by national area deprivation, England,
+              2022 to 2024.  The map uses the published broad deprivation
+              gradient as an external prior: 49.8 to 69.2 healthy years for
+              males and 48.2 to 68.5 healthy years for females from the most to
+              least deprived areas.
+              Source:
+              <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/healthinequalities/bulletins/healthylifeexpectancybynationalareadeprivationenglandandwales/between2013to2015and2022to2024">ONS HLE by national area deprivation</a>.
+            </td>
+          </tr>
+          <tr>
+            <th>MSOA mortality input</th>
+            <td>
+              OHID Fingertips indicator 93283, MSOA life expectancy at birth,
+              2019 to 2023, male and female.
+            </td>
+          </tr>
+          <tr>
+            <th>Census predictors</th>
+            <td>
+              Nomis Census 2021 bulk tables: TS037 general health, TS038
+              disability, TS007 age by single year and TS008 sex.  See
+              <a href="https://www.nomisweb.co.uk/sources/census_2021_bulk">Nomis Census 2021 bulk downloads</a>.
+            </td>
+          </tr>
+          <tr>
+            <th>Geography</th>
+            <td>
+              ONS MSOA 2021 to counties and unitary authorities 2023 best-fit
+              lookup, and ONS MSOA 2021 boundary service for station point
+              assignment.  See the
+              <a href="https://www.data.gov.uk/dataset/6338d27a-d19d-45de-b1c8-7660f3c3903b/msoa-2021-to-counties-and-unitary-authority-2023-best-fit-lookup-in-ew">lookup dataset</a>
+              and
+              <a href="https://www.data.gov.uk/dataset/677a5164-3a9e-4752-b8e6-5744d2b280ec/middle-layer-super-output-areas-december-2021-boundaries-ew-bgc-v3">MSOA boundary dataset</a>.
+            </td>
+          </tr>
+          <tr>
+            <th>Station points</th>
+            <td>
+              Department for Transport NaPTAN access nodes, using station-level
+              records where <code>StopType</code> is <code>MET</code>.  See
+              <a href="https://beta-naptan.dft.gov.uk/download">NaPTAN data portal</a>.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Estimator <span class="heading-accent">structure</span></h2>
+      <p>
+        The model has two layers.  The first layer is a calibrated synthetic
+        small-area model.  It was fitted separately for males and females at
+        county/unitary authority level.  The target was official HLE at birth for
+        2022 to 2024.  Predictors were population-weighted or
+        population-aggregated area measures derived from MSOAs:
+      </p>
+      <ul>
+        <li>MSOA life expectancy at birth, aggregated with sex-specific population weights.</li>
+        <li>Proportion in very good or good self-rated health.</li>
+        <li>Proportion in bad or very bad self-rated health.</li>
+        <li>Proportion disabled under the Equality Act.</li>
+        <li>Proportion limited a lot in day-to-day activities.</li>
+        <li>Proportion with no long-term physical or mental health condition.</li>
+        <li>Age-structure proportions: 0 to 15, 65 plus and 85 plus.</li>
+        <li>Sex-specific population share.</li>
+      </ul>
+      <p>
+        For sex <code>s</code> and authority <code>a</code>, the first-stage
+        fitted model is a weighted Gaussian regression.  Let \(Y_{as}\) denote
+        official authority HLE, \(\mathbf{x}_{as}\) the standardised predictor
+        vector, and \(w_{as}\) the sex-specific Census population weight:
+      </p>
+      \[
+        Y_{as} = \alpha_s + \mathbf{x}_{as}^{\top}\boldsymbol{\beta}_s + \varepsilon_{as},
+        \qquad
+        \varepsilon_{as} \sim N\!\left(0, \frac{\sigma_s^2}{w_{as}}\right).
+      \]
+      <p>
+        Estimation uses the ridge objective
+      </p>
+      \[
+        (\hat{\alpha}_s,\hat{\boldsymbol{\beta}}_s)
+        =
+        \arg\min_{\alpha,\boldsymbol{\beta}}
+        \left[
+          \sum_a w_{as}\{Y_{as}-\alpha-\mathbf{x}_{as}^{\top}\boldsymbol{\beta}\}^2
+          +
+          \lambda_s \sum_j \beta_j^2
+        \right].
+      \]
+      <p>
+        In Bayesian terms this is a normal prior on the regression coefficients,
+        \(\beta_{js}\sim N(0,\tau_s^2)\), with the intercept unpenalised.
+        The shrinkage is used because the authority-level training set is modest
+        and the health, disability, age and mortality predictors are correlated.
+        Predictors were standardised before fitting.  The ridge penalty was
+        selected by deterministic 10-fold cross-validation from a fixed grid.
+        The selected penalty was \(\lambda_s=10.0\) for males and
+        \(\lambda_s=1.0\) for females.
+      </p>
+      <p>
+        The second layer is the map-facing Bayesian borrowing step.  For each
+        mapped station \(i\), the calibrated local covariate estimate is treated
+        as a noisy likelihood and the ONS deprivation-gradient estimate is
+        treated as a prior.  If \(D_i\in\{1,\ldots,10\}\) is the station-area
+        IMD decile, the ONS deprivation benchmark for sex \(s\) is linearly
+        interpolated as
+      </p>
+      \[
+        p_{is}=d_{1s} + \frac{D_i-1}{9}(d_{10s}-d_{1s}),
+      \]
+      <p>
+        where \((d_{1s}, d_{10s})\) are the ONS HLE values for the most and
+        least deprived English areas.  This prior is centred within local
+        authority before borrowing:
+      </p>
+      \[
+        \mu^{(p)}_{is}=Y_{a(i)s}+p_{is}-\bar{p}_{a(i)s}.
+      \]
+      <p>
+        With \(z_{is}\) denoting the first-stage calibrated station estimate and
+        \(SE^{(1)}_{is}\) its standard error, the borrowing model is
+      </p>
+      \[
+        z_{is}\mid\theta_{is}\sim N\!\left(\theta_{is}, \{SE^{(1)}_{is}\}^2\right),
+        \qquad
+        \theta_{is}\sim N\!\left(\mu^{(p)}_{is}, \sigma_p^2\right),
+        \qquad
+        \sigma_p=1.0.
+      \]
+      <p>
+        Because this is a conjugate normal-normal model, the posterior mean and
+        variance are available in closed form:
+      </p>
+      \[
+        \hat{\theta}_{is}
+        =
+        \frac{z_{is}/\{SE^{(1)}_{is}\}^2 + \mu^{(p)}_{is}/\sigma_p^2}
+             {1/\{SE^{(1)}_{is}\}^2 + 1/\sigma_p^2},
+        \qquad
+        \{SE^{(post)}_{is}\}^2
+        =
+        \left(1/\{SE^{(1)}_{is}\}^2 + 1/\sigma_p^2\right)^{-1}.
+      \]
+      <p>
+        A simulation-based MCMC fit would give the same posterior mean for this
+        Gaussian borrowing step.  The closed-form update is simpler, transparent
+        and reproducible for a draft map.
+      </p>
+
+      <h2>Calibration <span class="heading-accent">step</span></h2>
+      <p>
+        The first-stage model was applied to each MSOA to produce a raw
+        synthetic HLE prediction.  Within each authority and sex, the raw MSOA
+        predictions were shifted so their sex-population-weighted mean exactly
+        matched the official authority HLE:
+      </p>
+      \[
+        z_{ms}
+        =
+        Y_{a(m)s}
+        +
+        \tilde{\theta}_{ms}
+        -
+        \bar{\tilde{\theta}}_{a(m)s},
+        \qquad
+        \bar{\tilde{\theta}}_{as}
+        =
+        \frac{\sum_{m\in a} n_{ms}\tilde{\theta}_{ms}}
+             {\sum_{m\in a} n_{ms}}.
+      \]
+      <p>
+        For the map display, the posterior station estimates are also centred
+        within each authority for the mapped station set.  This keeps the map
+        visibly anchored to the published authority HLE while allowing the
+        station pattern to borrow from deprivation and local covariates.  It does
+        not make the within-authority pattern official; that part is still
+        modelled.
+      </p>
+      \[
+        \theta^{(map)}_{is}
+        =
+        Y_{a(i)s}
+        +
+        \hat{\theta}_{is}
+        -
+        \bar{\hat{\theta}}_{a(i)s}.
+      \]
+      <p>
+        This centring is a conservative choice for a public-facing map: it
+        prevents the display from drifting away from published local HLE, but it
+        also means the mapped values are not independent direct observations.
+      </p>
+
+      <h2>Uncertainty <span class="heading-accent">intervals</span></h2>
+      <p>
+        The station intervals are model intervals, not official confidence
+        intervals.  The first-stage standard error combines four components:
+      </p>
+      <ul>
+        <li>Authority-level cross-validated model error.</li>
+        <li>Published official authority HLE standard error, approximated from the 95% confidence interval.</li>
+        <li>MSOA life-expectancy input standard error, scaled by the fitted life-expectancy coefficient.</li>
+        <li>An extra imputation penalty where an MSOA life-expectancy input was suppressed and replaced by the authority-sex mean.</li>
+      </ul>
+      <p>
+        The map-facing interval then uses the posterior standard error from the
+        normal-normal borrowing step plus a 2.0-year structural uncertainty
+        floor.  That floor is included because the station-level HLE target is
+        unobserved.  The interval is intentionally conservative enough for
+        public interpretation, but it still cannot capture every source of
+        small-area model uncertainty.
+      </p>
+      \[
+        SE^{(1)}_{is}
+        =
+        \sqrt{
+          RMSE_s^2
+          +
+          SE(Y_{a(i)s})^2
+          +
+          \{\hat{\beta}_{LE,s}SE(LE_{is})\}^2
+          +
+          I_{is}RMSE_s^2
+        },
+      \]
+      \[
+        SE^{(map)}_{is}
+        =
+        \sqrt{\{SE^{(post)}_{is}\}^2+\sigma_{struct}^2},
+        \qquad
+        \sigma_{struct}=2.0,
+      \]
+      \[
+        95\% \text{ model interval}
+        =
+        \theta^{(map)}_{is}\pm 1.96\,SE^{(map)}_{is}.
+      \]
+
+      <h2>Diagnostics <span class="heading-accent">from this run</span></h2>
+      <ul>
+        <li>60 Metro station records were matched to MSOAs; none were unmatched in the source model.</li>
+        <li>59 stations are shown on the map, matching the original life-expectancy Metro artwork.  Manors is excluded from the map because the original map reference dropped it.</li>
+        <li>151 authorities per sex were used for model training after missing official HLE targets were excluded.</li>
+        <li>Cross-validated RMSE was 1.50 years for males and 1.72 years for females.</li>
+        <li>Cross-validated MAE was 1.15 years for males and 1.35 years for females.</li>
+        <li>The maximum post-calibration authority error was less than 0.000001 years.</li>
+        <li>One station-sex input required life-expectancy imputation: male life expectancy for Manors.</li>
+        <li>The map-facing Bayesian-borrowed male range is 49.5 to 69.3 healthy years.</li>
+        <li>The map-facing Bayesian-borrowed female range is 49.0 to 70.1 healthy years.</li>
+        <li>The broad map-facing gaps are 19.8 years for males and 21.1 years for females.</li>
+      </ul>
+
+      <h2>Important <span class="heading-accent">limitations</span></h2>
+      <ul>
+        <li>These are not official ONS HLE estimates for stations or MSOAs.</li>
+        <li>The model is ecological.  It estimates area averages, not individual healthy life expectancy.</li>
+        <li>A station value refers to the residential MSOA containing the station point, not to Metro passengers or people born at the station.</li>
+        <li>The within-authority station pattern is modelled from covariates; it is not directly validated against current observed MSOA HLE, because current observed MSOA HLE is not published.</li>
+        <li>Calibration ensures official authority averages are reproduced, but it does not prove that the model has the correct within-authority spread.</li>
+        <li>The ONS deprivation prior makes the map more plausible against published deprivation HLE, but it also means the mapped estimates are partly prior-driven.</li>
+        <li>The 1.0-year deprivation prior standard deviation and 2.0-year structural uncertainty floor are modelling judgements.  A final publication should include sensitivity checks.</li>
+        <li>The map-facing authority centring is applied to the mapped station set, not to a population-weighted sample of all neighbourhoods in the authority.</li>
+        <li>Census health and disability predictors are from Census Day, 21 March 2021.  The mortality input covers 2019 to 2023, and official HLE covers 2022 to 2024.</li>
+        <li>The 2019 to 2023 MSOA life-expectancy input includes the COVID-19 pandemic period.</li>
+        <li>Census small-area counts are affected by disclosure-control methods including record swapping and cell key perturbation.</li>
+        <li>The MSOA general-health and disability predictors used here are raw counts and rates.  Age structure is included in the model, but these are not directly observed age-sex-specific Sullivan inputs.</li>
+        <li>Sex-specific HLE is modelled using sex-specific mortality and population structure, but the MSOA self-rated health and disability predictors are not sex-specific in the bulk tables used here.</li>
+        <li>Nearby stations can share an MSOA and therefore share the same estimate.</li>
+        <li>Manors is available in the station-estimate file but is not shown on this map, so the HLE follow-on visually matches the original life-expectancy post.</li>
+        <li>Station assignment can be sensitive to boundary placement for stations near an MSOA edge.</li>
+        <li>The uncertainty intervals do not include every possible source of model uncertainty, source-data revision or geography change.</li>
+        <li>The model shows association and spatial pattern.  It should not be interpreted as a causal estimate of transport access, deprivation or any single policy lever.</li>
+        <li>ONS describes current health state life expectancies as official statistics in development, so future methodological changes could revise the official HLE target used for calibration.</li>
+      </ul>
+
+      <h2>Reproducibility <span class="heading-accent">files</span></h2>
+      <p>
+        The pipeline is implemented in
+        <code>scripts/build-metro-hle-model.py</code>.  Running it writes:
+      </p>
+      <ul>
+        <li><code>stories/metro-healthy-life-expectancy/data/station-hle-estimates.csv</code></li>
+        <li><code>stories/metro-healthy-life-expectancy/data/station-hle-estimates.json</code></li>
+        <li><code>stories/metro-healthy-life-expectancy/data/station-hle-map-data.json</code></li>
+        <li><code>stories/metro-healthy-life-expectancy/data/model-diagnostics.json</code></li>
+      </ul>
+      <p>
+        The animation is implemented as the Remotion composition
+        <code>MetroHealthyLifeExpectancy</code> in
+        <code>remotion/hidden-week/src/MetroHealthyLifeExpectancyStory.tsx</code>.
+        The render command is:
+      </p>
+      <p>
+        <code>cd remotion/hidden-week &amp;&amp; npm run render:metro-hle</code>
+      </p>
+      <p>
+        <a class="button primary" href="/stories/metro-healthy-life-expectancy/">Back to the story</a>
+        <a class="button" href="/stories/metro-healthy-life-expectancy/data/station-hle-estimates.csv">Download station estimates</a>
+      </p>
+    </main>
+
+    <footer class="site-footer">
+      <p><span class="inline-wordmark">Gero<span class="wordmark-stats">stats</span></span>.co.uk</p>
+      <p><a href="mailto:drandrewkingston@gmail.com">drandrewkingston@gmail.com</a></p>
+      <p class="footer-credit">
+        <span>&copy; 2026 Dr. Andrew Kingston. All rights reserved.</span>
+        <span>Designed and deployed by Andrew Kingston BSc (Hons) MSc PhD CStat SFHEA.</span>
+      </p>
+    </footer>
+    <script src="/assets/site-lockdown.js?v=20260704"></script>
+  </body>
+</html>

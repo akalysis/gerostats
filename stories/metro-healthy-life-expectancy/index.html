@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Healthy years on the Metro | Gerostats</title>
+    <meta
+      name="description"
+      content="A follow-on Newcastle Metro map story about modelled healthy life expectancy and local health inequality."
+    >
+    <meta name="author" content="Andrew Kingston PhD CStat SFHEA">
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="canonical" href="https://gerostats.co.uk/stories/metro-healthy-life-expectancy/">
+    <link rel="icon" href="/favicon.svg?v=mark-20260704" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#story">Skip to story</a>
+
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Gerostats home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-word"><span>Gero</span><span class="brand-accent">stats</span></span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="/writing/">Garden</a>
+        <a href="/data-stories/">Stories</a>
+        <a href="/methods/">Methods</a>
+        <a href="/about/">About</a>
+        <a href="/contact/">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" id="story">
+        <p class="kicker">Newcastle, life expectancy and healthy years</p>
+        <h1>The Metro life-expectancy map had a follow-up question: <span class="heading-accent">healthy years.</span></h1>
+        <p class="lede">
+          The first Metro map asked how long life is expected to last around the
+          stations.  This is the follow-on question: for those years of life, how
+          many are expected to be healthy ones?
+        </p>
+        <p>
+          The answer is harder, because current official healthy life expectancy
+          is not published for every MSOA around a Metro station.  So this map
+          uses station-local estimates that borrow information from official
+          HLE, MSOA life expectancy, Census health and disability, and the ONS
+          deprivation gradient, then anchor back to published local authority
+          HLE.  It is not an official station estimate.  It is a careful
+          modelled follow-on to the original
+          <a class="text-link" href="/stories/metro-life-expectancy/">life expectancy Metro map</a>.
+        </p>
+        <div class="hero-actions" aria-label="Page actions">
+          <a class="button primary" href="#map">See the map</a>
+          <a class="button" href="/stories/metro-healthy-life-expectancy/technical-note/">Read the method</a>
+        </div>
+      </section>
+
+      <section class="map-stage" id="map" aria-labelledby="map-heading">
+        <div class="section-label">The map</div>
+        <h2 id="map-heading">The same Metro map, but with <span class="heading-accent">healthy life expectancy</span> on it</h2>
+        <p class="section-intro">
+          The animation uses the same supplied Metro artwork and station
+          positions as the life-expectancy story.  This time the story is about
+          healthy years: estimated HLE, deprivation, and the stations that
+          carry the follow-up question.
+        </p>
+
+        <div class="video-frame metro-hle-frame">
+          <video
+            id="metroHleVideo"
+            controls
+            controlslist="nodownload noremoteplayback"
+            disablepictureinpicture
+            disableremoteplayback
+            oncontextmenu="return false"
+            preload="metadata"
+            playsinline
+            src="assets/metro_healthy_life_expectancy_animation.mp4?v=plain-borrowing-1"
+          >
+            Your browser does not support embedded video.
+          </video>
+        </div>
+
+        <div class="chapter-bar" aria-label="Animation chapters">
+          <button type="button" data-time="0">Opening</button>
+          <button type="button" data-time="8">Borrowing</button>
+          <button type="button" data-time="16">HLE gap</button>
+          <button type="button" data-time="30">Deprivation</button>
+          <button type="button" data-time="43">Lower HLE</button>
+          <button type="button" data-time="57">Higher HLE</button>
+          <button type="button" data-time="68">Nearby contrast</button>
+          <button type="button" data-time="78">Sex comparison</button>
+        </div>
+      </section>
+
+      <section class="stat-band" id="numbers" aria-labelledby="numbers-heading">
+        <div>
+          <p class="section-label">The numbers</p>
+          <h2 id="numbers-heading">What the healthy-years map is asking us to <span class="heading-accent">face</span></h2>
+        </div>
+        <div class="stat-grid">
+          <article class="stat-card accent-red">
+            <p class="stat-value">19.8 years</p>
+            <h3>Largest male gap</h3>
+            <p>Percy Main is 49.5 healthy years.  Ilford Road and South Gosforth are 69.3.</p>
+          </article>
+          <article class="stat-card accent-teal">
+            <p class="stat-value">15.0 years</p>
+            <h3>Nearby contrast</h3>
+            <p>Fawdon is 54.3 healthy years.  South Gosforth is 69.3.</p>
+          </article>
+          <article class="stat-card accent-gold">
+            <p class="stat-value">21.1 years</p>
+            <h3>Largest female gap</h3>
+            <p>Percy Main is 49.0 healthy years.  Ilford Road and South Gosforth are 70.1.</p>
+          </article>
+          <article class="stat-card accent-blue">
+            <p class="stat-value">59 stations</p>
+            <h3>Borrowing information</h3>
+            <p>The map combines local station-area evidence with official HLE and the ONS deprivation pattern.</p>
+          </article>
+        </div>
+      </section>
+
+      <article class="essay">
+        <section>
+          <h2>The follow-up <span class="heading-accent">question</span></h2>
+          <p>
+            The first Metro map was about length of life.  It showed how far
+            apart neighbouring station areas can be when the measure is life
+            expectancy at birth.
+          </p>
+          <p>
+            This follow-up keeps the same map but changes the question.  If some
+            places can expect more years of life, how many of those years are
+            expected to be lived in good health?
+          </p>
+          <p>
+            That change matters.  Healthy life expectancy is not a softer
+            version of life expectancy.  It asks whether extra years are also
+            years with less illness and limitation.
+          </p>
+        </section>
+
+        <section>
+          <h2>What is being <span class="heading-accent">estimated</span></h2>
+          <p>
+            Healthy life expectancy is a period measure.  It combines mortality
+            with the proportion of people reporting very good or good health.
+            Put simply, it asks how many years a newborn could expect to live in
+            good health if current patterns continued.
+          </p>
+          <p>
+            A station does not have its own healthy life expectancy.  The map
+            links each Metro station to the MSOA around it, then uses a
+            statistical borrowing model to estimate HLE for that station-local
+            area.
+          </p>
+          <p>
+            That distinction matters.  These are not passenger estimates and
+            they are not predictions for named people.  They are modelled area
+            estimates, anchored to official published HLE and constrained by the
+            ONS deprivation gradient.
+          </p>
+        </section>
+
+        <section>
+          <h2>The stations that carry the <span class="heading-accent">story</span></h2>
+          <p>
+            On the male HLE map, Percy Main is estimated at 49.5 healthy years.
+            Byker is 49.7.  Howdon and Wallsend sit close by at about 50 healthy
+            years.
+          </p>
+          <p>
+            At the other end, Ilford Road and South Gosforth are 69.3 healthy
+            years.  East Boldon and Seaburn are also near the upper end of the
+            map.  The contrast is not a single station behaving strangely; it is
+            a patterned difference across the network.
+          </p>
+          <p>
+            For females, the broad picture is similar.  The map-facing gap is
+            21.1 healthy years, from Percy Main at 49.0 to Ilford Road and South
+            Gosforth at 70.1.
+          </p>
+        </section>
+
+        <section>
+          <h2>The nearby <span class="heading-accent">contrast</span></h2>
+          <p>
+            In the original life-expectancy map, Fawdon to South Gosforth was a
+            9.0-year male life expectancy difference.  On this modelled HLE
+            map, the same comparison is 54.3 healthy years at Fawdon versus 69.3
+            at South Gosforth.
+          </p>
+          <p>
+            That is a 15.0-year modelled healthy-years gap between nearby
+            station-local areas.  It should be read as a broad contrast, not a
+            decimal-point ranking.  But broad contrasts are exactly the point of
+            this kind of map.
+          </p>
+          <p>
+            The point is not the decimal place.  The point is that the
+            healthy-years gap is larger than the life-expectancy gap for the
+            same pair of station-local areas.
+          </p>
+        </section>
+
+        <section>
+          <h2>Why the modelling <span class="heading-accent">matters</span></h2>
+          <p>
+            This map is more statistically demanding than the life-expectancy
+            map because current official HLE is not published for every station
+            MSOA.  That is why the estimates borrow information.
+          </p>
+          <p>
+            Borrowing information means the estimate is not made from one small
+            area in isolation.  The model starts with what is known from official
+            larger-area HLE and from the national deprivation pattern, then lets
+            each station area's own mortality, health, disability and age profile
+            pull the estimate up or down.
+          </p>
+          <p>
+            If the local evidence is thin or noisy, the estimate stays closer to
+            the broader evidence.  If the local evidence is stronger and points
+            consistently in one direction, the station estimate moves further.
+            That is the point of the borrowing: avoid pretending that every
+            station area can speak with equal statistical certainty.
+          </p>
+          <p>
+            The borrowing is not cosmetic.  The local model uses mortality,
+            Census health, disability and age structure.  The ONS deprivation
+            gradient keeps the station estimates aligned with the broad national
+            pattern for healthy life expectancy.  The local-authority anchor
+            prevents the map drifting away from published HLE.
+          </p>
+          <p>
+            The result should be read as a defensible small-area contrast, not
+            as an official station league table.
+          </p>
+        </section>
+
+        <section>
+          <h2>Not just longer lives.  <span class="heading-accent">Healthier lives.</span></h2>
+          <p>
+            Healthy life expectancy is shaped by income, housing, work,
+            education, transport, air, food, services, stress and care.  It is
+            not only a health-service number.  It is a conditions-of-life number.
+          </p>
+          <p>
+            A fairer region would not only close the gap in how long people live.
+            It would close the gap in how long people live well.
+          </p>
+        </section>
+      </article>
+
+      <section class="closing-call" id="change">
+        <div>
+          <p class="section-label">The challenge</p>
+          <h2>Do not just add years.  <span class="heading-accent">Add healthy years.</span></h2>
+        </div>
+        <p>
+          The first Metro story asked us not just to mind the gap, but to close
+          it.  This follow-on asks the same thing with a harder measure.
+          <br><br>
+          Where you are born should not carry this much weight in how long life
+          is expected to last, or how much of that life is expected to be lived in
+          good health.
+          <br><br>
+          <a class="text-link" href="/stories/metro-life-expectancy/">Read the original life expectancy map</a>
+          <br>
+          <a class="text-link" href="/stories/metro-healthy-life-expectancy/technical-note/">Read the HLE technical note</a>
+        </p>
+      </section>
+
+      <section class="author-note" id="author" aria-labelledby="author-heading">
+        <p class="section-label">About the author</p>
+        <h2 id="author-heading">Andrew <span class="heading-accent">Kingston</span></h2>
+        <p>
+          I am a statistical epidemiologist from the North East.  My work focuses
+          on ageing, multimorbidity, disability, care need, health expectancy and
+          health inequalities.  This piece is also personal: it sits between
+          evidence, place and what inequality feels like when the geography is
+          part of your own story.
+        </p>
+        <p><a class="text-link" href="mailto:drandrewkingston@gmail.com">drandrewkingston@gmail.com</a></p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p><span class="inline-wordmark">Gero<span class="wordmark-stats">stats</span></span>.co.uk</p>
+      <p><a href="mailto:drandrewkingston@gmail.com">drandrewkingston@gmail.com</a></p>
+      <p class="footer-credit">
+        <span>&copy; 2026 Dr. Andrew Kingston. All rights reserved.</span>
+        <span>Designed and deployed by Andrew Kingston BSc (Hons) MSc PhD CStat SFHEA.</span>
+      </p>
+    </footer>
+
+    <script>
+      const video = document.querySelector("#metroHleVideo");
+      const chapterButtons = document.querySelectorAll("[data-time]");
+
+      chapterButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const seconds = Number.parseFloat(button.dataset.time);
+          if (!Number.isNaN(seconds)) {
+            video.currentTime = seconds;
+            video.play();
+          }
+        });
+      });
+    </script>
+    <script src="/assets/site-lockdown.js?v=20260704"></script>
+  </body>
+</html>

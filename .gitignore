@@ -1,5 +1,6 @@
 .DS_Store
 *.log
+.cache/
 node_modules/
 remotion/hidden-week/node_modules/
 remotion/hidden-week/out/

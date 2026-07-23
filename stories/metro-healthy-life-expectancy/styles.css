@@ -1,0 +1,156 @@
+@import url("../metro-life-expectancy/styles.css");
+
+.metro-hle-frame {
+  background: #f8f6ef;
+  border: 0;
+  border-radius: 8px;
+}
+
+.metro-hle-svg {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #f8f6ef;
+}
+
+.svg-title {
+  fill: #111111;
+  font-size: 37px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.svg-subtitle,
+.svg-legend-text,
+.side-copy,
+.svg-source {
+  fill: #3f3f46;
+  font-size: 18px;
+  font-weight: 550;
+}
+
+.svg-legend-text {
+  font-size: 16px;
+}
+
+.muted {
+  fill: #616161;
+}
+
+.hle-bubble {
+  cursor: pointer;
+  outline: none;
+}
+
+.hle-bubble .hle-marker {
+  filter: drop-shadow(0 4px 9px rgba(17, 17, 17, 0.24));
+}
+
+.hle-bubble.is-selected .hle-marker,
+.hle-bubble:hover .hle-marker,
+.hle-bubble:focus .hle-marker {
+  stroke-width: 5;
+}
+
+.bubble-value {
+  font-size: 12px;
+  font-weight: 900;
+  pointer-events: none;
+  text-anchor: middle;
+}
+
+.bubble-value.large {
+  font-size: 18px;
+}
+
+.station-map-label {
+  fill: #111111;
+  paint-order: stroke;
+  stroke: #ffffff;
+  stroke-width: 4px;
+  stroke-linejoin: round;
+  font-size: 16px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.metro-m {
+  fill: #111111;
+  font-size: 58px;
+  font-weight: 950;
+}
+
+.metro-word {
+  fill: #111111;
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.side-title {
+  fill: #111111;
+  font-size: 38px;
+  font-weight: 950;
+  letter-spacing: 0;
+}
+
+.side-kicker {
+  fill: #111111;
+  font-size: 17px;
+  font-weight: 950;
+}
+
+.side-number {
+  fill: #111111;
+  font-size: 62px;
+  font-weight: 950;
+}
+
+.side-number.compact {
+  font-size: 48px;
+}
+
+.side-copy.small {
+  font-size: 16px;
+}
+
+.side-copy.tiny {
+  font-size: 14px;
+}
+
+.side-red {
+  fill: #8e0d20;
+  font-size: 22px;
+  font-weight: 950;
+}
+
+.side-red.compact {
+  font-size: 17px;
+}
+
+.svg-source {
+  font-size: 13px;
+}
+
+.svg-credit {
+  fill: #5c5c5c;
+  font-size: 15px;
+  font-weight: 850;
+}
+
+.chapter-bar button[data-map-sex="male"],
+.chapter-bar button[data-map-sex="female"] {
+  background: var(--white);
+}
+
+.chapter-bar button.is-active {
+  background: var(--ink);
+  color: var(--white);
+}
+
+@media (max-width: 720px) {
+  .metro-hle-svg {
+    min-width: 0;
+  }
+}

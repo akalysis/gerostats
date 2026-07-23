@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "render": "remotion render src/index.ts HiddenWeek ../../assets/stories/hidden-week-story.mp4 --codec=h264 --crf=20 --pixel-format=yuv420p && ffmpeg -y -i ../../assets/stories/hidden-week-story.mp4 -an -c:v copy ../../assets/stories/hidden-week-story.noaudio.mp4 && mv ../../assets/stories/hidden-week-story.noaudio.mp4 ../../assets/stories/hidden-week-story.mp4",
-    "still": "remotion still src/index.ts HiddenWeek out/preview.png --frame=1200"
+    "render:metro-hle": "remotion render src/index.ts MetroHealthyLifeExpectancy ../../stories/metro-healthy-life-expectancy/assets/metro_healthy_life_expectancy_animation.mp4 --codec=h264 --crf=20 --pixel-format=yuv420p && ffmpeg -y -i ../../stories/metro-healthy-life-expectancy/assets/metro_healthy_life_expectancy_animation.mp4 -an -c:v copy ../../stories/metro-healthy-life-expectancy/assets/metro_healthy_life_expectancy_animation.noaudio.mp4 && mv ../../stories/metro-healthy-life-expectancy/assets/metro_healthy_life_expectancy_animation.noaudio.mp4 ../../stories/metro-healthy-life-expectancy/assets/metro_healthy_life_expectancy_animation.mp4",
+    "still": "remotion still src/index.ts HiddenWeek out/preview.png --frame=1200",
+    "still:metro-hle": "remotion still src/index.ts MetroHealthyLifeExpectancy out/metro-hle-preview.png --frame=720"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.359",
