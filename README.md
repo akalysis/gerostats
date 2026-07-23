@@ -23,6 +23,19 @@ HTML directly.  After deployment, attach the domain `gerostats.co.uk` in Vercel.
   Run `npm install` once in that folder, then `npm run render` to regenerate
   `/assets/stories/hidden-week-story.mp4`.
 - `/about/` is the author page.
+- `/publications/` is the curated Google Scholar publication profile.
+
+## Updating publications
+
+Refresh the publication list and citation snapshot from Google Scholar:
+
+```sh
+node scripts/update-publications.mjs
+```
+
+Review the generated `/data/publications.json`, then commit and deploy it with
+the site. The public page reads this static snapshot and does not contact Google
+Scholar from a visitor's browser.
 
 ## Formula rendering
 

@@ -380,6 +380,27 @@ body {
   box-shadow: none !important;
 }
 
+.publications-callout {
+  margin: 2.5rem 0 3rem;
+  padding: clamp(1.3rem, 3vw, 2rem);
+  border: 1px solid rgba(163, 230, 53, 0.34);
+  background: rgba(163, 230, 53, 0.055);
+}
+
+.article-content .publications-callout h2 {
+  margin: 0.25rem 0 0.8rem;
+  font-size: clamp(1.9rem, 3.4vw, 2.8rem);
+}
+
+.publications-callout .page-kicker,
+.publications-callout p {
+  margin-top: 0;
+}
+
+.publications-callout .button {
+  margin-top: 0.4rem;
+}
+
 .intro-thread,
 .story-card,
 .garden-strip,
